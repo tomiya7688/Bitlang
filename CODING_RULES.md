@@ -10,7 +10,87 @@ Core language logic MUST be written so that it can be reimplemented mechanically
 
 When two implementations are possible, prefer the one whose control flow, data model, and error behavior can be expressed similarly in C, Go, Rust, Zig, Java, C#, or Bitlang.
 
-## 2. The specification outranks the host language
+## 2. One file, one responsibility
+
+Every hand-maintained source file MUST have exactly one primary responsibility.
+
+A file MUST NOT become a container for several merely related responsibilities. Package/module membership alone is not sufficient reason to place code in the same file.
+
+The responsibility of a file should be describable in one short sentence. If that sentence requires "and" to join independent behaviors, the file should normally be split.
+
+Examples:
+
+```text
+Good:
+  token.go              -> defines token representation
+  lexer.go              -> converts source text into tokens
+  symbol.go             -> represents symbols
+  symbol_table.go       -> stores and resolves symbols
+  artifact.go           -> represents pipeline artifacts
+  stage.go              -> represents and executes one pipeline stage
+  pipeline.go           -> orders and executes stages
+
+Avoid:
+  lexer.go              -> token definitions + scanning + diagnostics + source loading
+  compiler.go           -> parsing + analysis + lowering + output writing
+```
+
+This rule is stronger than a numeric line limit. A 90-line file with two independent responsibilities MUST be split, while a longer declarative table may be acceptable if it still represents exactly one responsibility.
+
+The intended long-term mapping is:
+
+```text
+one conceptual responsibility
+        ~=
+one source file in the bootstrap implementation
+        ~=
+one class/object responsibility in an object-oriented implementation
+        ~=
+one corresponding component in a future Bitlang implementation
+```
+
+When the project is rewritten in an object-oriented language, a source file should therefore be structurally close to one class or one class-sized responsibility. This does not require forcing every language into class syntax; it requires keeping responsibilities narrow enough that such a translation is natural.
+
+A file MAY contain small supporting declarations that exist only to serve its single responsibility, but reusable or independently meaningful concepts MUST be moved to their own file.
+
+## 3. One function, one operation
+
+Every function or method MUST perform one clearly identifiable operation at one abstraction level.
+
+The operation should be describable with one verb phrase, for example:
+
+```text
+canonicalize an identifier
+resolve a symbol
+scan one token
+parse one expression
+validate one transition
+lower one statement
+format one diagnostic
+```
+
+A function that performs several sequential responsibilities MUST be decomposed, even when the total line count is small.
+
+Avoid functions of the form:
+
+```text
+read source -> tokenize -> parse -> analyze -> lower -> write output
+```
+
+Prefer orchestration that calls narrowly focused operations:
+
+```text
+source = loadSource(...)
+tokens = lexSource(source)
+ast = parseTokens(tokens)
+result = analyzeAst(ast)
+```
+
+An orchestration function itself has one operation: coordinating a defined workflow. It MUST NOT also contain the detailed implementation of the operations it coordinates.
+
+A helper function MUST represent a real operation or invariant. Do not create meaningless wrappers solely to satisfy this rule.
+
+## 4. The specification outranks the host language
 
 Bitlang semantics MUST NOT accidentally depend on Go behavior.
 
@@ -18,7 +98,7 @@ Host-language behavior such as integer overflow, map iteration order, Unicode ha
 
 If host-specific behavior is required, isolate it behind a small adapter boundary and document it.
 
-## 3. Prefer explicit data and explicit control flow
+## 5. Prefer explicit data and explicit control flow
 
 Core code SHOULD use:
 
@@ -43,7 +123,7 @@ Core code SHOULD avoid unless there is a strong reason:
 
 The goal is not to write Go as if it were C. The goal is to keep the semantic algorithm obvious enough that another implementation can follow the same steps.
 
-## 4. Keep stages as real boundaries
+## 6. Keep stages as real boundaries
 
 The canonical lowering pipeline is:
 
@@ -63,13 +143,13 @@ A later optimization MUST NOT erase these conceptual boundaries. Internal fast p
 
 Whenever practical, intermediate representations SHOULD be serializable and independently testable. This allows implementations written in different languages to compare results at stage boundaries.
 
-## 5. Determinism first
+## 7. Determinism first
 
 Given the same source, options, and declared environment, compiler stages SHOULD produce the same semantic result regardless of host OS, CPU, locale, process timing, or map/hash ordering.
 
 Do not rely on unordered container traversal when output order is observable. Sort or otherwise define the order explicitly.
 
-## 6. Keep the core independent from the CLI and OS
+## 8. Keep the core independent from the CLI and OS
 
 Language semantics, preprocessing, parsing, analysis, lowering, VM assembly generation, and translation logic belong in reusable core packages/modules.
 
@@ -77,13 +157,13 @@ Command-line parsing, terminal output, filesystem access, environment variables,
 
 The core SHOULD be callable by a CLI, test runner, VM, editor integration, or another compiler without pretending to be a command-line program.
 
-## 7. Minimize dependencies
+## 9. Minimize dependencies
 
 The bootstrap compiler SHOULD prefer the host standard library.
 
 A third-party dependency in semantic/compiler core code requires a clear reason. Dependencies that make a future Bitlang implementation substantially harder to reproduce SHOULD be avoided.
 
-## 8. Tests are cross-implementation contracts
+## 10. Tests are cross-implementation contracts
 
 Tests SHOULD describe semantic inputs and outputs rather than Go-specific implementation details.
 
@@ -97,7 +177,7 @@ input artifact + options -> expected artifact / diagnostics
 
 This will allow the Go bootstrap implementation and the future Bitlang implementation to be checked against the same corpus.
 
-## 9. Naming and representation
+## 11. Naming and representation
 
 Names SHOULD describe Bitlang concepts, not Go mechanisms. For example, prefer `Artifact`, `Stage`, `Symbol`, and `Diagnostic` over names tied to interfaces, goroutines, readers, or other host abstractions.
 
@@ -105,7 +185,7 @@ Bitlang identifiers are case-insensitive, but their original spelling SHOULD be 
 
 String and character contents MUST NOT be modified by identifier canonicalization.
 
-## 10. Self-hosting is the long-term target
+## 12. Self-hosting is the long-term target
 
 The project SHOULD be designed toward this bootstrap chain:
 
@@ -130,7 +210,7 @@ A new core feature SHOULD therefore be reviewed with one additional question:
 
 If the answer is no, either simplify the design or explicitly document why the host-specific mechanism is temporary.
 
-## 11. Comments are part of the implementation
+## 13. Comments are part of the implementation
 
 Comments are required where they preserve design intent, semantic constraints, portability assumptions, or non-obvious behavior.
 
@@ -190,86 +270,65 @@ Large logical sections MAY use short header comments, but comments MUST NOT be u
 
 When behavior changes, nearby comments MUST be updated in the same change. Stale comments are considered bugs.
 
-## 12. Keep files small and single-purpose
+## 14. File size is a secondary safety limit
 
-A source file SHOULD represent one clear responsibility or one tightly related group of data structures and operations.
+The primary rule is one file, one responsibility. Line count exists only as an additional warning against accidental growth.
 
-Do not grow a file merely because new code belongs to the same package/module. Package membership is not sufficient justification for sharing a file.
-
-For ordinary core source files, use these size guidelines:
+For ordinary hand-maintained core source files:
 
 - 0-200 lines: preferred range
-- 200-300 lines: acceptable when the file still has one clear responsibility
-- 300-400 lines: SHOULD trigger a split review
+- 200-300 lines: acceptable only while the file clearly retains one responsibility
+- 300-400 lines: MUST trigger a split review
 - more than 400 lines: MUST normally be split
 - more than 600 lines: prohibited except for generated data, declarative tables, or another explicitly documented exceptional case
 
-Blank lines and comments count toward these limits because documentation also affects navigability. Generated files MAY exceed them but MUST be clearly marked as generated and SHOULD NOT contain hand-maintained semantic logic.
+Blank lines and comments count toward these limits because documentation also affects navigability.
 
-Line count is only a warning signal. A file MUST be split earlier when it contains multiple independent responsibilities.
+Generated files MAY exceed them but MUST be clearly marked as generated and SHOULD NOT contain hand-maintained semantic logic.
 
-Examples of responsibilities that SHOULD normally be separate files include:
+Never keep multiple responsibilities together merely because the file is below the numeric limit.
 
-- token definitions vs lexer implementation
-- AST node definitions vs parser control flow
-- diagnostics data vs diagnostic rendering
-- symbol representation vs scope resolution
-- IR definitions vs lowering logic
-- VM instruction definitions vs VM execution
-- architecture mapping tables vs translation algorithms
-- CLI argument parsing vs compiler invocation
+## 15. Function size is a secondary safety limit
 
-Prefer names that describe responsibility directly, for example:
-
-```text
-lexer_token.go
-lexer_scan.go
-parser_expr.go
-parser_stmt.go
-diagnostic.go
-diagnostic_format.go
-ir_types.go
-lower_expr.go
-lower_stmt.go
-```
-
-Do not create meaningless fragments such as `utils1.go`, `helpers2.go`, or files split only to satisfy a numeric line limit.
-
-A split SHOULD follow semantic boundaries that can also be reproduced in another implementation language.
-
-## 13. Keep functions small enough to understand locally
-
-A function SHOULD normally perform one operation at one abstraction level.
+The primary rule is one function, one operation. Line count exists only as an additional warning against mixing operations or abstraction levels.
 
 As a guideline:
 
 - under 40 lines is preferred for ordinary functions
-- 40-80 lines SHOULD be reviewed for extraction opportunities
-- over 80 lines SHOULD normally be split
+- 40-80 lines MUST be reviewed for hidden multiple operations
+- over 80 lines SHOULD normally be decomposed
 - over 120 lines requires explicit justification in a comment or review
 
-Complex parser/lexer state machines may occasionally justify longer functions, but even there state transitions SHOULD be separated when doing so improves clarity without hiding control flow.
+Parser/lexer state machines may occasionally justify longer functions, but a long state machine still MUST perform one operation. Independent state transitions or semantic actions should be extracted where doing so preserves readable control flow.
 
-Do not split functions into tiny wrappers merely to meet line limits. The purpose is local comprehensibility and portability, not numeric compliance.
+## 16. File and function growth must be considered during every change
 
-## 14. File growth must be considered during every change
+Before adding code to an existing file, ask:
 
-Before adding a substantial feature to an existing file, check:
+1. Is this exactly the same responsibility as the file already has?
+2. Would this responsibility map naturally to the same class in an object-oriented implementation?
+3. Would a future Bitlang implementation naturally keep these operations together?
+4. Is an independently meaningful concept being introduced that deserves its own file?
 
-1. Is this the same responsibility as the existing file?
-2. Will the file remain easy to understand in isolation?
-3. Would a future C/Rust/Bitlang implementation naturally put this logic in the same module/file?
-4. Is the file approaching the split-review threshold?
+Before adding logic to an existing function, ask:
 
-If the answer suggests a new responsibility, create a new file before adding the implementation.
+1. Is this exactly the same operation the function already performs?
+2. Is it at the same abstraction level?
+3. Can the function still be named accurately with one verb phrase?
+4. Is the function beginning to coordinate and implement details at the same time?
 
-Refactoring an oversized file is part of feature work when the feature would otherwise make the problem worse. Do not defer all structural cleanup indefinitely.
+If these checks fail, split before adding the new implementation.
 
-## 15. Go bootstrap conventions
+## 17. Go bootstrap conventions
 
 For the current Go implementation specifically:
 
 - keep compiler core below `internal/bitlang` independent from `cmd/`
+- treat each Go source file as one class-sized responsibility even though Go has no classes
+- do not group several types in one file merely because Go permits it
+- prefer one primary semantic type/component per file when that type has independent behavior
+- place independently reusable support types in their own files
+- keep methods associated with the responsibility represented by that file
 - prefer ordinary structs over generic semantic containers
 - use `any` only at temporary representation boundaries; replace it with concrete Bitlang IR types as those types become defined
 - do not use reflection in compiler semantics
