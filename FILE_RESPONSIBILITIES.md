@@ -18,6 +18,11 @@ The responsibility text should remain short. It should describe *what the file o
 | File | Responsibility |
 | --- | --- |
 | `cmd/bitlang/main.go` | Start the Bitlang CUI application and hand control to the command-line frontend. |
+| `internal/bitlang/source_text.go` | Represent one untouched Bitlang source input together with diagnostic path metadata. |
+| `internal/bitlang/token_kind.go` | Define the language-neutral lexical categories used by Bitlang tokens. |
+| `internal/bitlang/token.go` | Represent one lexical token and its original source location. |
+| `internal/bitlang/lexer.go` | Convert Bitlang source text into an ordered token stream without applying semantic interpretation. |
+| `internal/bitlang/lexer_test.go` | Verify lexical tokenization, spelling preservation, source locations, and malformed literal handling. |
 | `internal/bitlang/names.go` | Represent and canonicalize Bitlang names and provide name-based symbol storage. **Split candidate:** canonical names and symbol storage are separate conceptual responsibilities and should be separated before this area grows. |
 | `internal/bitlang/names_test.go` | Verify Bitlang name canonicalization and symbol-name behavior. **Split together with `names.go` when its responsibilities are separated.** |
 | `internal/bitlang/pipeline.go` | Represent and execute the ordered Bitlang conversion pipeline. **Split candidate:** artifact representation, stage representation, and pipeline orchestration should become separate files/classes as implementation grows. |
