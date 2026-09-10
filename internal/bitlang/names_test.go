@@ -16,7 +16,7 @@ func TestCanonicalizeIdentifier(t *testing.T) {
 }
 
 func TestSymbolTableIsCaseInsensitive(t *testing.T) {
-	table := NewSymbolTable[int]()
+	table := NewSymbolTable()
 	if _, err := table.Define("PlayerHP", 100); err != nil {
 		t.Fatal(err)
 	}
@@ -26,12 +26,12 @@ func TestSymbolTableIsCaseInsensitive(t *testing.T) {
 		t.Fatal("symbol not found through case-insensitive lookup")
 	}
 	if got != 100 {
-		t.Fatalf("got %d, want 100", got)
+		t.Fatalf("got %v, want 100", got)
 	}
 }
 
 func TestSymbolTableRejectsCaseCollision(t *testing.T) {
-	table := NewSymbolTable[int]()
+	table := NewSymbolTable()
 	if _, err := table.Define("PlayerHP", 100); err != nil {
 		t.Fatal(err)
 	}
