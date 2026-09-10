@@ -2,7 +2,7 @@
 
 Bitlang is a strict language and translation pipeline designed around explicit, inspectable lowering stages.
 
-This repository currently contains an early **reference implementation**. The Python code is intentionally small and dependency-free so language semantics can be tested before committing to a production implementation language.
+The initial implementation is written in **Go** so development builds can be turned into standalone executables immediately and cross-compiled without introducing a runtime dependency.
 
 ## Planned pipeline
 
@@ -17,24 +17,49 @@ Bitlang source
   -> VM or architecture translator
 ```
 
-Each stage is represented explicitly. A stage consumes one artifact kind and produces another; implicit skipping or reordering is rejected by the reference pipeline.
+Each stage is represented explicitly. A stage consumes one artifact kind and produces another; implicit skipping or reordering is rejected by the current core.
 
 ## Current implementation
 
+- Go module and CLI entrypoint
 - explicit artifact/stage model
 - checked pipeline transitions
-- case-insensitive identifier canonicalization using Unicode `casefold()`
+- case-insensitive identifier canonicalization
 - collision-aware symbol table preserving original spelling for diagnostics
-- minimal CLI for inspecting identifier canonicalization
 - dependency-free unit tests
 
-String and character *contents* are not canonicalized. Identifier canonicalization is a symbol-level operation; source lexing will be implemented separately once the concrete grammar is fixed.
+String and character literal contents are not canonicalized. Identifier canonicalization is a symbol-level operation; source lexing will be implemented separately once the concrete grammar is fixed.
 
-## Development
+Unicode identifier normalization/case-folding is intentionally not part of the language contract yet. The current implementation uses Go's standard-library lowercase mapping as a temporary deterministic baseline.
+
+## Build
+
+Native executable:
 
 ```sh
-python -m unittest discover -s tests -v
-python -m bitlang.cli canonicalize MyVariable MYVARIABLE myvariable
+go build -o bitlang ./cmd/bitlang
 ```
 
-The reference implementation targets Python 3.11+.
+Windows x86-64 executable from another supported host:
+
+```sh
+GOOS=windows GOARCH=amd64 go build -o bitlang.exe ./cmd/bitlang
+```
+
+Windows ARM64:
+
+```sh
+GOOS=windows GOARCH=arm64 go build -o bitlang-arm64.exe ./cmd/bitlang
+```
+
+## Test
+
+```sh
+go test ./...
+```
+
+## Current CLI
+
+```sh
+./bitlang canonicalize MyVariable MYVARIABLE myvariable
+```
