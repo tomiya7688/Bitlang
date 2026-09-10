@@ -34,9 +34,9 @@ These are responsibility slots, not fixed filenames. Names may change when imple
 | Planned file/class | Responsibility |
 | --- | --- |
 | `Application` | Coordinate top-level application startup independent of a specific UI. |
-| `CuiFrontend` | Accept CUI compiler commands and present compiler results in terminal form. |
+| `CuiFrontend` | Accept CUI compiler commands and present official compiler results in terminal form. |
 | `CompileRequest` | Represent one requested compilation/conversion operation and its options. |
-| `CompilerPipeline` | Coordinate the complete multi-stage Bitlang conversion flow. |
+| `CompilerPipeline` | Coordinate the complete multi-stage official Bitlang conversion flow. |
 | `SourceArtifact` | Represent original Bitlang source input. |
 | `PreprocessedArtifact` | Represent Bitlang Preprocessed output. |
 | `CompiledArtifact` | Represent Bitlang Compiled output. |
@@ -53,24 +53,41 @@ These are responsibility slots, not fixed filenames. Names may change when imple
 
 ## Planned GUI IDE responsibilities
 
-The GUI IDE is not a replacement for the compiler core. It is another frontend over the same stage APIs used by the CUI compiler and tests.
+The GUI IDE uses this repository's official Bitlang compiler as its backend.
 
-Because Bitlang has multiple explicit conversion stages, the IDE should expose those stages rather than presenting compilation as a black box.
+The IDE MUST NOT contain a second compiler implementation, shadow compiler, simplified parser, or GUI-only semantic pipeline. The official compiler is the single source of truth for preprocessing, parsing, analysis, lowering, diagnostics, and generated artifacts.
+
+The CUI compiler and GUI IDE are therefore sibling frontends over the same official compiler core:
+
+```text
+                 +------------------+
+                 | Official Bitlang |
+                 | compiler core    |
+                 +------------------+
+                   ^              ^
+                   |              |
+             +-----------+   +-----------+
+             | CUI       |   | GUI IDE   |
+             | frontend  |   | frontend  |
+             +-----------+   +-----------+
+```
+
+Because Bitlang has multiple explicit conversion stages, the IDE should expose those official compiler stage results rather than presenting compilation as a black box.
 
 | Planned file/class | Responsibility |
 | --- | --- |
 | `IdeApplication` | Start and coordinate the desktop IDE application. |
 | `IdeWindow` | Own the primary IDE window layout and top-level UI composition. |
 | `SourceEditor` | Edit the currently selected Bitlang source document. |
-| `StageNavigator` | Select which conversion stage or representation is being inspected. |
-| `StageViewer` | Display one immutable stage artifact without owning conversion logic. |
-| `PipelineController` | Request stage conversions from the compiler core and distribute their results to the IDE. |
-| `DiagnosticPanel` | Display compiler errors, warnings, and advisor messages. |
-| `ArtifactDiffViewer` | Compare adjacent or selected stage artifacts to show what each conversion changed. |
+| `StageNavigator` | Select which official compiler stage or representation is being inspected. |
+| `StageViewer` | Display one official compiler artifact without owning conversion logic. |
+| `PipelineController` | Request conversions from the official compiler backend and distribute returned artifacts to the IDE. |
+| `DiagnosticPanel` | Display diagnostics returned by the official compiler backend. |
+| `ArtifactDiffViewer` | Compare official compiler artifacts from selected stages. |
 | `ProjectExplorer` | Display and select project source files and related artifacts. |
-| `BuildPanel` | Configure and invoke complete builds from the IDE. |
-| `VmPanel` | Launch or control Bitlang VM execution using generated VM Assembly. |
-| `TranslatorPanel` | Select and invoke VM Assembly translators such as RISC-V or ARM targets. |
+| `BuildPanel` | Configure and invoke official compiler builds from the IDE. |
+| `VmPanel` | Launch or control Bitlang VM execution using VM Assembly produced by the official compiler. |
+| `TranslatorPanel` | Select and invoke translators using official compiler VM Assembly output. |
 
 ## IDE pipeline concept
 
@@ -85,14 +102,18 @@ Source
   -> VM / Translator output
 ```
 
+Every intermediate representation shown by the IDE MUST come from the official compiler backend.
+
 Each node should be independently inspectable. Ideally the user can select a stage and see:
 
-- the artifact produced at that stage
+- the artifact produced by the official compiler at that stage
 - diagnostics generated at or before that stage
-- the difference from the previous stage
-- whether later stages are stale after an edit
+- the difference from the previous official stage artifact
+- whether later stage results are stale after an edit
 
-The compiler core MUST remain usable without the IDE. The IDE MUST call the same conversion interfaces used by the CUI compiler rather than duplicate compiler logic.
+The compiler core MUST remain usable without the IDE. The IDE MUST call the same official conversion interfaces used by the CUI compiler and tests rather than duplicate compiler logic.
+
+This also means that adding a new compiler stage or changing a stage representation should normally require changing the official compiler first. The IDE should then adapt to the compiler's public stage interface rather than invent its own semantic representation.
 
 ## Split rule for this table
 
