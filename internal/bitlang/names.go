@@ -34,9 +34,11 @@ func NewCanonicalName(spelling string) (CanonicalName, error) {
 	return CanonicalName{Spelling: spelling, Canonical: canonical}, nil
 }
 
-type Symbol[T any] struct {
+// Symbol intentionally avoids Go generics. Semantic compiler data structures
+// should be straightforward to reproduce in other implementation languages.
+type Symbol struct {
 	Name  CanonicalName
-	Value T
+	Value any
 }
 
 type DuplicateSymbolError struct {
@@ -48,49 +50,48 @@ func (e DuplicateSymbolError) Error() string {
 	return fmt.Sprintf("duplicate symbol: %q conflicts with existing %q", e.Incoming, e.Existing)
 }
 
-type SymbolTable[T any] struct {
-	symbols map[string]Symbol[T]
+type SymbolTable struct {
+	symbols map[string]Symbol
 }
 
-func NewSymbolTable[T any]() *SymbolTable[T] {
-	return &SymbolTable[T]{symbols: make(map[string]Symbol[T])}
+func NewSymbolTable() *SymbolTable {
+	return &SymbolTable{symbols: make(map[string]Symbol)}
 }
 
-func (t *SymbolTable[T]) Define(name string, value T) (Symbol[T], error) {
+func (t *SymbolTable) Define(name string, value any) (Symbol, error) {
 	parsed, err := NewCanonicalName(name)
 	if err != nil {
-		return Symbol[T]{}, err
+		return Symbol{}, err
 	}
 	if previous, ok := t.symbols[parsed.Canonical]; ok {
-		return Symbol[T]{}, DuplicateSymbolError{
+		return Symbol{}, DuplicateSymbolError{
 			Existing: previous.Name.Spelling,
 			Incoming: parsed.Spelling,
 		}
 	}
 
-	symbol := Symbol[T]{Name: parsed, Value: value}
+	symbol := Symbol{Name: parsed, Value: value}
 	t.symbols[parsed.Canonical] = symbol
 	return symbol, nil
 }
 
-func (t *SymbolTable[T]) Find(name string) (Symbol[T], bool) {
+func (t *SymbolTable) Find(name string) (Symbol, bool) {
 	canonical, err := CanonicalizeIdentifier(name)
 	if err != nil {
-		return Symbol[T]{}, false
+		return Symbol{}, false
 	}
 	symbol, ok := t.symbols[canonical]
 	return symbol, ok
 }
 
-func (t *SymbolTable[T]) Get(name string) (T, bool) {
+func (t *SymbolTable) Get(name string) (any, bool) {
 	symbol, ok := t.Find(name)
 	if !ok {
-		var zero T
-		return zero, false
+		return nil, false
 	}
 	return symbol.Value, true
 }
 
-func (t *SymbolTable[T]) Len() int {
+func (t *SymbolTable) Len() int {
 	return len(t.symbols)
 }
