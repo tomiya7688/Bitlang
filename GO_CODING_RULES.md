@@ -2,7 +2,11 @@
 
 This document applies only to the current Go bootstrap implementation of Bitlang.
 
-It does **not** define the Bitlang language itself. It defines how the Go application that implements the official compiler is structured.
+It does **not** define the Bitlang language itself, and it does **not** impose style or architectural rules on programs written in Bitlang.
+
+Bitlang source code is intentionally allowed to be written in many styles. The language's preprocessing and lowering stages are responsible for normalizing those forms into the same strict semantic representation where they mean the same thing. A Bitlang user should not need to manually imitate the internal structure of the official compiler.
+
+These rules exist only because the current official compiler is implemented in Go, where maintainability, dependency direction, and responsibility boundaries must be enforced manually.
 
 The Go implementation adopts the principles of:
 
@@ -10,7 +14,7 @@ The Go implementation adopts the principles of:
 https://github.com/tomiya7688/upd-commander-base-design
 ```
 
-The purpose is to keep application orchestration, cross-layer communication, compiler processing, and data access clearly separated.
+The purpose is to keep application orchestration, cross-layer communication, compiler processing, and data access clearly separated while the bootstrap compiler is maintained in Go.
 
 ## 1. UI / Process / Data separation
 
@@ -46,7 +50,7 @@ Data Layer
   external artifact storage
 ```
 
-These are architectural responsibilities. Go package layout may evolve, but direct dependency paths MUST preserve the same separation.
+These are architectural responsibilities of the Go implementation only. They are not Bitlang language constructs and are not required of Bitlang programs.
 
 ## 2. Commander is routing only
 
@@ -124,14 +128,16 @@ Data Processing
   read cached artifacts
 ```
 
-Each Processing component still follows the project-wide rules:
+Each Go Processing component follows the Go implementation maintenance rules:
 
 - one file = one responsibility
 - one function = one operation
 
+These are Go bootstrap implementation rules, not restrictions on Bitlang source programs.
+
 ## 5. Do not skip layers
 
-The normal dependency path is:
+The normal dependency path in the Go application is:
 
 ```text
 UI <-> Process <-> Data
@@ -214,7 +220,7 @@ It MUST NOT contain compiler logic, command implementation, file processing, or 
 
 ## 10. File responsibility table remains authoritative
 
-`FILE_RESPONSIBILITIES.md` is the architectural responsibility registry.
+`FILE_RESPONSIBILITIES.md` is the architectural responsibility registry for the implementation repository.
 
 Every Go implementation file must have exactly one responsibility recorded there.
 
@@ -222,9 +228,11 @@ Commander, Messenger, and Processing files must be identifiable from their respo
 
 If a responsibility description becomes long enough to require several independent clauses, split the file/component.
 
+Again, this table describes the compiler implementation. It is not a source-organization requirement for Bitlang programs.
+
 ## 11. Go-specific implementation rules
 
-In addition to `CODING_RULES.md`:
+In addition to the compiler implementation guidance in `CODING_RULES.md`:
 
 - use `gofmt`
 - keep `go test ./...` passing
@@ -249,4 +257,12 @@ Before adding a Go component, verify:
 7. Can the Process logic be tested without UI and filesystem dependencies?
 8. Is the file responsibility recorded in `FILE_RESPONSIBILITIES.md`?
 
-If these questions cannot be answered clearly, the component boundary should be redesigned before implementation.
+If these questions cannot be answered clearly, the Go component boundary should be redesigned before implementation.
+
+## 13. Bitlang source is deliberately freer than the Go bootstrap
+
+The strictness in this document is an implementation maintenance constraint caused by the current host language and project structure.
+
+Bitlang itself is intended to absorb different source-writing styles during preprocessing and lower them into the same defined behavior where semantics are equivalent.
+
+Therefore, do not copy these Go architectural restrictions into the Bitlang language specification merely because the bootstrap compiler uses them.
