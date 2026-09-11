@@ -29,7 +29,8 @@ The responsibility text should remain short. It should describe *what the file o
 | `internal/bitlang/pipeline_test.go` | Verify pipeline stage ordering, transition validation, and execution behavior. |
 | `go.mod` | Define the Go bootstrap module and minimum Go language version. |
 | `README.md` | Introduce Bitlang, its pipeline, build procedure, and project-level direction. |
-| `CODING_RULES.md` | Define implementation, portability, documentation, and source-structure rules. |
+| `CODING_RULES.md` | Define language-implementation portability, documentation, and source-structure rules shared across implementations. |
+| `GO_CODING_RULES.md` | Define Go-bootstrap-specific application architecture and UPD Commander / Messenger / Processing rules. |
 | `FILE_RESPONSIBILITIES.md` | Maintain the canonical mapping from files to their single responsibilities. |
 
 ## Planned compiler/runtime responsibilities
