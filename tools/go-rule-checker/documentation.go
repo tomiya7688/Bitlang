@@ -8,7 +8,6 @@ import (
 
 func checkDocumentation(fileSet *token.FileSet, file *ast.File, path string) []finding {
 	var findings []finding
-
 	for _, declaration := range file.Decls {
 		switch node := declaration.(type) {
 		case *ast.FuncDecl:
@@ -32,17 +31,11 @@ func checkDocumentation(fileSet *token.FileSet, file *ast.File, path string) []f
 			}
 		}
 	}
-
 	return findings
 }
 
 func missingComment(fileSet *token.FileSet, name *ast.Ident, path string) finding {
-	return finding{
-		level:   "WARN",
-		path:    path,
-		line:    declarationLine(fileSet, name),
-		message: "DOC missing: " + name.Name,
-	}
+	return finding{level: "W", rule: "DOC", path: path, line: declarationLine(fileSet, name), message: "missing: " + name.Name}
 }
 
 func isTestEntrypoint(path string, name string) bool {

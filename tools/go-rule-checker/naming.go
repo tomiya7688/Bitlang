@@ -19,14 +19,9 @@ var discouragedNameParts = map[string]bool{
 
 func checkFilename(path string) []finding {
 	base := strings.TrimSuffix(filepath.Base(path), filepath.Ext(path))
-	parts := splitName(base)
-	for _, part := range parts {
+	for _, part := range splitName(base) {
 		if discouragedNameParts[strings.ToLower(part)] {
-			return []finding{{
-				level:   "WARN",
-				path:    path,
-				message: "NAME file uses vague word: " + part,
-			}}
+			return []finding{{level: "W", rule: "NAME", path: path, message: "vague word: " + part}}
 		}
 	}
 	return nil
@@ -34,7 +29,6 @@ func checkFilename(path string) []finding {
 
 func checkNames(fileSet *token.FileSet, file *ast.File, path string) []finding {
 	var findings []finding
-
 	for _, declaration := range file.Decls {
 		switch node := declaration.(type) {
 		case *ast.FuncDecl:
@@ -52,19 +46,13 @@ func checkNames(fileSet *token.FileSet, file *ast.File, path string) []finding {
 			}
 		}
 	}
-
 	return findings
 }
 
 func checkName(fileSet *token.FileSet, name *ast.Ident, path string) []finding {
 	for _, part := range splitName(name.Name) {
 		if discouragedNameParts[strings.ToLower(part)] {
-			return []finding{{
-				level:   "WARN",
-				path:    path,
-				line:    declarationLine(fileSet, name),
-				message: "NAME vague word: " + part,
-			}}
+			return []finding{{level: "W", rule: "NAME", path: path, line: declarationLine(fileSet, name), message: "vague word: " + part}}
 		}
 	}
 	return nil
