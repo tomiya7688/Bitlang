@@ -38,10 +38,10 @@ func Run(paths []string, out io.Writer) (int, error) {
 	}
 
 	if len(findings) == 0 {
-		fmt.Fprintln(out, "go-rule-checker: no findings")
+		fmt.Fprintln(out, "OK go-rules")
 		return 0, nil
 	}
 
-	fmt.Fprintf(out, "go-rule-checker: %d finding(s)\n", len(findings))
+	fmt.Fprintf(out, "NG go-rules: %d\n", len(findings))
 	return 1, nil
 }
