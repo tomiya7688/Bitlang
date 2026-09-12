@@ -1,0 +1,4 @@
+# Examples only. Rename to .go-rule-checker-ignore to enable.
+# path generated/**
+# rule DOC third_party/**
+# rule NAME legacy.go
