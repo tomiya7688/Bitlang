@@ -85,3 +85,7 @@ go test ./...
 ```sh
 ./bitlang canonicalize MyVariable MYVARIABLE myvariable
 ```
+
+## License
+
+Bitlang and the Bitlang-related assets maintained in this repository are licensed under the [MIT License](LICENSE), unless explicitly stated otherwise.
