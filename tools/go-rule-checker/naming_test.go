@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func TestCheckDeclarationsFindsGenericNameAndMissingComment(t *testing.T) {
+func TestCheckNamesFindsGenericName(t *testing.T) {
 	const source = `package sample
 
 type DataManager struct{}
@@ -18,9 +18,9 @@ type DataManager struct{}
 		t.Fatal(err)
 	}
 
-	findings := checkDeclarations(fileSet, file, "sample.go")
-	if len(findings) != 2 {
-		t.Fatalf("expected 2 findings, got %d: %v", len(findings), findings)
+	findings := checkNames(fileSet, file, "sample.go")
+	if len(findings) != 1 {
+		t.Fatalf("expected 1 finding, got %d: %v", len(findings), findings)
 	}
 }
 
