@@ -27,6 +27,18 @@ The responsibility text should remain short. It should describe *what the file o
 | `internal/bitlang/names_test.go` | Verify Bitlang name canonicalization and symbol-name behavior. **Split together with `names.go` when its responsibilities are separated.** |
 | `internal/bitlang/pipeline.go` | Represent and execute the ordered Bitlang conversion pipeline. **Split candidate:** artifact representation, stage representation, and pipeline orchestration should become separate files/classes as implementation grows. |
 | `internal/bitlang/pipeline_test.go` | Verify pipeline stage ordering, transition validation, and execution behavior. |
+| `tools/go-rule-checker/cmd/go-rule-checker/main.go` | Start the Go implementation rule checker and map its result to a process exit status. |
+| `tools/go-rule-checker/run.go` | Coordinate one complete rule-checker execution and report findings. |
+| `tools/go-rule-checker/file_discovery.go` | Discover Go source files from requested paths while excluding non-source directories. |
+| `tools/go-rule-checker/source_check.go` | Parse one Go source file and coordinate the independent rule checks applied to it. |
+| `tools/go-rule-checker/finding.go` | Represent and format one rule-checker finding. |
+| `tools/go-rule-checker/naming.go` | Detect responsibility-obscuring file and identifier names. |
+| `tools/go-rule-checker/naming_test.go` | Verify generic-name detection and identifier splitting. |
+| `tools/go-rule-checker/documentation.go` | Detect exported Go declarations that lack documentation comments. |
+| `tools/go-rule-checker/documentation_test.go` | Verify exported-documentation checks and Go test entrypoint exceptions. |
+| `tools/go-rule-checker/function_size.go` | Detect functions that exceed the Go implementation size thresholds. |
+| `tools/go-rule-checker/main_file.go` | Detect non-startup function declarations placed in `main.go`. |
+| `tools/go-rule-checker/README.md` | Document the Go rule checker's scope, usage, and exit behavior. |
 | `go.mod` | Define the Go bootstrap module and minimum Go language version. |
 | `README.md` | Introduce Bitlang, its pipeline, build procedure, and project-level direction. |
 | `CODING_RULES.md` | Define language-implementation portability, documentation, and source-structure rules shared across implementations. |
