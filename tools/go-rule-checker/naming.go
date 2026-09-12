@@ -25,7 +25,7 @@ func checkFilename(path string) []finding {
 			return []finding{{
 				level:   "WARN",
 				path:    path,
-				message: "generic filename part \"" + part + "\" hides responsibility",
+				message: "NAME file uses vague word: " + part,
 			}}
 		}
 	}
@@ -63,7 +63,7 @@ func checkName(fileSet *token.FileSet, name *ast.Ident, path string) []finding {
 				level:   "WARN",
 				path:    path,
 				line:    declarationLine(fileSet, name),
-				message: "generic identifier part \"" + part + "\" should be replaced by a responsibility-specific name",
+				message: "NAME vague word: " + part,
 			}}
 		}
 	}
