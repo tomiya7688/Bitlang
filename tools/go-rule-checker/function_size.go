@@ -23,7 +23,7 @@ func checkFunctionSizes(fileSet *token.FileSet, file *ast.File, path string) []f
 				level:   "ERROR",
 				path:    path,
 				line:    start,
-				message: "function \"" + function.Name.Name + "\" exceeds 120 lines and requires decomposition or explicit justification",
+				message: "SIZE >120: " + function.Name.Name,
 			})
 			continue
 		}
@@ -33,7 +33,7 @@ func checkFunctionSizes(fileSet *token.FileSet, file *ast.File, path string) []f
 				level:   "WARN",
 				path:    path,
 				line:    start,
-				message: "function \"" + function.Name.Name + "\" exceeds 80 lines; review for multiple operations",
+				message: "SIZE >80: " + function.Name.Name,
 			})
 		}
 	}
