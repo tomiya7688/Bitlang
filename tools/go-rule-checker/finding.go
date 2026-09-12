@@ -10,8 +10,12 @@ type finding struct {
 }
 
 func (f finding) String() string {
-	if f.line > 0 {
-		return fmt.Sprintf("%s %s:%d: %s", f.level, f.path, f.line, f.message)
+	level := "W"
+	if f.level == "ERROR" {
+		level = "E"
 	}
-	return fmt.Sprintf("%s %s: %s", f.level, f.path, f.message)
+	if f.line > 0 {
+		return fmt.Sprintf("%s %s:%d %s", level, f.path, f.line, f.message)
+	}
+	return fmt.Sprintf("%s %s %s", level, f.path, f.message)
 }
