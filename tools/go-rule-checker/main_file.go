@@ -24,7 +24,7 @@ func checkMainFile(fileSet *token.FileSet, file *ast.File, path string) []findin
 			level:   "WARN",
 			path:    path,
 			line:    declarationLine(fileSet, function.Name),
-			message: "main.go should contain startup logic only; move function \"" + function.Name.Name + "\" to its responsibility file",
+			message: "MAIN extra function: " + function.Name.Name,
 		})
 	}
 	return findings
