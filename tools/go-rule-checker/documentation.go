@@ -41,7 +41,7 @@ func missingComment(fileSet *token.FileSet, name *ast.Ident, path string) findin
 		level:   "WARN",
 		path:    path,
 		line:    declarationLine(fileSet, name),
-		message: "exported identifier \"" + name.Name + "\" has no documentation comment",
+		message: "DOC missing: " + name.Name,
 	}
 }
 
