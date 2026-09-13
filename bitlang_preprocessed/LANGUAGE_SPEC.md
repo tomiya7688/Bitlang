@@ -24,7 +24,11 @@ Bitlang family language
 
 ## Canonicalization requirements
 
-Where practical, semantically equivalent Bitlang programs should normalize to the same Bitlang preprocessed structure.
+Semantically equivalent source forms must normalize to the same Bitlang preprocessed representation whenever they express the same meaning.
+
+This is a language-wide rule, not a rule limited to particular syntax categories or types.
+
+Different source spellings, aliases, shorthand, convenience syntax, family-language syntax, or alternate notations may exist before preprocessing, but if their semantics are identical they must converge to one canonical preprocessed form.
 
 The preprocessed language should therefore minimize alternate spellings and alternate semantic forms. Convenience syntax belongs in Bitlang or in Bitlang-family front ends, not in Bitlang preprocessed unless the distinction is semantically necessary.
 
@@ -37,6 +41,12 @@ Examples of normalization targets include:
 - shorthand declarations into fully explicit declarations
 - inferred/default attributes into explicit attributes where the canonical form requires them
 - family-language-specific constructs into their equivalent Bitlang representation
+- alternate array syntax into one canonical array representation
+- alternate pointer syntax into one canonical pointer representation
+- alternate reference syntax into one canonical reference representation
+- aliases and shortened names into fully resolved canonical references
+
+If two source forms are not semantically identical, they must not be merged merely because their surface syntax is similar.
 
 ## Assignment normalization
 
