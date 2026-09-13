@@ -61,6 +61,26 @@ Structured generation is preferred when practical so generated output remains va
 - compile-time errors
 - compile-time warnings
 
+### Module configuration
+
+Preprocessor functions may inspect and modify the configuration of the active Bitlang module.
+
+The module configuration API should be able to work with module-level concerns such as:
+
+- module name and hierarchical path
+- imports and dependencies
+- exports and public visibility rules
+- aliases and name-resolution shortcuts
+- initialization settings or initialization requirements
+- compile-related module settings
+- module metadata and future version-related settings
+
+Preprocessor functions may therefore generate or alter module configuration before Bitlang preprocessed output is produced.
+
+Any source-facing shorthand introduced through module configuration must be resolved during preprocessing. Bitlang preprocessed should retain the normalized, explicit result rather than depending on source-only aliases or preprocessor state.
+
+Module configuration changes are compile-time operations and must not silently become runtime mutation of module state.
+
 ## Attribute automation
 
 Preprocessor functions may automatically add, remove, inspect, or provide default attributes for Bitlang declarations.
