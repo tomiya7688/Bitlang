@@ -136,6 +136,38 @@ These source-level dimension and length attributes are convenience information. 
 
 Therefore programmers may write dimensionality compactly, while Bitlang preprocessed uses ordinary nested arrays internally.
 
+## Pointer and reference types
+
+`Ptr<T>` and `Ref<T>` are distinct types with different safety guarantees.
+
+### Ptr<T>
+
+`Ptr<T>` is the low-level raw-pointer type.
+
+It may:
+
+- contain `null`
+- be reassigned
+- participate in pointer arithmetic
+- expose and manipulate raw addresses where the target platform permits it
+
+Because `Ptr<T>` is intentionally low-level, code using it is responsible for avoiding invalid addresses, dangling pointers, and other unsafe memory access.
+
+### Ref<T>
+
+`Ref<T>` is the safe reference type.
+
+It:
+
+- cannot contain `null`
+- does not permit pointer arithmetic
+- does not expose arbitrary raw-address manipulation as part of normal reference operations
+- must not outlive the value or object it references
+
+The compiler and static-analysis stages should reject references whose lifetime is known to exceed the referenced value's lifetime.
+
+Whether an existing `Ref<T>` binding may later be rebound to another valid referent is a separate rule and is not yet finalized.
+
 ## Explicit type conversion
 
 Bitlang has no ordinary implicit type conversion. Different types remain incompatible until the program explicitly performs an appropriate conversion.
