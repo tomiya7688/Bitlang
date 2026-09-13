@@ -128,6 +128,28 @@ Automation exists to reduce repetitive annotation while keeping Bitlang's semant
 
 Properties or attributes that can be proven without changing program behavior may be attached automatically. Changes that could alter runtime behavior or program meaning must require an explicit rule, configuration, or declaration rather than heuristic inference alone.
 
+## Safety diagnostics during preprocessing
+
+The preprocessor may emit warnings when the resolved property set or control flow strongly suggests a dangerous resource or lifetime state even if the program is not yet provably invalid.
+
+Examples include:
+
+- an `Owned Manual_release Releasable` resource reaching the end of its lifetime without any visible release path
+- a borrowed or referenced value whose lifetime appears likely to exceed that of its source
+- ownership states that are technically representable but leave release responsibility ambiguous
+- a moved or otherwise transferred resource that still appears to be used through a stale access path
+
+These situations should normally produce warnings when risk is detected but correctness cannot be proven either way.
+
+If the preprocessor or static analysis can prove that the resulting program violates a Bitlang semantic rule, the diagnostic should be an error rather than only a warning.
+
+The intended distinction is:
+
+- **warning**: suspicious or dangerous state, but not conclusively invalid
+- **error**: semantic invalidity can be proven
+
+Warnings must not silently rewrite runtime semantics merely to make the warning disappear. Any automatic correction that changes program meaning requires an explicit preprocessing rule or configuration.
+
 ## Activation scope
 
 A preprocessor macro or preprocessor function may define an explicit activation start point and may optionally define an explicit end point.
