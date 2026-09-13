@@ -79,6 +79,46 @@ Str1x1
 
 which represents the one-character string form. The first `1` is currently reserved for possible future string-representation semantics.
 
+## Canonical container and indirection types
+
+Bitlang preprocessed uses the following canonical type constructors:
+
+```text
+Array<T>
+ptr<T>
+Ref<T>
+```
+
+Their meanings are:
+
+- `Array<T>`: array whose element type is `T`
+- `ptr<T>`: pointer to `T`
+- `Ref<T>`: reference to `T`
+
+Any source-level notation with the same semantics must normalize to these forms.
+
+Examples:
+
+```text
+int[]
+Array<int>
+```
+
+normalize to:
+
+```text
+Array<Int10x32>
+```
+
+and equivalent pointer or reference notations must likewise normalize to `ptr<T>` or `Ref<T>` with the contained type itself fully canonicalized.
+
+Nested forms are represented by composition, for example:
+
+```text
+Array<ptr<Int10x32>>
+Ref<Array<Int10x32>>
+```
+
 ## Canonicalization requirement
 
-Equivalent source-level type spellings, inferred types, and omitted default representation details should normalize to the same concrete Bitlang preprocessed type whenever possible.
+Equivalent source-level type spellings, inferred types, omitted default representation details, and alternate syntactic forms must normalize to the same concrete Bitlang preprocessed type whenever they have the same semantics.
