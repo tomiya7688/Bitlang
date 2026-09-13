@@ -71,6 +71,79 @@ a = a - 1
 
 Bitlang preprocessed must not contain value-producing increment/decrement expressions.
 
+## Modifier design principle
+
+A Bitlang modifier should represent one primary semantic property.
+
+Independent properties should be expressed by combining independent modifiers rather than assigning multiple unrelated meanings to one modifier.
+
+This principle is especially important for lifetime, storage, ownership, accessibility, and instance requirements because these properties may vary independently.
+
+## `static`
+
+`static` means **static retention**.
+
+A `static` target exists in a statically retained form and keeps the information or state associated with that target for the lifetime of its static retention region.
+
+The fundamental meaning of `static` is the same regardless of the kind of target to which it is applied. Where applicable, this includes variables, functions, and type members.
+
+`static` does not by itself mean that an instance is unnecessary.
+
+In particular, Bitlang must not overload `static` with the conventional secondary meaning of "callable or accessible without an instance".
+
+The exact start and end of each static retention region, initialization timing, destruction behavior, and lower-level representation are defined separately by the relevant lifetime and compilation rules.
+
+## Instance-free access modifier
+
+Bitlang provides a separate modifier whose sole semantic purpose is to state that access to a target does **not require an instance**.
+
+The final source-level keyword or symbol for this modifier is not yet fixed. Until it is named, this specification refers to it as the **instance-free modifier**.
+
+The instance-free modifier:
+
+- removes the requirement to provide or construct an instance in order to access or call the target
+- does not imply static retention
+- does not change the target's lifetime by itself
+- does not imply state retention
+- is semantically independent from `static`
+
+`static` and the instance-free modifier may therefore be combined.
+
+Conceptually, the two properties form independent axes:
+
+| Static retention | Instance-free | Meaning |
+|---|---|---|
+| no | no | ordinary instance-dependent target |
+| yes | no | statically retained target that still requires an instance for access |
+| no | yes | instance-free target without static retention |
+| yes | yes | statically retained and instance-free target |
+
+No additional compound modifier is required to represent these combinations. Their meaning is obtained from the composition of the two simple modifiers.
+
+Conceptually:
+
+```text
+static target
+```
+
+means only "retain this target statically", while:
+
+```text
+<instance-free> target
+```
+
+means only "this target does not require an instance".
+
+The combination:
+
+```text
+static <instance-free> target
+```
+
+means both properties simultaneously.
+
+Whether every combination is legal for every target kind is defined by the specification for that target kind. The semantic properties themselves remain independent.
+
 ## Functional-programming normalization
 
 Functional-programming concepts may remain semantically visible in Bitlang preprocessed when they are part of the core meaning, but each concept should have one canonical representation.
