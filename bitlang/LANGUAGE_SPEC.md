@@ -105,11 +105,11 @@ a = a - 1
 
 This keeps mutation and value evaluation separate and removes increment/decrement side-effect semantics from the core language.
 
-## Read and write access qualifiers
+## Access and reassignment qualifiers
 
-Bitlang separates read access and write access into independent semantic qualifiers.
+Bitlang separates read access, write access, and reassignment into independent semantic properties.
 
-The canonical concepts are:
+The access qualifiers are:
 
 ```text
 Readable
@@ -122,23 +122,38 @@ Unwriteable
 
 `Unreadable` means reading the value through that declaration or reference is prohibited.
 
-`Writeable` means the value may be modified through the declaration or reference.
+`Writeable` means the value or reachable mutable state may be modified through the declaration or reference.
 
 `Unwriteable` means modification through that declaration or reference is prohibited.
 
-Readability and writability are independent axes. A declaration may therefore be readable but unwriteable, unreadable but writeable where such a use is meaningful, both readable and writeable, or neither.
+Readability and writability are independent axes.
 
-These qualifiers describe access capability and must not be treated as synonyms for constant-value semantics.
+Reassignment is expressed separately:
+
+```text
+Reassignable
+Unreassignable
+```
+
+`Reassignable` means the declaration may later be assigned another value or binding of the same compatible type.
+
+`Unreassignable` means the declaration cannot be rebound or assigned a replacement value after initialization. This does not by itself make the contained or referenced object immutable.
+
+For example, an `Unreassignable Writeable` reference may remain bound to the same object while still allowing that object's writable state to be changed.
+
+These qualifiers describe individual capabilities. Bitlang should prefer combinations of these explicit properties rather than broad source-language-style categories such as `mutable`, `dynamic`, or `flexible` when those categories can be represented more precisely by the independent qualifiers.
 
 ## Const
 
-`Const` is separate from `Readable`, `Unreadable`, `Writeable`, and `Unwriteable`.
+`Const` is separate from `Readable`, `Unreadable`, `Writeable`, `Unwriteable`, `Reassignable`, and `Unreassignable`.
 
-`Const` represents a strongly fixed value rather than merely a restriction on which operations are currently permitted through a particular access path.
+`Const` represents a strongly fixed value.
 
-A `Const` value is intended to remain semantically fixed after its definition. It is therefore stronger than simply marking a declaration `Unwriteable`.
+A `Const` declaration cannot be reassigned, and the value represented by it must remain semantically unchanged after initialization. For aggregate or object values, this strong fixed-value rule also applies to the state that forms part of that value rather than only to the outer variable binding.
 
-The exact compile-time representation and any restrictions on initialization timing, addressability, or propagation through references will be defined separately, but `Const` must retain the meaning of a strong fixed value throughout preprocessing and compilation.
+Therefore `Const` is stronger than merely combining `Unreassignable` and `Unwriteable` as access restrictions: it states that the value itself is fixed, not only that one particular access path lacks permission to modify it.
+
+Preprocessing and compilation must preserve this strong fixed-value meaning.
 
 ## Preprocessor functions
 
