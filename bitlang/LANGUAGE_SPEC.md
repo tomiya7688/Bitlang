@@ -229,6 +229,32 @@ express ownership separately from `Ptr<T>` and `Ref<T>` themselves.
 
 The compiler and static-analysis stages should use these qualifiers when checking lifetime and release responsibility, while preserving the distinction between ownership and access capability.
 
+## Borrow state
+
+Borrow state is represented independently from ownership.
+
+The canonical borrow-state properties are:
+
+```text
+Unborrowed
+Shared_borrowed
+Exclusive_borrowed
+```
+
+`Unborrowed` means there is no active borrow that restricts ordinary access through the owning declaration.
+
+`Shared_borrowed` means one or more shared borrows are active. Shared borrows may coexist when the applicable access rules allow it, but operations that would invalidate those borrows are restricted.
+
+`Exclusive_borrowed` means an exclusive borrow is active. While it remains active, conflicting borrows or direct operations through other access paths are prohibited.
+
+Borrow state is distinct from the `Borrowed` ownership qualifier. `Borrowed` answers whether a declaration owns a resource, while borrow state describes the current borrowing condition of a resource or declaration.
+
+Source-facing Bitlang may write a borrow-state property explicitly or omit it. When omitted, preprocessing resolves the state from context and emits the final state in Bitlang preprocessed.
+
+Preprocessor rules may deliberately change borrow state. Because forcing a state such as `Exclusive_borrowed -> Unborrowed` can re-enable access while a real borrow may still exist, such a rewrite is a semantic override and must be explicit. Unsafe overrides may produce warnings or errors.
+
+Typical invalid or suspicious states include releasing a resource while it is borrowed, creating a conflicting borrow during `Exclusive_borrowed`, or allowing a borrow to outlive its source.
+
 ## Copy and move properties
 
 Copyability and movability are represented as independent semantic properties.
