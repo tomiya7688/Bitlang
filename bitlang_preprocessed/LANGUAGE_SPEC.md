@@ -62,6 +62,8 @@ This includes properties such as:
 - `Writeable` / `Unwriteable`
 - `Reassignable` / `Unreassignable`
 - `Owned` / `Borrowed`
+- `Copyable` / `Uncopyable`
+- `Movable` / `Unmovable`
 - `Initialized` / `Uninitialized`
 - nullability and optionality properties
 - visibility/export properties
@@ -73,6 +75,37 @@ The general rule is that Bitlang preprocessed should not require later stages to
 Properties that are genuinely not applicable to a target do not need meaningless placeholder declarations.
 
 This explicit-property rule exists so that Bitlang preprocessed can act as a deterministic semantic contract for static analysis and later compilation stages.
+
+## Copy and move property declaration
+
+When copying or moving is meaningful for a declaration or value, Bitlang preprocessed must explicitly state the resolved capability using:
+
+```text
+Copyable
+Uncopyable
+Movable
+Unmovable
+```
+
+`Copyable` and `Uncopyable` form the copy-capability axis. `Movable` and `Unmovable` form a separate move-capability axis.
+
+The properties are independent from ownership. For example:
+
+```text
+Owned Uncopyable Movable Ptr<My_type>
+```
+
+may describe an owned resource that cannot be duplicated but may have its ownership/value transferred.
+
+An ordinary scalar value may instead resolve to properties such as:
+
+```text
+Copyable Movable Int10x32
+```
+
+The preprocessed form must not rely on later stages to infer copyability or movability from the type or ownership state. If source Bitlang omits these properties, preprocessing resolves and emits them.
+
+These properties state whether the operations are permitted; the canonical operation used for a move and the exact state of the source after a move are specified separately.
 
 ## Lifetime-property declaration
 
