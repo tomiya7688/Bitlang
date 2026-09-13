@@ -77,6 +77,27 @@ Attribute automation exists to reduce repetitive annotation while keeping Bitlan
 
 Attributes that can be proven without changing program behavior may be attached automatically. Attributes that could change runtime behavior or program meaning must require an explicit rule, configuration, or declaration rather than heuristic inference alone.
 
+## Activation scope
+
+A preprocessor macro or preprocessor function may define an explicit activation start point and may optionally define an explicit end point.
+
+When an end point is omitted, the active range ends automatically at the end of the nearest enclosing structural scope.
+
+Default scope behavior:
+
+- declared inside a function: active until the end of that function
+- declared at file level: active until the end of that file
+- declared inside a class: active in that class and, when inheritance propagation applies, in child classes
+- declared for a variable: active only for that variable/declaration scope
+- declared inside a struct: active until the end of that struct definition
+- declared inside another lexical block: active until the end of that block
+
+An explicit end marker may be used to terminate the active range before the natural end of the structural scope.
+
+Class-scope propagation should be representable explicitly so a rule can either remain local to the class or propagate to inheriting child classes.
+
+Preprocessor activation markers are preprocessing-only constructs. They do not remain in Bitlang preprocessed output; only their expanded and normalized effects remain.
+
 ## Role in the Bitlang family
 
 Bitlang-family languages generally transform into ordinary Bitlang before normal Bitlang preprocessing.
