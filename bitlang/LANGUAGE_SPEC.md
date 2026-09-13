@@ -207,6 +207,38 @@ express ownership separately from `Ptr<T>` and `Ref<T>` themselves.
 
 The compiler and static-analysis stages should use these qualifiers when checking lifetime and release responsibility, while preserving the distinction between ownership and access capability.
 
+## Lifetime properties
+
+Lifetime is represented independently from ownership, access capability, and pointer/reference type.
+
+Canonical lifetime properties include:
+
+```text
+Local_lifetime
+Function_lifetime
+Object_lifetime
+Module_lifetime
+Static_lifetime
+```
+
+These properties describe the lifetime region in which a declaration or resource remains valid.
+
+`Local_lifetime` describes a value whose lifetime is limited to its local lexical region.
+
+`Function_lifetime` describes a value valid for the lifetime of the containing function invocation.
+
+`Object_lifetime` describes state whose lifetime follows the lifetime of an owning object or instance.
+
+`Module_lifetime` describes state retained for the lifetime of the active module.
+
+`Static_lifetime` describes state retained for the applicable static-retention lifetime.
+
+Lifetime properties do not by themselves define ownership. For example, a `Borrowed Ref<T>` may have a shorter lifetime than the `Owned` value it refers to.
+
+The compiler and static-analysis stages must reject uses where a borrowed reference or other dependent value can outlive the value on which it depends.
+
+Source-facing Bitlang may omit a lifetime property when it is obvious from context, but preprocessing must resolve the applicable lifetime explicitly.
+
 ## Initialization state
 
 Initialization state is represented as an explicit property of a declaration.
