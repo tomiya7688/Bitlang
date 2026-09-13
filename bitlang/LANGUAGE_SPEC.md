@@ -22,6 +22,24 @@ Bitlang family language
 
 This allows family languages to focus on their own syntax and usability while Bitlang remains the shared language for expressing the meaning of the program.
 
+## Modules and naming hierarchy
+
+Bitlang does not provide a separate `namespace` construct.
+
+`module` is the single top-level organizational concept used for namespacing and may also carry broader responsibilities such as import/export boundaries, dependency management, visibility, compilation grouping, initialization boundaries, or future versioning rules.
+
+A module may contain nested modules or named declarations so that fully qualified names can be expressed hierarchically.
+
+Conceptually:
+
+```text
+Game.Combat.Player.attack
+```
+
+may identify `attack` as a member reached through the `Game` and `Combat` module hierarchy and the `Player` type.
+
+Bitlang preprocessed should use fully qualified references wherever practical so that the referenced declaration is explicit and unambiguous. Source-level aliases or shortened forms may be provided through preprocessing rules, but they must normalize to the canonical fully qualified representation.
+
 ## Functional-language support
 
 Bitlang must be able to represent functional-programming semantics even though Bitlang itself does not need to be primarily written as a functional language.
