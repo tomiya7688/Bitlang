@@ -110,8 +110,16 @@ Ref<T>
 Their meanings are:
 
 - `Array<T>`: array whose element type is `T`
-- `Ptr<T>`: pointer to `T`
-- `Ref<T>`: reference to `T`
+- `Ptr<T>`: raw pointer to `T`
+- `Ref<T>`: safe reference to `T`
+
+`Ptr<T>` and `Ref<T>` are distinct types and are not interchangeable.
+
+`Ptr<T>` is the low-level form and may participate in explicit address-level operations and pointer arithmetic where otherwise valid.
+
+`Ref<T>` represents a reference to an existing target without exposing unrestricted raw-address manipulation. Pointer arithmetic and arbitrary-address operations are not available through `Ref<T>`.
+
+Conversion between `Ptr<T>` and `Ref<T>` must be explicit and follows the normal Bitlang conversion rules.
 
 Any source-level notation with the same semantics must normalize to these forms.
 
