@@ -78,6 +78,28 @@ where the initial capitalization is canonical formatting rather than semantic id
 
 Because Bitlang names are semantically case-insensitive, differences in capitalization do not create distinct identifiers. Naming-style normalization may therefore be performed by preprocessing where a canonical internal name is required.
 
+## Property declaration and preprocessing
+
+Bitlang source may explicitly declare semantic properties when the programmer wants direct control over them.
+
+When an applicable property is omitted in source code, the preprocessor determines and fills in the appropriate property from the declaration kind, lexical context, module configuration, defaults, static analysis, or explicit preprocessor rules.
+
+An explicitly written source property takes precedence over an ordinary inferred/default value unless another explicit language rule makes that combination invalid.
+
+This means source-facing Bitlang may remain comparatively compact while still producing a fully explicit canonical representation.
+
+Conceptually:
+
+```text
+int a = 4
+```
+
+may omit visibility, readability, writability, reassignment, initialization, nullability, optionality, lifetime, and other applicable properties. Preprocessing resolves those omitted properties before Bitlang preprocessed is produced.
+
+The same source declaration may instead explicitly specify one or more of those properties when desired. Preprocessor functions may also inspect, add, remove, or change properties before canonical output is finalized.
+
+Bitlang preprocessed must contain the resolved final property set and must not require later compiler stages to reconstruct omitted property semantics.
+
 ## Functional-language support
 
 Bitlang must be able to represent functional-programming semantics even though Bitlang itself does not need to be primarily written as a functional language.
@@ -237,7 +259,7 @@ Lifetime properties do not by themselves define ownership. For example, a `Borro
 
 The compiler and static-analysis stages must reject uses where a borrowed reference or other dependent value can outlive the value on which it depends.
 
-Source-facing Bitlang may omit a lifetime property when it is obvious from context, but preprocessing must resolve the applicable lifetime explicitly.
+Source-facing Bitlang may explicitly specify a lifetime property. When omitted, preprocessing resolves the applicable lifetime from context and emits it explicitly in Bitlang preprocessed.
 
 ## Initialization state
 
