@@ -40,6 +40,24 @@ may identify `attack` as a member reached through the `Game` and `Combat` module
 
 Bitlang preprocessed should use fully qualified references wherever practical so that the referenced declaration is explicit and unambiguous. Source-level aliases or shortened forms may be provided through preprocessing rules, but they must normalize to the canonical fully qualified representation.
 
+## Naming style
+
+Bitlang does not force source-code authors to use snake_case, camelCase, PascalCase, or another naming style. Source-facing code may use whichever naming style is convenient, subject to the language's normal identifier rules.
+
+Bitlang's own internal and canonical naming follows a stricter convention. Internal functions, class names, and property names formed by joining two or more words use `snake_case`.
+
+Examples of canonical internal-style names include:
+
+```text
+memory_manager
+current_scope
+read_access
+```
+
+This convention is intended for Bitlang's own internal functions, generated/internal class names, and multi-word property names. It is not a mandatory coding-style rule imposed on user-written source.
+
+Because Bitlang names are semantically case-insensitive, differences in capitalization do not create distinct identifiers. Naming-style normalization may therefore be performed by preprocessing where a canonical internal name is required.
+
 ## Functional-language support
 
 Bitlang must be able to represent functional-programming semantics even though Bitlang itself does not need to be primarily written as a functional language.
