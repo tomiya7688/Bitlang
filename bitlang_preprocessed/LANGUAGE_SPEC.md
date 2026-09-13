@@ -61,7 +61,9 @@ This includes properties such as:
 - `Reassignable` / `Unreassignable`
 - `Owned` / `Borrowed`
 - `Initialized` / `Uninitialized`
-- storage and lifetime properties such as `static` when applicable
+- nullability and optionality properties
+- visibility/export properties
+- explicit lifetime properties such as `Local_lifetime`, `Function_lifetime`, `Object_lifetime`, `Module_lifetime`, or `Static_lifetime` where applicable
 - instance requirements and other independent semantic properties defined by the language
 
 The general rule is that Bitlang preprocessed should not require later stages to guess which side of a defined property axis applies. If a property is meaningful and applicable to the target, preprocessing should emit its resolved canonical state explicitly.
@@ -69,6 +71,36 @@ The general rule is that Bitlang preprocessed should not require later stages to
 Properties that are genuinely not applicable to a target do not need meaningless placeholder declarations.
 
 This explicit-property rule exists so that Bitlang preprocessed can act as a deterministic semantic contract for static analysis and later compilation stages.
+
+## Lifetime-property declaration
+
+Bitlang preprocessed must explicitly state the resolved lifetime category of a declaration or resource when lifetime is meaningful for that target.
+
+Canonical lifetime properties include:
+
+```text
+Local_lifetime
+Function_lifetime
+Object_lifetime
+Module_lifetime
+Static_lifetime
+```
+
+The lifetime property is independent from ownership. `Owned` / `Borrowed` answers who controls lifetime responsibility, while the lifetime property states the region for which the value remains valid.
+
+Examples include:
+
+```text
+Local_lifetime
+Function_lifetime
+Object_lifetime
+Module_lifetime
+Static_lifetime
+```
+
+A local declaration should therefore not rely on the compiler inferring that it is local merely from syntax. Its resolved lifetime property is emitted explicitly.
+
+Reference and borrow checks may use these properties directly. A dependent or borrowed value must not have a lifetime that can exceed the value or resource on which it depends.
 
 ## Assignment normalization
 
