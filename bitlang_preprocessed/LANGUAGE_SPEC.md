@@ -38,6 +38,39 @@ Examples of normalization targets include:
 - inferred/default attributes into explicit attributes where the canonical form requires them
 - family-language-specific constructs into their equivalent Bitlang representation
 
+## Assignment normalization
+
+Compound assignment operators do not exist in Bitlang preprocessed.
+
+Forms such as:
+
+```text
+a += b
+a -= b
+a *= b
+a /= b
+```
+
+must be normalized into explicit assignment forms equivalent to:
+
+```text
+a = a + b
+a = a - b
+a = a * b
+a = a / b
+```
+
+Increment and decrement operators are not part of Bitlang preprocessed. Prefix forms such as `++a` and `--a` are unsupported in Bitlang. Postfix forms such as `a++` and `a--` must also be eliminated before the preprocessed form is produced, if any source-facing language accepts them at all.
+
+Mutation should therefore be represented explicitly, for example:
+
+```text
+a = a + 1
+a = a - 1
+```
+
+Bitlang preprocessed must not contain value-producing increment/decrement expressions.
+
 ## Functional-programming normalization
 
 Functional-programming concepts may remain semantically visible in Bitlang preprocessed when they are part of the core meaning, but each concept should have one canonical representation.
