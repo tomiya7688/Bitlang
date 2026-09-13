@@ -229,6 +229,33 @@ express ownership separately from `Ptr<T>` and `Ref<T>` themselves.
 
 The compiler and static-analysis stages should use these qualifiers when checking lifetime and release responsibility, while preserving the distinction between ownership and access capability.
 
+## Copy and move properties
+
+Copyability and movability are represented as independent semantic properties.
+
+The canonical property pairs are:
+
+```text
+Copyable
+Uncopyable
+Movable
+Unmovable
+```
+
+`Copyable` means a value may be duplicated as another value with equivalent state according to the type's copy semantics.
+
+`Uncopyable` means duplication is not permitted.
+
+`Movable` means a value or owned resource may be transferred to another declaration according to the applicable move semantics.
+
+`Unmovable` means such transfer is prohibited.
+
+Copyability and movability are independent from ownership. A common owned-resource form may therefore be `Owned Uncopyable Movable`, while ordinary scalar values may be `Copyable Movable`.
+
+Source-facing Bitlang may specify these properties explicitly or omit them. When omitted, preprocessing resolves them from the type, declaration kind, ownership state, context, and explicit preprocessor rules. The final resolved properties must be emitted in Bitlang preprocessed.
+
+Exact move-operation syntax and the source-state transition after a move are defined separately from these capability properties.
+
 ## Lifetime properties
 
 Lifetime is represented independently from ownership, access capability, and pointer/reference type.
