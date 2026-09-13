@@ -136,6 +136,38 @@ These source-level dimension and length attributes are convenience information. 
 
 Therefore programmers may write dimensionality compactly, while Bitlang preprocessed uses ordinary nested arrays internally.
 
+## Explicit type conversion
+
+Bitlang has no ordinary implicit type conversion. Different types remain incompatible until the program explicitly performs an appropriate conversion.
+
+### Cast
+
+A cast changes the value's type.
+
+It is used when the semantic type itself changes, for example when converting between integer and floating-point types or between other distinct type families.
+
+A cast may fail when the requested target type cannot represent the value. Overflow remains an error.
+
+### Pulse
+
+A pulse produces a converted representation while preserving the original source variable.
+
+Pulse is intended for representation changes such as radix conversion where the source variable must remain unchanged.
+
+For example, an `Int10x32` may be pulsed to an `Int2x32` value for an operation that requires radix 2, while the original `Int10x32` variable remains `Int10x32` and retains its value.
+
+Both ordinary Bitlang code and preprocessor functions may perform cast and pulse operations.
+
+### No automatic conversion
+
+Bitlang itself does not automatically widen, narrow, change radix, change signedness, unwrap wrappers, or otherwise convert a value merely to make an operation type-compatible.
+
+If two operands have different types, they must first be made compatible explicitly.
+
+The preprocessing system may provide explicit opt-in automation rules. For example, a preprocessor function or attribute may mark a declaration as automatically widenable or otherwise permit a specific safe conversion. Such behavior is generated preprocessing logic, not a built-in implicit-conversion rule of Bitlang.
+
+Any automatically generated conversion must be explicit in Bitlang preprocessed output so that canonical semantics remain unambiguous.
+
 ## Preprocessing rule
 
-Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand, inferred types, defaults, and compact array-dimension notation into the concrete canonical type representation used by Bitlang preprocessed.
+Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand, inferred types, defaults, compact array-dimension notation, and explicitly configured conversion automation into the concrete canonical type representation and explicit operations used by Bitlang preprocessed.
