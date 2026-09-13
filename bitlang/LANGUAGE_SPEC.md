@@ -14,13 +14,49 @@ Conceptually:
 Bitlang family language
     -> transform
     -> Bitlang
-    -> preprocess
+    -> preprocess + normalize
     -> Bitlang preprocessed
     -> compile
     -> Bitlang compiled
 ```
 
-This allows family languages to focus on their own syntax and usability while Bitlang remains the shared language for expressing the normalized meaning of the program.
+This allows family languages to focus on their own syntax and usability while Bitlang remains the shared language for expressing the meaning of the program.
+
+## Functional-language support
+
+Bitlang must be able to represent functional-programming semantics even though Bitlang itself does not need to be primarily written as a functional language.
+
+The Bitlang family may provide a dedicated **Bit Function lang** front end. Bit Function lang is intended to be written naturally in a functional style and then transform into ordinary Bitlang.
+
+Bitlang should therefore be able to represent concepts such as:
+
+- first-class functions
+- functions stored in variables
+- functions passed as arguments
+- functions returned as values
+- lambdas
+- closures
+- higher-order functions
+- immutable values
+- recursion
+- pattern matching
+- sum/variant-like data representations
+- Option/Result-like values
+- partial application and currying semantics where required by a family language
+
+These features may have multiple convenient source-level notations in Bitlang or in Bitlang-family languages, but they must be normalized before reaching Bitlang preprocessed.
+
+The intended functional pipeline is:
+
+```text
+Bit Function lang
+    -> transform
+    -> Bitlang functional-semantic representation
+    -> preprocess + normalize
+    -> Bitlang preprocessed canonical representation
+    -> compile
+    -> Bitlang compiled procedural representation
+```
 
 ## Preprocessor functions
 
