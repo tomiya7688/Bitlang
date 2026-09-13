@@ -169,6 +169,27 @@ express ownership separately from `Ptr<T>` and `Ref<T>` themselves.
 
 The compiler and static-analysis stages should use these qualifiers when checking lifetime and release responsibility, while preserving the distinction between ownership and access capability.
 
+## Initialization state
+
+Initialization state is represented as an explicit property of a declaration.
+
+The initialization properties are:
+
+```text
+Initialized
+Uninitialized
+```
+
+`Initialized` means the declaration currently has a valid initialized value.
+
+`Uninitialized` means the declaration exists but does not yet contain a valid initialized value.
+
+An `Uninitialized` declaration must not be read as a value. It may transition to `Initialized` only through a valid initialization operation.
+
+Initialization state is independent from readability, writability, reassignment, ownership, and other declaration properties. Preprocessor functions may inspect and transform this property under the same explicit-property rules used elsewhere in Bitlang.
+
+Bitlang source may omit some initialization-state detail when it is directly inferable from the declaration syntax, but preprocessing must resolve that state explicitly.
+
 ## Const
 
 `Const` is separate from `Readable`, `Unreadable`, `Writeable`, `Unwriteable`, `Reassignable`, and `Unreassignable`.
