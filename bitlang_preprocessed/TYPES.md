@@ -137,6 +137,40 @@ Array<Ptr<Int10x32>>
 Ref<Array<Int10x32>>
 ```
 
+## Multidimensional arrays
+
+Bitlang preprocessed does not keep a separate multidimensional-array abstraction.
+
+Source-level dimension-count notation is expanded into nested `Array` constructors.
+
+Conceptually:
+
+```text
+Array<T, Dimension=3>
+```
+
+normalizes to:
+
+```text
+Array<Array<Array<T>>>
+```
+
+with `T` itself fully canonicalized.
+
+Fixed-length information is attached to the corresponding nested array level. A source form conceptually equivalent to:
+
+```text
+Array<T, Dimension=2, Length=10,20>
+```
+
+normalizes to a nested form conceptually equivalent to:
+
+```text
+Array<Array<T, 20>, 10>
+```
+
+Thus dimensionality is represented structurally by nesting, while each fixed length belongs to the specific array level it constrains.
+
 ## Canonicalization requirement
 
 Equivalent source-level type spellings, inferred types, omitted default representation details, alternate capitalization, and alternate syntactic forms must normalize to the same concrete Bitlang preprocessed type whenever they have the same semantics.
