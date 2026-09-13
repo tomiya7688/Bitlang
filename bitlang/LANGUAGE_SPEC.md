@@ -254,7 +254,26 @@ Copyability and movability are independent from ownership. A common owned-resour
 
 Source-facing Bitlang may specify these properties explicitly or omit them. When omitted, preprocessing resolves them from the type, declaration kind, ownership state, context, and explicit preprocessor rules. The final resolved properties must be emitted in Bitlang preprocessed.
 
-Exact move-operation syntax and the source-state transition after a move are defined separately from these capability properties.
+## Move state
+
+Whether a declaration still retains a usable value after move processing is represented by an independent state-property axis:
+
+```text
+Unmoved
+Moved
+```
+
+`Unmoved` means the declaration currently retains its normal usable value or ownership state.
+
+`Moved` means the value or ownership represented by that declaration has been moved away. Ordinary reading, reuse, release, or another move through that stale source declaration is invalid unless another explicit language operation or preprocessing rule restores a valid state.
+
+A valid move from a movable declaration normally transitions the source from `Unmoved` to `Moved`.
+
+Reinitializing a declaration with a new valid value may transition it back to `Unmoved` when the declaration and type permit such reinitialization.
+
+Preprocessor functions may explicitly change move-state properties. In particular, an explicit preprocessing rule may replace `Moved` with `Unmoved` when a project or transformation deliberately wants to override the ordinary move-state result. Because this can change program meaning and can create unsafe use-after-move behavior if applied incorrectly, such a transition must never be introduced merely by heuristic inference. It requires an explicit preprocessing rule, configuration, or source-directed transformation and may produce a warning when safety cannot be proven.
+
+Bitlang preprocessed must contain the final resolved move state whenever move state is meaningful for that declaration.
 
 ## Lifetime properties
 
