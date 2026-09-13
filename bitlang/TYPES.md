@@ -30,6 +30,25 @@ is equivalent, after preprocessing, to:
 Int10x32 value
 ```
 
+## Signed and unsigned integers
+
+`Int` is signed.
+
+`Uint` is unsigned.
+
+Examples:
+
+```text
+Int10x32
+Uint10x32
+```
+
+## Overflow
+
+Numeric overflow is an error by default.
+
+Bitlang must not silently wrap an overflowing value unless a separate operation explicitly requests different overflow behavior.
+
 ## Radix-aware numeric forms
 
 Numeric types may use other radix values while preserving the same bit width.
@@ -43,13 +62,31 @@ Int10x32
 Int16x32
 ```
 
-These forms describe the same width of integer storage with different radix representations.
+Radix is part of the numeric type representation, not merely display formatting.
 
-Radix conversion should preserve the numeric value and bit width unless an explicit narrowing, widening, signedness change, or overflow rule says otherwise.
+Values with different radix types cannot be used together directly in arithmetic or bitwise operations. One side must first be converted to the same radix through an appropriate Bitlang pulse function or preprocessor pulse function.
 
-This makes binary and octal forms directly usable for low-level and bit-oriented operations. In particular, radix-2 representation exposes individual bits directly, while radix-8 representation groups bits in sets of three. Radix-16 may likewise be used as a compact bit-oriented representation.
+For example, an `Int2x32` and an `Int10x32` are not directly compatible operands even when they represent the same numeric value and bit width.
 
-Bitwise operations are defined over the underlying fixed-width bit pattern rather than over the human-readable spelling of the number. The radix component therefore provides an explicit representation while the bit width defines the available bit positions.
+Bitwise operations are performed over the fixed-width bit representation after operand types have been made compatible. Radix-2 exposes individual bits directly, radix-8 groups bits in sets of three, and radix-16 provides a compact bit-oriented form.
+
+## Literals and type inference
+
+Literals use ordinary type inference unless an explicit type is supplied.
+
+The inferred type must ultimately resolve to a concrete Bitlang type before canonical preprocessing is complete.
+
+## Floating-point types
+
+Floating-point types also carry a radix component.
+
+If the radix is omitted, radix 10 is the default.
+
+The same general naming principle applies:
+
+```text
+<TypeName><Radix>x<BitWidth>
+```
 
 ## Types without radix
 
@@ -69,6 +106,10 @@ has no maximum character limit by default.
 
 A bounded string form specifies a maximum number of characters explicitly.
 
+`Char` is source-level shorthand for a one-character string representation and normalizes to `Str1x1`.
+
+The first `1` in `Str1x1` is currently reserved and does not yet have a finalized semantic meaning. It may be assigned a useful string-representation property later.
+
 ## Preprocessing rule
 
-Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand and defaults into the concrete canonical type representation used by Bitlang preprocessed.
+Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand, inferred types, and defaults into the concrete canonical type representation used by Bitlang preprocessed.
