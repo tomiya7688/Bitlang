@@ -48,6 +48,28 @@ Examples of normalization targets include:
 
 If two source forms are not semantically identical, they must not be merged merely because their surface syntax is similar.
 
+## Explicit property declaration
+
+Bitlang preprocessed should explicitly declare all semantic properties that apply to a declaration or value wherever those properties are represented by the language.
+
+Defaults, source shorthand, omitted attributes, or preprocessor-only assumptions must be resolved before Bitlang preprocessed is produced.
+
+This includes properties such as:
+
+- `Readable` / `Unreadable`
+- `Writeable` / `Unwriteable`
+- `Reassignable` / `Unreassignable`
+- `Owned` / `Borrowed`
+- `Initialized` / `Uninitialized`
+- storage and lifetime properties such as `static` when applicable
+- instance requirements and other independent semantic properties defined by the language
+
+The general rule is that Bitlang preprocessed should not require later stages to guess which side of a defined property axis applies. If a property is meaningful and applicable to the target, preprocessing should emit its resolved canonical state explicitly.
+
+Properties that are genuinely not applicable to a target do not need meaningless placeholder declarations.
+
+This explicit-property rule exists so that Bitlang preprocessed can act as a deterministic semantic contract for static analysis and later compilation stages.
+
 ## Assignment normalization
 
 Compound assignment operators do not exist in Bitlang preprocessed.
