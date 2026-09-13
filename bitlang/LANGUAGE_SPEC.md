@@ -143,6 +143,32 @@ For example, an `Unreassignable Writeable` reference may remain bound to the sam
 
 These qualifiers describe individual capabilities. Bitlang should prefer combinations of these explicit properties rather than broad source-language-style categories such as `mutable`, `dynamic`, or `flexible` when those categories can be represented more precisely by the independent qualifiers.
 
+## Ownership qualifiers
+
+Ownership is represented independently from pointer/reference type and independently from read, write, and reassignment capability.
+
+The ownership qualifiers are:
+
+```text
+Owned
+Borrowed
+```
+
+`Owned` means the declaration owns the lifetime responsibility for the represented resource or object. The owning declaration is responsible for ensuring that the resource is released or otherwise finalized according to the applicable storage model.
+
+`Borrowed` means the declaration does not own the resource. It may use the resource only while the actual owner keeps it valid, and it must not independently release or finalize that resource.
+
+Ownership qualifiers are attributes, not type wrappers. Therefore forms such as:
+
+```text
+Owned Ptr<MyType>
+Borrowed Ref<MyType>
+```
+
+express ownership separately from `Ptr<T>` and `Ref<T>` themselves.
+
+The compiler and static-analysis stages should use these qualifiers when checking lifetime and release responsibility, while preserving the distinction between ownership and access capability.
+
 ## Const
 
 `Const` is separate from `Readable`, `Unreadable`, `Writeable`, `Unwriteable`, `Reassignable`, and `Unreassignable`.
