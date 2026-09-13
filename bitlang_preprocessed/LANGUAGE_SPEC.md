@@ -64,6 +64,7 @@ This includes properties such as:
 - `Owned` / `Borrowed`
 - `Copyable` / `Uncopyable`
 - `Movable` / `Unmovable`
+- `Moved` / `Unmoved`
 - `Initialized` / `Uninitialized`
 - nullability and optionality properties
 - visibility/export properties
@@ -105,7 +106,28 @@ Copyable Movable Int10x32
 
 The preprocessed form must not rely on later stages to infer copyability or movability from the type or ownership state. If source Bitlang omits these properties, preprocessing resolves and emits them.
 
-These properties state whether the operations are permitted; the canonical operation used for a move and the exact state of the source after a move are specified separately.
+## Move-state declaration
+
+When move state is meaningful, Bitlang preprocessed must explicitly state one of:
+
+```text
+Unmoved
+Moved
+```
+
+`Unmoved` means the declaration currently retains a usable value or ownership state.
+
+`Moved` means that value or ownership has been transferred away from the declaration. Unless another explicit semantic rule has restored the source, ordinary reading, reuse, release, or another move through the moved declaration is invalid.
+
+A normal valid move transitions the source declaration from `Unmoved` to `Moved`.
+
+A valid reinitialization with a new value may transition a declaration back to `Unmoved` where such reinitialization is permitted.
+
+Preprocessor transformations are allowed to change move-state properties, including deliberately rewriting `Moved` to `Unmoved`. Such an override is not ordinary inference: it must come from an explicit preprocessing rule, configuration, or source-directed transformation because it can alter runtime meaning and potentially re-enable access to a resource that was previously moved.
+
+If preprocessing cannot prove that an explicit `Moved -> Unmoved` override is safe, it may emit a warning. If the resulting state is provably invalid, it must produce an error.
+
+The final resolved move-state property is emitted in Bitlang preprocessed so later stages do not need to reconstruct move history merely to determine the declaration's current state.
 
 ## Lifetime-property declaration
 
