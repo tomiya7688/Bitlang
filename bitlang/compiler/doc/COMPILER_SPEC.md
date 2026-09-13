@@ -22,13 +22,9 @@ A transformer is responsible for translating a family language's syntax and lang
 
 ## Preprocessor functions
 
-The Bitlang preprocessing system supports preprocessor functions. These are compile-time functions used for definitions, code generation, and source transformation.
+The Bitlang preprocessing system supports preprocessor functions. These are compile-time functions used for definitions, code generation, source transformation, and attribute automation.
 
-They may provide behavior comparable to:
-
-- Go-style pre-build generation
-- C-style macro/definition expansion
-- general source-text or structure transformation
+The core preprocessor-function language and built-in function groups are specified in `../../PREPROCESSOR_FUNCTIONS.md`.
 
 Preprocessor functions execute before the normal Bitlang-to-Bitlang-preprocessed compilation stage is completed and do not become runtime functions.
 
