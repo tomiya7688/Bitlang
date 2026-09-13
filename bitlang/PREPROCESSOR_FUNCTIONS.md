@@ -98,6 +98,7 @@ Examples include properties such as:
 - `Writeable` / `Unwriteable`
 - `Reassignable` / `Unreassignable`
 - `Owned` / `Borrowed`
+- `Moved` / `Unmoved`
 
 These properties are independent semantic axes unless a specific language rule states otherwise.
 
@@ -128,6 +129,12 @@ Automation exists to reduce repetitive annotation while keeping Bitlang's semant
 
 Properties or attributes that can be proven without changing program behavior may be attached automatically. Changes that could alter runtime behavior or program meaning must require an explicit rule, configuration, or declaration rather than heuristic inference alone.
 
+Move state follows the same rule. A preprocessor function may explicitly rewrite `Moved` to `Unmoved` or vice versa, but a `Moved -> Unmoved` rewrite is a semantic override, not an ordinary inferred default. It must therefore come from an explicit preprocessing rule, configuration, or source-directed transformation.
+
+This capability exists so transformers and project-specific preprocessing can deliberately restore or reinterpret state when they have additional semantic knowledge that the ordinary move rules do not capture.
+
+When a move-state override cannot be proven safe, preprocessing may emit a warning. If the resulting state is provably invalid, preprocessing must emit an error.
+
 ## Safety diagnostics during preprocessing
 
 The preprocessor may emit warnings when the resolved property set or control flow strongly suggests a dangerous resource or lifetime state even if the program is not yet provably invalid.
@@ -138,6 +145,7 @@ Examples include:
 - a borrowed or referenced value whose lifetime appears likely to exceed that of its source
 - ownership states that are technically representable but leave release responsibility ambiguous
 - a moved or otherwise transferred resource that still appears to be used through a stale access path
+- an explicit `Moved -> Unmoved` override for which validity cannot be proven
 
 These situations should normally produce warnings when risk is detected but correctness cannot be proven either way.
 
