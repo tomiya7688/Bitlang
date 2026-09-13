@@ -56,6 +56,26 @@ read_access
 
 This convention is intended for Bitlang's own internal functions, generated/internal class names, and multi-word property names. It is not a mandatory coding-style rule imposed on user-written source.
 
+The reason for preferring `snake_case` internally is that Bitlang identifiers are semantically case-insensitive. A naming scheme that relies on capitalization alone to mark word boundaries would lose information during canonical case normalization. Underscores preserve those word boundaries explicitly and therefore remain easy to read after normalization.
+
+Preprocessor-generated canonical names are normally normalized so that the first character is uppercase and the remaining letters of each word are lowercase. Multi-word canonical names preserve `_` as the word separator.
+
+Conceptually:
+
+```text
+currentScope
+CurrentScope
+CURRENT_SCOPE
+```
+
+may all resolve to the same semantic name and normalize to a canonical spelling such as:
+
+```text
+Current_scope
+```
+
+where the initial capitalization is canonical formatting rather than semantic identity.
+
 Because Bitlang names are semantically case-insensitive, differences in capitalization do not create distinct identifiers. Naming-style normalization may therefore be performed by preprocessing where a canonical internal name is required.
 
 ## Functional-language support
