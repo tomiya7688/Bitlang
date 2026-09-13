@@ -110,6 +110,32 @@ A bounded string form specifies a maximum number of characters explicitly.
 
 The first `1` in `Str1x1` is currently reserved and does not yet have a finalized semantic meaning. It may be assigned a useful string-representation property later.
 
+## Arrays
+
+Bitlang source may describe array dimensionality and fixed lengths as attributes inside the `Array<...>` form rather than requiring the programmer to write repeated nested array constructors manually.
+
+Conceptually:
+
+```text
+Array<T, Dimension=3>
+```
+
+means a three-dimensional array of `T`.
+
+Fixed lengths may also be supplied in the array attributes. When more than one dimension is present, a fixed length may be supplied for each dimension.
+
+Conceptually:
+
+```text
+Array<T, Dimension=2, Length=10,20>
+```
+
+represents a two-dimensional array whose dimensions have fixed lengths 10 and 20.
+
+These source-level dimension and length attributes are convenience information. The preprocessor expands dimensionality into nested canonical `Array` types. Fixed-length information is attached to the corresponding canonical array level rather than retained as a separate multidimensional-array abstraction.
+
+Therefore programmers may write dimensionality compactly, while Bitlang preprocessed uses ordinary nested arrays internally.
+
 ## Preprocessing rule
 
-Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand, inferred types, and defaults into the concrete canonical type representation used by Bitlang preprocessed.
+Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand, inferred types, defaults, and compact array-dimension notation into the concrete canonical type representation used by Bitlang preprocessed.
