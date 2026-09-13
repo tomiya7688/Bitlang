@@ -62,6 +62,7 @@ This includes properties such as:
 - `Writeable` / `Unwriteable`
 - `Reassignable` / `Unreassignable`
 - `Owned` / `Borrowed`
+- `Unborrowed` / `Shared_borrowed` / `Exclusive_borrowed`
 - `Copyable` / `Uncopyable`
 - `Movable` / `Unmovable`
 - `Moved` / `Unmoved`
@@ -77,6 +78,30 @@ The general rule is that Bitlang preprocessed should not require later stages to
 Properties that are genuinely not applicable to a target do not need meaningless placeholder declarations.
 
 This explicit-property rule exists so that Bitlang preprocessed can act as a deterministic semantic contract for static analysis and later compilation stages.
+
+## Borrow-state declaration
+
+When borrowing state is meaningful, Bitlang preprocessed must explicitly state one of:
+
+```text
+Unborrowed
+Shared_borrowed
+Exclusive_borrowed
+```
+
+`Unborrowed` means there is no active borrow that restricts ordinary access through the original declaration.
+
+`Shared_borrowed` means one or more compatible shared borrows are active. Operations that would invalidate those borrows are prohibited while the state remains active.
+
+`Exclusive_borrowed` means an exclusive borrow is active. Conflicting borrows and conflicting direct access paths are prohibited until that exclusive borrow ends.
+
+Borrow state is independent from the ownership qualifier `Borrowed`. The ownership qualifier describes whether a declaration owns a resource; borrow state describes the resource's current borrowing condition.
+
+The final borrow state must be explicit in Bitlang preprocessed even when source Bitlang omitted it and preprocessing inferred it from borrow creation and lifetime information.
+
+Preprocessor transformations may explicitly rewrite borrow state. A rewrite such as `Exclusive_borrowed -> Unborrowed` is a semantic override, not ordinary inference, because it may re-enable access while a real borrow is still active. Unsafe overrides may produce warnings, and provably invalid resulting states must produce errors.
+
+Static analysis may use borrow state to reject operations such as releasing a borrowed resource, creating a conflicting borrow while an exclusive borrow is active, or allowing a borrow to outlive its source.
 
 ## Copy and move property declaration
 
