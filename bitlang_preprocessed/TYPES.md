@@ -113,14 +113,6 @@ Their meanings are:
 - `Ptr<T>`: raw pointer to `T`
 - `Ref<T>`: safe reference to `T`
 
-`Ptr<T>` and `Ref<T>` are distinct types and are not interchangeable.
-
-`Ptr<T>` is the low-level form and may participate in explicit address-level operations and pointer arithmetic where otherwise valid.
-
-`Ref<T>` represents a reference to an existing target without exposing unrestricted raw-address manipulation. Pointer arithmetic and arbitrary-address operations are not available through `Ref<T>`.
-
-Conversion between `Ptr<T>` and `Ref<T>` must be explicit and follows the normal Bitlang conversion rules.
-
 Any source-level notation with the same semantics must normalize to these forms.
 
 Examples:
@@ -144,6 +136,24 @@ Nested forms are represented by composition, for example:
 Array<Ptr<Int10x32>>
 Ref<Array<Int10x32>>
 ```
+
+## Ptr semantics
+
+`Ptr<T>` is the canonical raw-pointer type.
+
+It may contain `null`, may be reassigned, may use pointer arithmetic, and may expose or manipulate raw addresses when supported by the target environment.
+
+Invalid-address, dangling-pointer, and equivalent low-level memory errors are the responsibility of code using `Ptr<T>`.
+
+## Ref semantics
+
+`Ref<T>` is the canonical safe-reference type.
+
+It cannot contain `null`, does not permit pointer arithmetic, does not provide normal arbitrary raw-address manipulation, and must not outlive its referent.
+
+A reference whose lifetime is provably longer than its referent is invalid and must be rejected before execution.
+
+Whether an existing `Ref<T>` binding may be rebound to another valid referent is not yet part of the finalized canonical rules.
 
 ## Multidimensional arrays
 
