@@ -2,6 +2,24 @@
 
 Bitlang preprocessed uses explicit canonical type names rather than source-level shorthand wherever defaults are known.
 
+## Canonical capitalization
+
+Bitlang identifiers and type names are case-insensitive in meaning. Source code may therefore use any capitalization for equivalent names.
+
+When the preprocessor emits canonical Bitlang preprocessed type names and type constructors, it must normalize their spelling to start with an uppercase letter.
+
+Examples:
+
+```text
+int
+INT
+Int
+```
+
+all refer to the same type meaning and normalize to the same canonical type.
+
+Likewise, source spellings equivalent to array, pointer, or reference type constructors normalize to canonical forms beginning with an uppercase letter.
+
 ## Canonical numeric naming
 
 For types that have both a radix/base and a bit width, use:
@@ -85,14 +103,14 @@ Bitlang preprocessed uses the following canonical type constructors:
 
 ```text
 Array<T>
-ptr<T>
+Ptr<T>
 Ref<T>
 ```
 
 Their meanings are:
 
 - `Array<T>`: array whose element type is `T`
-- `ptr<T>`: pointer to `T`
+- `Ptr<T>`: pointer to `T`
 - `Ref<T>`: reference to `T`
 
 Any source-level notation with the same semantics must normalize to these forms.
@@ -110,15 +128,15 @@ normalize to:
 Array<Int10x32>
 ```
 
-and equivalent pointer or reference notations must likewise normalize to `ptr<T>` or `Ref<T>` with the contained type itself fully canonicalized.
+and equivalent pointer or reference notations must likewise normalize to `Ptr<T>` or `Ref<T>` with the contained type itself fully canonicalized.
 
 Nested forms are represented by composition, for example:
 
 ```text
-Array<ptr<Int10x32>>
+Array<Ptr<Int10x32>>
 Ref<Array<Int10x32>>
 ```
 
 ## Canonicalization requirement
 
-Equivalent source-level type spellings, inferred types, omitted default representation details, and alternate syntactic forms must normalize to the same concrete Bitlang preprocessed type whenever they have the same semantics.
+Equivalent source-level type spellings, inferred types, omitted default representation details, alternate capitalization, and alternate syntactic forms must normalize to the same concrete Bitlang preprocessed type whenever they have the same semantics.
