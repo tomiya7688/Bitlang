@@ -105,6 +105,41 @@ a = a - 1
 
 This keeps mutation and value evaluation separate and removes increment/decrement side-effect semantics from the core language.
 
+## Read and write access qualifiers
+
+Bitlang separates read access and write access into independent semantic qualifiers.
+
+The canonical concepts are:
+
+```text
+Readable
+Unreadable
+Writeable
+Unwriteable
+```
+
+`Readable` means the value may be read through the declaration or reference.
+
+`Unreadable` means reading the value through that declaration or reference is prohibited.
+
+`Writeable` means the value may be modified through the declaration or reference.
+
+`Unwriteable` means modification through that declaration or reference is prohibited.
+
+Readability and writability are independent axes. A declaration may therefore be readable but unwriteable, unreadable but writeable where such a use is meaningful, both readable and writeable, or neither.
+
+These qualifiers describe access capability and must not be treated as synonyms for constant-value semantics.
+
+## Const
+
+`Const` is separate from `Readable`, `Unreadable`, `Writeable`, and `Unwriteable`.
+
+`Const` represents a strongly fixed value rather than merely a restriction on which operations are currently permitted through a particular access path.
+
+A `Const` value is intended to remain semantically fixed after its definition. It is therefore stronger than simply marking a declaration `Unwriteable`.
+
+The exact compile-time representation and any restrictions on initialization timing, addressability, or propagation through references will be defined separately, but `Const` must retain the meaning of a strong fixed value throughout preprocessing and compilation.
+
 ## Preprocessor functions
 
 Bitlang provides preprocessor functions as a language-specific mechanism for reducing repetitive or inconvenient source code without weakening the strict Bitlang language model.
