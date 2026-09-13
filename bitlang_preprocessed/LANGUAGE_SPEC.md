@@ -89,6 +89,27 @@ Independent properties should be expressed by combining independent modifiers ra
 
 This principle is especially important for lifetime, storage, ownership, accessibility, and instance requirements because these properties may vary independently.
 
+## Initialization-state declaration
+
+Bitlang preprocessed must explicitly state the initialization state of every variable declaration.
+
+The canonical initialization-state properties are:
+
+```text
+Initialized
+Uninitialized
+```
+
+A declaration that already contains a valid value must be marked `Initialized`.
+
+A declaration that exists without a valid value must be marked `Uninitialized`.
+
+The preprocessed form must not depend on inference or source shorthand to determine whether a variable is initialized. Even when the source syntax makes the state obvious, preprocessing must emit the explicit canonical initialization property.
+
+Reading an `Uninitialized` variable as a value is invalid. A valid initialization operation changes its state to `Initialized` before subsequent reads are permitted.
+
+Initialization state is an independent semantic property and may be combined with other explicit properties such as readability, writability, reassignment, ownership, storage, and lifetime properties.
+
 ## `static`
 
 `static` means **static retention**.
