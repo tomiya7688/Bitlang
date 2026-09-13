@@ -256,24 +256,39 @@ Source-facing Bitlang may specify these properties explicitly or omit them. When
 
 ## Move state
 
-Whether a declaration still retains a usable value after move processing is represented by an independent state-property axis:
+Move state is represented by:
 
 ```text
 Unmoved
 Moved
 ```
 
-`Unmoved` means the declaration currently retains its normal usable value or ownership state.
+A normal move changes the source declaration from `Unmoved` to `Moved`. A `Moved` declaration cannot ordinarily be read, released again, or moved again until a valid reinitialization or explicit preprocessing rule changes its state.
 
-`Moved` means the value or ownership represented by that declaration has been moved away. Ordinary reading, reuse, release, or another move through that stale source declaration is invalid unless another explicit language operation or preprocessing rule restores a valid state.
+Preprocessor rules may deliberately change move state, including `Moved -> Unmoved`, but such a semantic override must be explicit and may produce warnings or errors when unsafe.
 
-A valid move from a movable declaration normally transitions the source from `Unmoved` to `Moved`.
+## Release state
 
-Reinitializing a declaration with a new valid value may transition it back to `Unmoved` when the declaration and type permit such reinitialization.
+Release state is represented independently from release capability and release policy.
 
-Preprocessor functions may explicitly change move-state properties. In particular, an explicit preprocessing rule may replace `Moved` with `Unmoved` when a project or transformation deliberately wants to override the ordinary move-state result. Because this can change program meaning and can create unsafe use-after-move behavior if applied incorrectly, such a transition must never be introduced merely by heuristic inference. It requires an explicit preprocessing rule, configuration, or source-directed transformation and may produce a warning when safety cannot be proven.
+The state properties are:
 
-Bitlang preprocessed must contain the final resolved move state whenever move state is meaningful for that declaration.
+```text
+Unreleased
+Released
+```
+
+`Unreleased` means the resource represented by the declaration has not yet been released.
+
+`Released` means that resource has already been released or otherwise destroyed and is no longer a valid live resource.
+
+Releasing an `Unreleased` resource transitions it to `Released`.
+
+After `Released`, ordinary access to the released resource, creation of new references to it, or a second release is invalid unless a later explicit operation establishes a new live resource for the declaration.
+
+The declaration or handle itself may remain in scope after the underlying resource is released. This is intentional: the language can retain `Released` as a semantic state so static analysis can detect use-after-release and double-release. At runtime the underlying resource may already be gone, while the variable slot or handle may still exist until normal scope end or optimization removes it.
+
+A valid reallocation or reinitialization may transition a declaration from `Released` to `Unreleased`. Preprocessor rules may also explicitly rewrite this state, but an override that claims a resource is live without establishing a valid resource is unsafe and should be diagnosed.
 
 ## Lifetime properties
 
