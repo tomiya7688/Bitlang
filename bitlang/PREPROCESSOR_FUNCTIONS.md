@@ -51,7 +51,7 @@ Structured generation is preferred when practical so generated output remains va
 - enumerate functions
 - enumerate variables
 - enumerate types
-- inspect attributes
+- inspect properties and attributes
 - access structured source information
 - obtain the set of all variables declared in the current structural scope
 
@@ -88,21 +88,45 @@ Any source-facing shorthand introduced through module configuration must be reso
 
 Module configuration changes are compile-time operations and must not silently become runtime mutation of module state.
 
-## Attribute automation
+## Property-driven semantics
 
-Preprocessor functions may automatically add, remove, inspect, or provide default attributes for Bitlang declarations.
+Bitlang should represent complicated declaration behavior as explicit properties wherever practical rather than hiding several independent meanings behind one broad keyword.
+
+Examples include properties such as:
+
+- `Readable` / `Unreadable`
+- `Writeable` / `Unwriteable`
+- `Reassignable` / `Unreassignable`
+- `Owned` / `Borrowed`
+
+These properties are independent semantic axes unless a specific language rule states otherwise.
+
+Preprocessor functions may inspect, add, remove, replace, or otherwise modify these properties during preprocessing. This allows source code to use concise declarations or project-level rules while still producing a strict and explicit Bitlang preprocessed result.
+
+Property changes are compile-time transformations. They must be fully resolved before preprocessing finishes; Bitlang preprocessed must contain the resulting explicit properties and must not depend on hidden mutable preprocessor state.
+
+A preprocessor function may change properties on a single declaration, a selected declaration set, or a current-scope variable set.
+
+Semantic conflicts between properties must be diagnosed rather than silently resolved unless an explicit preprocessing rule defines how to resolve them.
+
+`Const` remains a stronger dedicated semantic concept rather than merely another combination of access properties.
+
+## Attribute and property automation
+
+Preprocessor functions may automatically add, remove, inspect, or provide default attributes or properties for Bitlang declarations.
 
 The system should support operations equivalent to:
 
-- add an attribute to a target
-- remove an attribute from a target
-- test whether an attribute is present
-- set default attributes for a declaration category
-- infer attributes through static analysis when the result is provable
+- add a property or attribute to a target
+- remove a property or attribute from a target
+- replace one property with another
+- test whether a property or attribute is present
+- set default properties or attributes for a declaration category
+- infer properties or attributes through static analysis when the result is provable
 
-Attribute automation exists to reduce repetitive annotation while keeping Bitlang's semantic model explicit.
+Automation exists to reduce repetitive annotation while keeping Bitlang's semantic model explicit.
 
-Attributes that can be proven without changing program behavior may be attached automatically. Attributes that could change runtime behavior or program meaning must require an explicit rule, configuration, or declaration rather than heuristic inference alone.
+Properties or attributes that can be proven without changing program behavior may be attached automatically. Changes that could alter runtime behavior or program meaning must require an explicit rule, configuration, or declaration rather than heuristic inference alone.
 
 ## Activation scope
 
