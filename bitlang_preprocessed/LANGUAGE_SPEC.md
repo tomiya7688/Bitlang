@@ -52,7 +52,9 @@ If two source forms are not semantically identical, they must not be merged mere
 
 Bitlang preprocessed should explicitly declare all semantic properties that apply to a declaration or value wherever those properties are represented by the language.
 
-Defaults, source shorthand, omitted attributes, or preprocessor-only assumptions must be resolved before Bitlang preprocessed is produced.
+A property may have been written explicitly in Bitlang source or may have been inferred, defaulted, generated, or transformed by preprocessing. That distinction does not survive as ambiguity in Bitlang preprocessed: the resolved final property itself must be emitted.
+
+Defaults, source shorthand, omitted attributes, or preprocessor-only assumptions must therefore be resolved before Bitlang preprocessed is produced.
 
 This includes properties such as:
 
@@ -88,15 +90,7 @@ Static_lifetime
 
 The lifetime property is independent from ownership. `Owned` / `Borrowed` answers who controls lifetime responsibility, while the lifetime property states the region for which the value remains valid.
 
-Examples include:
-
-```text
-Local_lifetime
-Function_lifetime
-Object_lifetime
-Module_lifetime
-Static_lifetime
-```
+A source declaration may specify its lifetime directly, or it may omit it and allow preprocessing to infer the appropriate lifetime from context. In either case, the Bitlang preprocessed result must contain the same explicit resolved lifetime property when the resulting semantics are the same.
 
 A local declaration should therefore not rely on the compiler inferring that it is local merely from syntax. Its resolved lifetime property is emitted explicitly.
 
