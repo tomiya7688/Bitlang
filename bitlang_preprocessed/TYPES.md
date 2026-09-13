@@ -50,6 +50,57 @@ when `Int10x32` is the default representation of `int`.
 
 `Int` is signed and `Uint` is unsigned.
 
+## Explicit declaration properties
+
+Bitlang preprocessed should explicitly state every semantic property that applies to a declaration rather than relying on defaults or omission.
+
+For example, a source declaration inside a function such as:
+
+```text
+int a = 4
+```
+
+may normalize conceptually to:
+
+```text
+Private Readable Writeable Reassignable Initialized Nonnullable Required Int10x32 a = 4
+```
+
+The exact set depends on which properties apply to the declaration, but applicable properties should not be left implicit.
+
+## Nullability and presence
+
+Nullability and presence are separate canonical property axes.
+
+Nullability:
+
+```text
+Nullable
+Nonnullable
+```
+
+Presence:
+
+```text
+Optional
+Required
+```
+
+`Nullable` means `null` is a valid value. `Nonnullable` means `null` is invalid.
+
+`Optional` means the value or declaration may be absent. `Required` means it must be present.
+
+All applicable declarations must state both axes explicitly in Bitlang preprocessed. Therefore the absence of `Nullable` must not be interpreted implicitly as non-nullable, and the absence of `Optional` must not be interpreted implicitly as required.
+
+The axes are independent. Examples include:
+
+```text
+Required Nullable
+Required Nonnullable
+Optional Nullable
+Optional Nonnullable
+```
+
 ## Overflow
 
 Overflow is an error by default. Canonical Bitlang arithmetic must not silently wrap overflowing values.
@@ -149,11 +200,11 @@ Invalid-address, dangling-pointer, and equivalent low-level memory errors are th
 
 `Ref<T>` is the canonical safe-reference type.
 
-It cannot contain `null`, does not permit pointer arithmetic, does not provide normal arbitrary raw-address manipulation, and must not outlive its referent.
+It cannot contain `null`, does not permit pointer arithmetic, does not provide normal arbitrary raw-address manipulation, must not outlive its referent, and cannot be rebound after its initial binding.
 
 A reference whose lifetime is provably longer than its referent is invalid and must be rejected before execution.
 
-Whether an existing `Ref<T>` binding may be rebound to another valid referent is not yet part of the finalized canonical rules.
+Assignment through a writable `Ref<T>` changes the referenced value; it does not change which referent the reference is bound to.
 
 ## Multidimensional arrays
 
