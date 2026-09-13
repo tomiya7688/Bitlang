@@ -53,6 +53,13 @@ Structured generation is preferred when practical so generated output remains va
 - enumerate types
 - inspect attributes
 - access structured source information
+- obtain the set of all variables declared in the current structural scope
+
+The current-scope variable-set operation is a target-selection mechanism, not a global mode. A preprocessor function may use that set as an argument or target and apply one transformation or rule to every variable in the current scope.
+
+The meaning of current scope follows the normal structural scope in which the preprocessor function is evaluated, such as a function, class, struct, file, or lexical block.
+
+Nested scopes remain distinct unless the preprocessor function explicitly traverses into them. This prevents a rule intended for one scope from silently affecting variables owned by child scopes.
 
 ### Environment and diagnostics
 
