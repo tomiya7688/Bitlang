@@ -65,6 +65,7 @@ This includes properties such as:
 - `Copyable` / `Uncopyable`
 - `Movable` / `Unmovable`
 - `Moved` / `Unmoved`
+- `Released` / `Unreleased`
 - `Initialized` / `Uninitialized`
 - nullability and optionality properties
 - visibility/export properties
@@ -128,6 +129,27 @@ Preprocessor transformations are allowed to change move-state properties, includ
 If preprocessing cannot prove that an explicit `Moved -> Unmoved` override is safe, it may emit a warning. If the resulting state is provably invalid, it must produce an error.
 
 The final resolved move-state property is emitted in Bitlang preprocessed so later stages do not need to reconstruct move history merely to determine the declaration's current state.
+
+## Release-state declaration
+
+When release state is meaningful, Bitlang preprocessed must explicitly state one of:
+
+```text
+Unreleased
+Released
+```
+
+`Unreleased` means the represented resource is currently live and has not yet been released.
+
+`Released` means the represented resource has already been released or destroyed and is no longer a valid live resource.
+
+A valid release transitions `Unreleased` to `Released`.
+
+After `Released`, access to the released resource, creation of new references to it, or another release through the same released state is invalid unless a later valid allocation or initialization establishes a new live resource.
+
+The underlying runtime resource may cease to exist immediately on release, while the declaration or handle can remain as a semantic state until its scope ends. Retaining this `Released` state lets static analysis detect use-after-release and double-release. An optimizer may remove the dead handle entirely when no later semantic use remains.
+
+A valid reallocation or reinitialization may transition `Released` back to `Unreleased`. An explicit preprocessing rule may also rewrite the state, but claiming `Unreleased` without establishing a valid live resource is unsafe and must be diagnosed when provably invalid.
 
 ## Lifetime-property declaration
 
