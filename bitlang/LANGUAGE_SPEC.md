@@ -58,6 +58,35 @@ Bit Function lang
     -> Bitlang compiled procedural representation
 ```
 
+## Assignment and increment syntax
+
+Bitlang source may provide compound-assignment convenience syntax such as `+=`, `-=`, `*=`, and `/=`. These forms are source-level sugar only and must be expanded during preprocessing into explicit assignment plus the corresponding operation.
+
+For example:
+
+```text
+a += b
+```
+
+normalizes to the equivalent of:
+
+```text
+a = a + b
+```
+
+Prefix increment and decrement forms such as `++a` and `--a` are not part of Bitlang. They are intentionally unsupported because they combine mutation and expression evaluation in a way that is easy to misuse.
+
+Postfix increment and decrement forms such as `a++` and `a--` are also not part of the canonical language. If convenience syntax of this kind is ever accepted by a source-facing Bitlang mode or family language, it must be restricted to a standalone mutation statement and normalized before Bitlang preprocessed. It must not be usable as a value-producing expression.
+
+The preferred explicit forms are:
+
+```text
+a = a + 1
+a = a - 1
+```
+
+This keeps mutation and value evaluation separate and removes increment/decrement side-effect semantics from the core language.
+
 ## Preprocessor functions
 
 Bitlang provides preprocessor functions as a language-specific mechanism for reducing repetitive or inconvenient source code without weakening the strict Bitlang language model.
