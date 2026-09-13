@@ -163,10 +163,13 @@ It:
 - does not permit pointer arithmetic
 - does not expose arbitrary raw-address manipulation as part of normal reference operations
 - must not outlive the value or object it references
+- cannot be rebound after its initial binding
 
 The compiler and static-analysis stages should reject references whose lifetime is known to exceed the referenced value's lifetime.
 
-Whether an existing `Ref<T>` binding may later be rebound to another valid referent is a separate rule and is not yet finalized.
+Assignment through a `Ref<T>` may modify the referenced value when that value is writable, but it does not change which value the reference is bound to.
+
+For example, after binding a reference to `a`, assigning a new reference target such as `Ref(b)` is invalid. Ordinary assignment through that reference may still write to `a` when permitted by the referenced value's mutability rules.
 
 ## Explicit type conversion
 
