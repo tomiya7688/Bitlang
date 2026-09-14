@@ -1,155 +1,88 @@
 # Bitlang File Responsibility Table
 
-This file is the canonical responsibility map for source files and major planned files in the Bitlang repository.
+Canonical map for implementation files. Keep each record to one short responsibility.
 
-The project follows these structural rules:
-
-- one file = one responsibility
-- one function = one operation
-- a responsibility should map naturally to one class when reimplemented in an object-oriented language
-- if one responsibility record becomes too large to describe cleanly, the responsibility is too broad and the file/class SHOULD be split
-- adding a new source file requires adding or updating its responsibility record here
-- moving behavior between files requires updating this table in the same change
-
-The responsibility text should remain short. It should describe *what the file owns*, not enumerate every helper function it contains.
-
-## Current files
+## Core source
 
 | File | Responsibility |
 | --- | --- |
-| `cmd/bitlang/main.go` | Start the Bitlang CUI application and hand control to the command-line frontend. |
-| `internal/bitlang/source_text.go` | Represent one untouched Bitlang source input together with diagnostic path metadata. |
-| `internal/bitlang/token_kind.go` | Define the language-neutral lexical categories used by Bitlang tokens. |
-| `internal/bitlang/token.go` | Represent one lexical token and its original source location. |
-| `internal/bitlang/lexer.go` | Convert Bitlang source text into an ordered token stream without applying semantic interpretation. |
-| `internal/bitlang/lexer_test.go` | Verify lexical tokenization, spelling preservation, source locations, and malformed literal handling. |
-| `internal/bitlang/names.go` | Represent and canonicalize Bitlang names and provide name-based symbol storage. **Split candidate:** canonical names and symbol storage are separate conceptual responsibilities and should be separated before this area grows. |
-| `internal/bitlang/names_test.go` | Verify Bitlang name canonicalization and symbol-name behavior. **Split together with `names.go` when its responsibilities are separated.** |
-| `internal/bitlang/pipeline.go` | Represent and execute the ordered Bitlang conversion pipeline. **Split candidate:** artifact representation, stage representation, and pipeline orchestration should become separate files/classes as implementation grows. |
-| `internal/bitlang/pipeline_test.go` | Verify pipeline stage ordering, transition validation, and execution behavior. |
-| `tools/go-rule-checker/cmd/go-rule-checker/main.go` | Start the Go implementation rule checker and map its result to a process exit status. |
-| `tools/go-rule-checker/run.go` | Coordinate one complete rule-checker execution and report findings. |
-| `tools/go-rule-checker/file_discovery.go` | Discover Go source files from requested paths while excluding non-source directories. |
-| `tools/go-rule-checker/source_check.go` | Parse one Go source file and coordinate the independent rule checks applied to it. |
-| `tools/go-rule-checker/finding.go` | Represent and format one rule-checker finding. |
-| `tools/go-rule-checker/naming.go` | Detect responsibility-obscuring file and identifier names. |
-| `tools/go-rule-checker/naming_test.go` | Verify generic-name detection and identifier splitting. |
-| `tools/go-rule-checker/documentation.go` | Detect exported Go declarations that lack documentation comments. |
-| `tools/go-rule-checker/documentation_test.go` | Verify exported-documentation checks and Go test entrypoint exceptions. |
-| `tools/go-rule-checker/function_size.go` | Detect functions that exceed the Go implementation size thresholds. |
-| `tools/go-rule-checker/main_file.go` | Detect non-startup function declarations placed in `main.go`. |
-| `tools/go-rule-checker/README.md` | Document the Go rule checker's scope, usage, and exit behavior. |
-| `go.mod` | Define the Go bootstrap module and minimum Go language version. |
-| `README.md` | Introduce Bitlang, its pipeline, build procedure, and project-level direction. |
-| `CODING_RULES.md` | Define language-implementation portability, documentation, and source-structure rules shared across implementations. |
-| `GO_CODING_RULES.md` | Define Go-bootstrap-specific application architecture and UPD Commander / Messenger / Processing rules. |
-| `FILE_RESPONSIBILITIES.md` | Maintain the canonical mapping from files to their single responsibilities. |
+| `cmd/bitlang/main.go` | Start the CUI and hand control to the frontend. |
+| `internal/bitlang/source_text.go` | Represent untouched source text and diagnostic path metadata. |
+| `internal/bitlang/token_kind.go` | Define lexical token categories. |
+| `internal/bitlang/token.go` | Represent one token and source location. |
+| `internal/bitlang/lexer.go` | Convert source text into tokens. |
+| `internal/bitlang/lexer_test.go` | Verify lexer behavior. |
+| `internal/bitlang/canonical_name.go` | Represent and canonicalize Bitlang identifiers. |
+| `internal/bitlang/canonical_name_test.go` | Verify identifier canonicalization. |
+| `internal/bitlang/symbol.go` | Represent one named semantic value. |
+| `internal/bitlang/duplicate_symbol_error.go` | Represent canonical-name collision errors. |
+| `internal/bitlang/symbol_table.go` | Store and resolve symbols by canonical name. |
+| `internal/bitlang/symbol_table_test.go` | Verify symbol-table behavior. |
+| `internal/bitlang/artifact_kind.go` | Define canonical pipeline artifact kinds. |
+| `internal/bitlang/artifact.go` | Represent one pipeline artifact. |
+| `internal/bitlang/stage.go` | Represent and execute one pipeline stage. |
+| `internal/bitlang/stage_transition.go` | Define valid canonical stage transitions. |
+| `internal/bitlang/pipeline.go` | Order and execute stages. |
+| `internal/bitlang/pipeline_test.go` | Verify pipeline behavior. |
 
-## Planned compiler/runtime responsibilities
+## Go rule checker
 
-These are responsibility slots, not fixed filenames. Names may change when implementation begins, but each responsibility should remain isolated.
-
-| Planned file/class | Responsibility |
+| File | Responsibility |
 | --- | --- |
-| `Application` | Coordinate top-level application startup independent of a specific UI. |
-| `CuiFrontend` | Accept CUI compiler commands and present official compiler results in terminal form. |
-| `CompileRequest` | Represent one requested compilation/conversion operation and its options. |
-| `CompilerPipeline` | Coordinate the complete multi-stage official Bitlang conversion flow. |
-| `SourceArtifact` | Represent original Bitlang source input. |
-| `PreprocessedArtifact` | Represent Bitlang Preprocessed output. |
-| `CompiledArtifact` | Represent Bitlang Compiled output. |
-| `TreeObjectArtifact` | Represent Bitlang TreeObject output. |
-| `VmAssemblyArtifact` | Represent Bitlang VM Assembly output. |
-| `Preprocessor` | Convert Bitlang source into Bitlang Preprocessed. |
-| `StaticAnalyzer` | Perform static analysis over Bitlang Preprocessed. |
-| `Advisor` | Produce advisory diagnostics that do not change compilation semantics. |
-| `Compiler` | Convert analyzed Bitlang Preprocessed into Bitlang Compiled. |
-| `TreeLowerer` | Convert Bitlang Compiled into Bitlang TreeObject. |
-| `VmAssemblyLowerer` | Convert Bitlang TreeObject into Bitlang VM Assembly. |
-| `Diagnostic` | Represent one compiler diagnostic independent of UI rendering. |
-| `DiagnosticFormatter` | Convert diagnostics into textual presentation. |
+| `tools/go-rule-checker/cmd/go-rule-checker/main.go` | Start the checker and map results to exit status. |
+| `tools/go-rule-checker/run.go` | Coordinate one checker execution. |
+| `tools/go-rule-checker/file_discovery.go` | Discover Go source files. |
+| `tools/go-rule-checker/source_check.go` | Coordinate checks for one source file. |
+| `tools/go-rule-checker/finding.go` | Represent and format one finding. |
+| `tools/go-rule-checker/naming.go` | Check responsibility-obscuring names. |
+| `tools/go-rule-checker/documentation.go` | Check exported documentation comments. |
+| `tools/go-rule-checker/function_size.go` | Check function size limits. |
+| `tools/go-rule-checker/file_size.go` | Check file size limits. |
+| `tools/go-rule-checker/main_file.go` | Check startup-only `main.go` structure. |
+| `tools/go-rule-checker/ignore.go` | Load and apply checker ignore rules. |
+| `tools/go-rule-checker/README.md` | Document checker usage. |
+| `tools/go-rule-checker/IGNORE_FORMAT.md` | Document ignore configuration syntax. |
 
-## Planned GUI IDE responsibilities
+Tests under `tools/go-rule-checker/*_test.go` verify the matching checker responsibility.
 
-The GUI IDE uses this repository's official Bitlang compiler as its backend.
+## Project / AI routing documents
 
-The IDE MUST NOT contain a second compiler implementation, shadow compiler, simplified parser, or GUI-only semantic pipeline. The official compiler is the single source of truth for preprocessing, parsing, analysis, lowering, diagnostics, and generated artifacts.
-
-The CUI compiler and GUI IDE are therefore sibling frontends over the same official compiler core:
-
-```text
-                 +------------------+
-                 | Official Bitlang |
-                 | compiler core    |
-                 +------------------+
-                   ^              ^
-                   |              |
-             +-----------+   +-----------+
-             | CUI       |   | GUI IDE   |
-             | frontend  |   | frontend  |
-             +-----------+   +-----------+
-```
-
-Because Bitlang has multiple explicit conversion stages, the IDE should expose those official compiler stage results rather than presenting compilation as a black box.
-
-| Planned file/class | Responsibility |
+| File | Responsibility |
 | --- | --- |
-| `IdeApplication` | Start and coordinate the desktop IDE application. |
-| `IdeWindow` | Own the primary IDE window layout and top-level UI composition. |
-| `SourceEditor` | Edit the currently selected Bitlang source document. |
-| `StageNavigator` | Select which official compiler stage or representation is being inspected. |
-| `StageViewer` | Display one official compiler artifact without owning conversion logic. |
-| `PipelineController` | Request conversions from the official compiler backend and distribute returned artifacts to the IDE. |
-| `DiagnosticPanel` | Display diagnostics returned by the official compiler backend. |
-| `ArtifactDiffViewer` | Compare official compiler artifacts from selected stages. |
-| `ProjectExplorer` | Display and select project source files and related artifacts. |
-| `BuildPanel` | Configure and invoke official compiler builds from the IDE. |
-| `VmPanel` | Launch or control Bitlang VM execution using VM Assembly produced by the official compiler. |
-| `TranslatorPanel` | Select and invoke translators using official compiler VM Assembly output. |
+| `README.md` | Introduce Bitlang and its overall pipeline. |
+| `CODING_RULES.md` | Define cross-language compiler implementation rules. |
+| `GO_CODING_RULES.md` | Define Go-bootstrap-specific architecture rules. |
+| `FILE_RESPONSIBILITIES.md` | Map files to responsibilities. |
+| `AI_CONTEXT.md` | Provide the smallest AI development entrypoint. |
+| `CURRENT_STATE.md` | Summarize current implementation capability and limits. |
+| `CHANGE_ROUTING.md` | Route change categories to source/tests/docs. |
+| `VALIDATION_ROUTING.md` | Route changes to the smallest sufficient validation. |
+| `go.mod` | Define the Go bootstrap module and language version. |
 
-## IDE pipeline concept
+## Planned core responsibilities
 
-The intended IDE view is approximately:
+Keep these separate when implemented:
 
-```text
-Source
-  -> Preprocessed
-  -> Compiled
-  -> TreeObject
-  -> VM Assembly
-  -> VM / Translator output
-```
+- `Application`: top-level application coordination
+- `CuiFrontend`: terminal request/presentation handling
+- `CompileRequest`: one requested conversion and options
+- `CompilerPipeline`: complete official conversion orchestration
+- `SourceArtifact`, `PreprocessedArtifact`, `CompiledArtifact`, `TreeObjectArtifact`, `VmAssemblyArtifact`: stage-specific representations
+- `Preprocessor`: Source to Preprocessed
+- `StaticAnalyzer`: static analysis over Preprocessed
+- `Advisor`: non-semantic advisory diagnostics
+- `Compiler`: Preprocessed to Compiled
+- `TreeLowerer`: Compiled to TreeObject
+- `VmAssemblyLowerer`: TreeObject to VM Assembly
+- `Diagnostic`: UI-independent diagnostic representation
+- `DiagnosticFormatter`: textual diagnostic presentation
 
-Every intermediate representation shown by the IDE MUST come from the official compiler backend.
+## GUI rule
 
-Each node should be independently inspectable. Ideally the user can select a stage and see:
+The GUI IDE and CUI are sibling frontends over the same official compiler core. GUI code must not duplicate compiler semantics.
 
-- the artifact produced by the official compiler at that stage
-- diagnostics generated at or before that stage
-- the difference from the previous official stage artifact
-- whether later stage results are stale after an edit
+Planned GUI responsibilities remain separate: `IdeApplication`, `IdeWindow`, `SourceEditor`, `StageNavigator`, `StageViewer`, `PipelineController`, `DiagnosticPanel`, `ArtifactDiffViewer`, `ProjectExplorer`, `BuildPanel`, `VmPanel`, `TranslatorPanel`.
 
-The compiler core MUST remain usable without the IDE. The IDE MUST call the same official conversion interfaces used by the CUI compiler and tests rather than duplicate compiler logic.
+## Split rule
 
-This also means that adding a new compiler stage or changing a stage representation should normally require changing the official compiler first. The IDE should then adapt to the compiler's public stage interface rather than invent its own semantic representation.
-
-## Split rule for this table
-
-A responsibility record is intentionally expected to fit in one short sentence.
-
-If a record repeatedly needs multiple clauses such as "A and B and C", detailed sub-bullets, or exceptions to explain what the file owns, that is evidence that the corresponding file/class has accumulated more than one responsibility and SHOULD be split.
-
-When a split occurs:
-
-```text
-OldFile: A and B
-```
-
-should become something like:
-
-```text
-FileA: A
-FileB: B
-```
-
-The responsibility table is therefore not only documentation; it is an architectural size check.
+If a responsibility cannot be described in one short sentence, split the file/component before extending it.
