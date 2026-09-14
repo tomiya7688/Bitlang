@@ -1,18 +1,19 @@
 # Bitlang Current State
 
-Compact implementation snapshot for AI-assisted work. Update this file when capabilities materially change.
+Compact implementation snapshot for AI-assisted work.
 
 ## Implemented
 - Go bootstrap module and CUI entrypoint
 - explicit staged pipeline skeleton
-- source text representation
-- lexer with identifier / number / string / character / symbol / EOF tokens
-- source location tracking
+- source text and lexical token representations
+- lexer with source locations
 - case-insensitive identifier canonicalization baseline
 - symbol table with duplicate-name detection
-- Go implementation coding rules
-- file responsibility registry
-- `go-rule-checker` with compact findings, size checks, and ignore support
+- pipeline responsibilities split into artifact / stage / transition / orchestration files
+- name responsibilities split into canonical name / symbol / duplicate error / symbol table files
+- Go implementation coding rules and responsibility registry
+- `go-rule-checker` with compact findings, file/function size checks, and ignore support
+- AI context entrypoint, change routing, and validation routing
 
 ## Current Pipeline
 - Source: partial
@@ -26,14 +27,12 @@ Compact implementation snapshot for AI-assisted work. Update this file when capa
 - identifier canonicalization currently uses Go lowercase behavior as a bootstrap baseline
 - lexer identifier character rules are temporary ASCII rules
 - comments and grammar-specific multi-character operators are not yet finalized
-- `names.go` and `pipeline.go` still contain multiple conceptual responsibilities and should be split
 
 ## Near-Term Implementation
-1. split `names.go` by canonical name / symbol / symbol table responsibilities
-2. split `pipeline.go` by artifact / stage / pipeline / transition responsibilities
-3. introduce concrete Preprocessed artifact representation
-4. add a minimal preprocessor boundary without inventing unspecified syntax
-5. expose stage results through reusable compiler-core APIs before expanding CUI/GUI behavior
+1. introduce concrete Preprocessed artifact representation
+2. add a minimal preprocessor boundary without inventing unspecified syntax
+3. expose stage results through reusable compiler-core APIs
+4. expand CUI only after compiler-core stage APIs are stable
 
 ## Source of Truth Reminder
-This file is only a current-state index. Language semantics belong in specification/design sources and compiler tests, not here.
+This file is an index only. Language semantics belong in specification/design sources and compiler tests.
