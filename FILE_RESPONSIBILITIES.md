@@ -55,6 +55,7 @@ Tests under `tools/go-rule-checker/*_test.go` verify the matching checker respon
 | `tools/bitlang-ci/run.go` | Coordinate strict project-owned validation checks. |
 | `tools/bitlang-ci/README.md` | Document strict CI behavior and failure policy. |
 | `.github/workflows/strict-ci.yml` | Run Bitlang CI and additional hosted checks on supported runner OSes. |
+| `.gitattributes` | Keep source and validation text line endings deterministic across operating systems. |
 
 ## Project / AI routing documents
 
