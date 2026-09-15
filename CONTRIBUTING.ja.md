@@ -48,6 +48,7 @@ Bitlang source
 
 - `README.md` / `README.ja.md` — プロジェクト概要と基本的なビルド方法
 - `CURRENT_STATE.md` / `CURRENT_STATE.ja.md` — 現在の実装状態の短い一覧
+- `SECURITY.md` / `SECURITY.ja.md` — 脆弱性報告とセキュリティ要件
 - `bitlang/LANGUAGE_SPEC.md` — 言語仕様
 - `CODING_RULES.md` — 移植性とコンパイラ実装規約
 - `GO_CODING_RULES.md` — Go bootstrap 実装専用の規約
@@ -90,6 +91,21 @@ Go 実装を変更する場合:
 
 Go 実装規約は Bitlang 言語仕様ではありません。bootstrap 実装上の都合を利用者向け言語要件にしないでください。
 
+## セキュリティ上の期待事項
+
+security-sensitive な変更や脆弱性報告を行う前に [SECURITY.ja.md](SECURITY.ja.md)（[English](SECURITY.md)）を確認してください。
+
+- credential、token、private key、production secret、実在する personal data を commit しない
+- 新規 dependency は明確な理由がある場合に限り、必要最小限にする
+- GitHub Actions は immutable commit SHA に固定し、人間向け release version は comment に残す
+- 明確な理由なしに workflow token permission を広げない
+- authenticated Git write を意図して行う job 以外では checkout credential を保持しない
+- untrusted Pull Request のコード実行に `pull_request_target` を使用しない
+- security-sensitive な修正には可能な限り regression coverage を追加する
+- CI を通すためだけに security check を無効化、弱体化、bypass しない
+
+脆弱性の可能性がある内容を exploit 詳細付きで公開 Issue に投稿しないでください。`SECURITY.ja.md` の private reporting 手順に従ってください。
+
 ## ドキュメントの言語方針
 
 コントリビューター向けドキュメントは英語版と日本語版を維持します。
@@ -118,7 +134,7 @@ Bitlang の意味論、中間表現、pipeline contract を変更する場合は
 2. 関連 Issue がある場合は参照する。
 3. 挙動を変更する場合はテストを追加または更新する。
 4. 公開契約を変更する場合は登録済みの日英ドキュメントを両方更新する。
-5. リポジトリの CI を通過する。
+5. リポジトリの Strict CI と Security CI を通過する。
 
 大規模で無関係な refactor は、可能な限り機能変更と分離してください。
 
