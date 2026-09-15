@@ -1,5 +1,7 @@
 # Contributing to Bitlang
 
+English | [日本語](CONTRIBUTING.ja.md)
+
 Thank you for your interest in Bitlang.
 
 Bitlang is still under active design and implementation. Contributions do not need to be large, and you do not need to understand the whole compiler pipeline before participating.
@@ -44,8 +46,8 @@ Bitlang source
 
 Useful entry points:
 
-- `README.md` — project overview and basic build instructions
-- `CURRENT_STATE.md` — compact implementation status
+- `README.md` / `README.ja.md` — project overview and basic build instructions
+- `CURRENT_STATE.md` / `CURRENT_STATE.ja.md` — compact implementation status
 - `bitlang/LANGUAGE_SPEC.md` — language specification
 - `CODING_RULES.md` — portability and compiler implementation rules
 - `GO_CODING_RULES.md` — Go bootstrap implementation rules
@@ -59,6 +61,12 @@ Run the test suite with:
 
 ```sh
 go test ./...
+```
+
+Run the full local CI gate with:
+
+```sh
+go run ./tools/bitlang-ci/cmd/bitlang-ci
 ```
 
 Build the current CLI with:
@@ -82,6 +90,18 @@ For Go implementation work:
 
 The Go implementation rules are not Bitlang language rules. Do not accidentally turn bootstrap implementation conventions into user-facing language requirements.
 
+## Documentation language policy
+
+Contributor-facing documentation is maintained in English and Japanese.
+
+- the base `.md` file is the English document;
+- the `.ja.md` file is the Japanese document;
+- when a registered document pair is changed, both files must be updated in the same pull request;
+- CI verifies that registered pairs exist, link to each other, and are changed together;
+- a translation must preserve meaning rather than introduce a separate specification.
+
+The current CI-enforced pairs are listed in `tools/doc-pair-checker`. Technical specification translations will be added to that list as they are reviewed; an unreviewed translation must not silently become a second source of truth.
+
 ## Specifications and design changes
 
 Small implementation fixes can normally be submitted directly against an existing issue.
@@ -97,7 +117,7 @@ A useful pull request should generally:
 1. solve one clearly scoped problem;
 2. reference the relevant issue when one exists;
 3. include or update tests when behavior changes;
-4. update documentation when the public contract changes;
+4. update both registered documentation languages when the public contract changes;
 5. pass the repository's CI checks.
 
 Large unrelated refactors should be separated from functional changes where practical.
