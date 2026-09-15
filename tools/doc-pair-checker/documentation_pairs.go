@@ -22,6 +22,7 @@ var requiredDocumentationPairs = []documentationPair{
 	{englishPath: "CONTRIBUTING.md", japanesePath: "CONTRIBUTING.ja.md"},
 	{englishPath: "CURRENT_STATE.md", japanesePath: "CURRENT_STATE.ja.md"},
 	{englishPath: "SECURITY.md", japanesePath: "SECURITY.ja.md"},
+	{englishPath: ".github/SECURITY_SETTINGS.md", japanesePath: ".github/SECURITY_SETTINGS.ja.md"},
 	{englishPath: "tools/bitlang-ci/README.md", japanesePath: "tools/bitlang-ci/README.ja.md"},
 	{englishPath: "tools/doc-pair-checker/README.md", japanesePath: "tools/doc-pair-checker/README.ja.md"},
 }
