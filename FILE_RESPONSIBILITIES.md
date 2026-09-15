@@ -7,6 +7,8 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | File | Responsibility |
 | --- | --- |
 | `cmd/bitlang/main.go` | Start the CUI and hand control to the frontend. |
+| `internal/cui/run.go` | Route one CUI invocation and format terminal output. |
+| `internal/cui/run_test.go` | Verify CUI routing and exit behavior. |
 | `internal/bitlang/source_text.go` | Represent untouched source text and diagnostic path metadata. |
 | `internal/bitlang/token_kind.go` | Define lexical token categories. |
 | `internal/bitlang/token.go` | Represent one token and source location. |
@@ -44,6 +46,15 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `tools/go-rule-checker/IGNORE_FORMAT.md` | Document ignore configuration syntax. |
 
 Tests under `tools/go-rule-checker/*_test.go` verify the matching checker responsibility.
+
+## Bitlang CI
+
+| File | Responsibility |
+| --- | --- |
+| `tools/bitlang-ci/cmd/bitlang-ci/main.go` | Start the shared strict CI gate and map its exit status. |
+| `tools/bitlang-ci/run.go` | Coordinate strict project-owned validation checks. |
+| `tools/bitlang-ci/README.md` | Document strict CI behavior and failure policy. |
+| `.github/workflows/strict-ci.yml` | Run Bitlang CI and additional hosted checks on supported runner OSes. |
 
 ## Project / AI routing documents
 
