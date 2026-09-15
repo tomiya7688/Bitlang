@@ -65,6 +65,27 @@ jobs:
       - name: Run gosec
         run: gosec ./...
 
+  lexer-fuzz:
+    name: Hostile lexer fuzz smoke
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Setup project Go
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Fuzz lexer
+        run: go test ./internal/bitlang -run '^$' -fuzz '^FuzzLexerNeverPanics$' -fuzztime=15s
+
   secrets:
     name: Secret leak scan
     timeout-minutes: 15
@@ -183,6 +204,7 @@ jobs:
     needs:
       - govulncheck
       - gosec
+      - lexer-fuzz
       - secrets
       - dependency-review
       - workflow-security
@@ -196,13 +218,14 @@ jobs:
         env:
           GOVULNCHECK_RESULT: ${{ needs.govulncheck.result }}
           GOSEC_RESULT: ${{ needs.gosec.result }}
+          LEXER_FUZZ_RESULT: ${{ needs.lexer-fuzz.result }}
           SECRETS_RESULT: ${{ needs.secrets.result }}
           DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
           WORKFLOW_SECURITY_RESULT: ${{ needs.workflow-security.result }}
           WORKFLOW_LINT_RESULT: ${{ needs.workflow-lint.result }}
           CODEQL_RESULT: ${{ needs.codeql.result }}
         run: |
-          for result in "$GOVULNCHECK_RESULT" "$GOSEC_RESULT" "$SECRETS_RESULT" "$DEPENDENCY_REVIEW_RESULT" "$WORKFLOW_SECURITY_RESULT" "$WORKFLOW_LINT_RESULT" "$CODEQL_RESULT"; do
+          for result in "$GOVULNCHECK_RESULT" "$GOSEC_RESULT" "$LEXER_FUZZ_RESULT" "$SECRETS_RESULT" "$DEPENDENCY_REVIEW_RESULT" "$WORKFLOW_SECURITY_RESULT" "$WORKFLOW_LINT_RESULT" "$CODEQL_RESULT"; do
             case "$result" in
               success|skipped) ;;
               *) echo "Security check did not pass: $result" >&2; exit 1 ;;
