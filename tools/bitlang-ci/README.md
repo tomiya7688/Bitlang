@@ -19,7 +19,7 @@ The command runs all checks and fails if any check fails:
 - `go vet ./...`
 - `go test ./...`
 - shuffled/repeated tests
-- `go build ./cmd/bitlang`
+- Bitlang CUI build into a temporary output directory
 - `git diff --check`
 
 GitHub Actions additionally runs the race detector and coverage smoke tests.
