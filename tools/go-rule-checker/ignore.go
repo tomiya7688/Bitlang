@@ -8,6 +8,8 @@ import (
 	"strings"
 )
 
+const ignoreConfigPath = ".go-rule-checker-ignore"
+
 type ignoreRule struct {
 	rule    string
 	pattern string
@@ -18,8 +20,8 @@ type ignoreConfig struct {
 	rules []ignoreRule
 }
 
-func loadIgnoreConfig(path string) (ignoreConfig, error) {
-	file, err := os.Open(path)
+func loadIgnoreConfig() (ignoreConfig, error) {
+	file, err := os.Open(ignoreConfigPath)
 	if os.IsNotExist(err) {
 		return ignoreConfig{}, nil
 	}
@@ -43,7 +45,7 @@ func loadIgnoreConfig(path string) (ignoreConfig, error) {
 		case fields[0] == "rule" && len(fields) == 3:
 			config.rules = append(config.rules, ignoreRule{rule: fields[1], pattern: fields[2]})
 		default:
-			return ignoreConfig{}, fmt.Errorf("%s:%d invalid ignore record", path, line)
+			return ignoreConfig{}, fmt.Errorf("%s:%d invalid ignore record", ignoreConfigPath, line)
 		}
 	}
 	return config, scanner.Err()
