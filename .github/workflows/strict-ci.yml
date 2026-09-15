@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - main
+  merge_group:
   workflow_dispatch:
 
 permissions:
@@ -17,6 +18,7 @@ concurrency:
 jobs:
   bitlang-ci:
     name: Bitlang CI (${{ matrix.os }})
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -38,8 +40,29 @@ jobs:
       - name: Run Bitlang CI
         run: go run ./tools/bitlang-ci/cmd/bitlang-ci
 
+  pr-documentation:
+    name: Documentation language sync
+    if: github.event_name == 'pull_request'
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout history
+        uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Check paired documentation changes
+        run: go run ./tools/doc-pair-checker/cmd/doc-pair-checker --base "${{ github.event.pull_request.base.sha }}"
+
   race:
     name: Race detector
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -52,10 +75,11 @@ jobs:
           cache: true
 
       - name: Race test
-        run: go test -race ./...
+        run: go test -count=1 -race ./...
 
   coverage:
     name: Coverage smoke
+    timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -68,4 +92,41 @@ jobs:
           cache: true
 
       - name: Coverage
-        run: go test -covermode=atomic ./...
+        run: go test -count=1 -covermode=atomic ./...
+
+  cross-build:
+    name: Cross build (${{ matrix.goos }}/${{ matrix.goarch }})
+    timeout-minutes: 15
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: windows
+            goarch: amd64
+          - goos: windows
+            goarch: arm64
+          - goos: darwin
+            goarch: amd64
+          - goos: darwin
+            goarch: arm64
+    env:
+      CGO_ENABLED: 0
+      GOOS: ${{ matrix.goos }}
+      GOARCH: ${{ matrix.goarch }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.1
+
+      - name: Setup Go
+        uses: actions/setup-go@v7
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Cross build Bitlang CLI
+        run: go build -trimpath ./cmd/bitlang
