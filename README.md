@@ -1,5 +1,7 @@
 # Bitlang
 
+English | [日本語](README.ja.md)
+
 Bitlang is a strict language and translation pipeline designed around explicit, inspectable lowering stages.
 
 The initial implementation is written in **Go** so development builds can be turned into standalone executables immediately and cross-compiled without introducing a runtime dependency.
@@ -58,7 +60,9 @@ Unicode identifier normalization/case-folding is intentionally not part of the l
 
 Contributors are welcome. You do not need to understand the entire compiler to participate: implementation fixes, tests, documentation, tooling, specification review, and bug reports are all useful.
 
-Start with [CONTRIBUTING.md](CONTRIBUTING.md), or browse issues labeled [good first issue](https://github.com/tomiya7688/Bitlang/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+Start with [CONTRIBUTING.md](CONTRIBUTING.md) ([日本語](CONTRIBUTING.ja.md)), or browse issues labeled [good first issue](https://github.com/tomiya7688/Bitlang/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
+Contributor-facing documentation is maintained in English and Japanese. Registered language pairs are checked by CI so that a pull request does not update only one side.
 
 ## Build
 
@@ -84,6 +88,12 @@ GOOS=windows GOARCH=arm64 go build -o bitlang-arm64.exe ./cmd/bitlang
 
 ```sh
 go test ./...
+```
+
+For the full project validation gate:
+
+```sh
+go run ./tools/bitlang-ci/cmd/bitlang-ci
 ```
 
 ## Current CLI
