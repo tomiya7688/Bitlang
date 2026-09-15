@@ -11,7 +11,7 @@ func Run(paths []string, out io.Writer) (int, error) {
 	if len(paths) == 0 {
 		paths = []string{"."}
 	}
-	config, err := loadIgnoreConfig(".go-rule-checker-ignore")
+	config, err := loadIgnoreConfig()
 	if err != nil {
 		return 0, err
 	}
