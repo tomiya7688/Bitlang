@@ -48,6 +48,7 @@ Useful entry points:
 
 - `README.md` / `README.ja.md` — project overview and basic build instructions
 - `CURRENT_STATE.md` / `CURRENT_STATE.ja.md` — compact implementation status
+- `SECURITY.md` / `SECURITY.ja.md` — vulnerability reporting and security requirements
 - `bitlang/LANGUAGE_SPEC.md` — language specification
 - `CODING_RULES.md` — portability and compiler implementation rules
 - `GO_CODING_RULES.md` — Go bootstrap implementation rules
@@ -90,6 +91,21 @@ For Go implementation work:
 
 The Go implementation rules are not Bitlang language rules. Do not accidentally turn bootstrap implementation conventions into user-facing language requirements.
 
+## Security expectations
+
+Read [SECURITY.md](SECURITY.md) before making security-sensitive changes or reporting a vulnerability.
+
+- never commit credentials, tokens, private keys, production secrets, or real personal data;
+- new dependencies require a clear reason and should be kept to the minimum necessary;
+- GitHub Actions must use immutable commit SHAs, with the readable release version kept in a comment;
+- do not broaden workflow token permissions without an explicit reason;
+- checkout credentials should not be persisted unless a job intentionally performs authenticated Git writes;
+- do not use `pull_request_target` to execute code from an untrusted pull request;
+- security-sensitive fixes should add regression coverage where practical;
+- do not disable, weaken, or bypass security checks merely to make CI pass.
+
+Potential vulnerabilities must not be disclosed with exploit details in a public Issue. Follow the private reporting process described in `SECURITY.md`.
+
 ## Documentation language policy
 
 Contributor-facing documentation is maintained in English and Japanese.
@@ -118,7 +134,7 @@ A useful pull request should generally:
 2. reference the relevant issue when one exists;
 3. include or update tests when behavior changes;
 4. update both registered documentation languages when the public contract changes;
-5. pass the repository's CI checks.
+5. pass the repository's strict and security CI checks.
 
 Large unrelated refactors should be separated from functional changes where practical.
 
