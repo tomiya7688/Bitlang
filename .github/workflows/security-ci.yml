@@ -176,3 +176,36 @@ jobs:
 
       - name: Analyze
         uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4.38.0
+
+  security-gate:
+    name: Security gate
+    if: always()
+    needs:
+      - govulncheck
+      - gosec
+      - secrets
+      - dependency-review
+      - workflow-security
+      - workflow-lint
+      - codeql
+    timeout-minutes: 5
+    permissions: {}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce all security checks
+        env:
+          GOVULNCHECK_RESULT: ${{ needs.govulncheck.result }}
+          GOSEC_RESULT: ${{ needs.gosec.result }}
+          SECRETS_RESULT: ${{ needs.secrets.result }}
+          DEPENDENCY_REVIEW_RESULT: ${{ needs.dependency-review.result }}
+          WORKFLOW_SECURITY_RESULT: ${{ needs.workflow-security.result }}
+          WORKFLOW_LINT_RESULT: ${{ needs.workflow-lint.result }}
+          CODEQL_RESULT: ${{ needs.codeql.result }}
+        run: |
+          for result in "$GOVULNCHECK_RESULT" "$GOSEC_RESULT" "$SECRETS_RESULT" "$DEPENDENCY_REVIEW_RESULT" "$WORKFLOW_SECURITY_RESULT" "$WORKFLOW_LINT_RESULT" "$CODEQL_RESULT"; do
+            case "$result" in
+              success|skipped) ;;
+              *) echo "Security check did not pass: $result" >&2; exit 1 ;;
+            esac
+          done
+          echo "OK security gate"
