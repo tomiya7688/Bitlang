@@ -4,7 +4,10 @@ import (
 	"bytes"
 	"fmt"
 	"io"
+	"os"
 	"os/exec"
+	"path/filepath"
+	"runtime"
 	"strings"
 )
 
@@ -27,7 +30,6 @@ func Run(root string, out io.Writer, errOut io.Writer) int {
 		{name: "go vet", cmd: "go", args: []string{"vet", "./..."}},
 		{name: "go test", cmd: "go", args: []string{"test", "./..."}},
 		{name: "go test shuffled/repeated", cmd: "go", args: []string{"test", "-shuffle=on", "-count=3", "./..."}},
-		{name: "go build", cmd: "go", args: []string{"build", "./cmd/bitlang"}},
 		{name: "git diff check", cmd: "git", args: []string{"diff", "--check"}},
 	}
 
@@ -35,6 +37,10 @@ func Run(root string, out io.Writer, errOut io.Writer) int {
 		if !runCommand(root, check, out, errOut) {
 			failures++
 		}
+	}
+
+	if !runBuildCheck(root, out, errOut) {
+		failures++
 	}
 
 	if failures > 0 {
@@ -78,4 +84,23 @@ func runCommand(root string, check commandCheck, out io.Writer, errOut io.Writer
 	}
 	fmt.Fprintf(out, "OK %s\n", check.name)
 	return true
+}
+
+func runBuildCheck(root string, out io.Writer, errOut io.Writer) bool {
+	tempDir, err := os.MkdirTemp("", "bitlang-ci-build-*")
+	if err != nil {
+		fmt.Fprintf(errOut, "FAIL go build: create temp dir: %v\n", err)
+		return false
+	}
+	defer os.RemoveAll(tempDir)
+
+	output := filepath.Join(tempDir, "bitlang")
+	if runtime.GOOS == "windows" {
+		output += ".exe"
+	}
+	return runCommand(root, commandCheck{
+		name: "go build",
+		cmd:  "go",
+		args: []string{"build", "-o", output, "./cmd/bitlang"},
+	}, out, errOut)
 }
