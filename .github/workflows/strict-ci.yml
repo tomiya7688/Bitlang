@@ -150,3 +150,32 @@ jobs:
 
       - name: Cross build Bitlang CLI
         run: go build -trimpath -o "$RUNNER_TEMP/bitlang-${GOOS}-${GOARCH}" ./cmd/bitlang
+
+  strict-gate:
+    name: Strict gate
+    if: always()
+    needs:
+      - bitlang-ci
+      - pr-documentation
+      - race
+      - coverage
+      - cross-build
+    timeout-minutes: 5
+    permissions: {}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Enforce all strict checks
+        env:
+          BITLANG_CI_RESULT: ${{ needs.bitlang-ci.result }}
+          DOCUMENTATION_RESULT: ${{ needs.pr-documentation.result }}
+          RACE_RESULT: ${{ needs.race.result }}
+          COVERAGE_RESULT: ${{ needs.coverage.result }}
+          CROSS_BUILD_RESULT: ${{ needs.cross-build.result }}
+        run: |
+          for result in "$BITLANG_CI_RESULT" "$DOCUMENTATION_RESULT" "$RACE_RESULT" "$COVERAGE_RESULT" "$CROSS_BUILD_RESULT"; do
+            case "$result" in
+              success|skipped) ;;
+              *) echo "Strict check did not pass: $result" >&2; exit 1 ;;
+            esac
+          done
+          echo "OK strict gate"
