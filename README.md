@@ -102,6 +102,12 @@ go run ./tools/bitlang-ci/cmd/bitlang-ci
 ./bitlang canonicalize MyVariable MYVARIABLE myvariable
 ```
 
+## Security
+
+Security-sensitive reports should follow [SECURITY.md](SECURITY.md) ([日本語](SECURITY.ja.md)). Do not publish exploit details, credentials, or sensitive reproduction data in a public Issue.
+
+The repository runs a separate Security CI gate for CodeQL, reachable Go vulnerabilities, Go security static analysis, secret leaks, dependency changes, and GitHub Actions supply-chain risks.
+
 ## License
 
 Bitlang and the Bitlang-related assets maintained in this repository are licensed under the [MIT License](LICENSE), unless explicitly stated otherwise.
