@@ -1,6 +1,7 @@
 package gorulechecker
 
 import (
+	"fmt"
 	"io/fs"
 	"os"
 	"path/filepath"
@@ -13,9 +14,12 @@ func collectGoFiles(paths []string) ([]string, error) {
 	var files []string
 
 	for _, root := range paths {
-		info, err := os.Stat(root)
+		info, err := os.Lstat(root)
 		if err != nil {
 			return nil, err
+		}
+		if info.Mode()&os.ModeSymlink != 0 {
+			return nil, fmt.Errorf("symlink scan target is not allowed: %s", root)
 		}
 
 		if !info.IsDir() {
@@ -31,6 +35,12 @@ func collectGoFiles(paths []string) ([]string, error) {
 			}
 			if entry.IsDir() && shouldSkipDir(entry.Name()) {
 				return filepath.SkipDir
+			}
+			if entry.Type()&os.ModeSymlink != 0 {
+				if strings.HasSuffix(entry.Name(), ".go") {
+					return fmt.Errorf("symlinked Go file is not allowed: %s", path)
+				}
+				return nil
 			}
 			if !entry.IsDir() && strings.HasSuffix(entry.Name(), ".go") {
 				files = appendUnique(files, seen, path)
