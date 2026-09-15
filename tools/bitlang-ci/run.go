@@ -27,9 +27,12 @@ func Run(root string, out io.Writer, errOut io.Writer) int {
 
 	checks := []commandCheck{
 		{name: "go-rule-checker", cmd: "go", args: []string{"run", "./tools/go-rule-checker/cmd/go-rule-checker", "."}},
+		{name: "documentation pairs", cmd: "go", args: []string{"run", "./tools/doc-pair-checker/cmd/doc-pair-checker"}},
+		{name: "go mod tidy", cmd: "go", args: []string{"mod", "tidy", "-diff"}},
 		{name: "go vet", cmd: "go", args: []string{"vet", "./..."}},
 		{name: "go test", cmd: "go", args: []string{"test", "./..."}},
 		{name: "go test shuffled/repeated", cmd: "go", args: []string{"test", "-shuffle=on", "-count=3", "./..."}},
+		{name: "go build packages", cmd: "go", args: []string{"build", "./..."}},
 		{name: "git diff check", cmd: "git", args: []string{"diff", "--check"}},
 	}
 
