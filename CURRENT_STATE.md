@@ -1,6 +1,8 @@
 # Bitlang Current State
 
-Compact implementation snapshot for AI-assisted work.
+English | [日本語](CURRENT_STATE.ja.md)
+
+Compact implementation snapshot for AI-assisted and contributor work.
 
 ## Implemented
 - Go bootstrap module and CUI entrypoint
@@ -13,6 +15,7 @@ Compact implementation snapshot for AI-assisted work.
 - name responsibilities split into canonical name / symbol / duplicate error / symbol table files
 - Go implementation coding rules and responsibility registry
 - `go-rule-checker` with compact findings, file/function size checks, and ignore support
+- project-owned `bitlang-ci` validation gate
 - AI context entrypoint, change routing, and validation routing
 
 ## Current Pipeline
