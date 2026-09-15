@@ -1,5 +1,7 @@
 # Repository Security Settings
 
+English | [日本語](SECURITY_SETTINGS.ja.md)
+
 This file records GitHub-side security settings that cannot be enforced only by files in the repository.
 
 The repository owner should keep the following enabled where GitHub provides the feature for this public repository:
