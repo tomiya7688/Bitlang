@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"fmt"
 	"io"
-	"os"
 	"os/exec"
 	"path"
 	"path/filepath"
@@ -52,10 +51,10 @@ func Run(root string, baseRef string, out io.Writer, errOut io.Writer) int {
 }
 
 func validateDocumentationPair(root string, pair documentationPair, changedFiles map[string]struct{}, errOut io.Writer) bool {
-	english, englishErr := os.ReadFile(filepath.Join(root, filepath.FromSlash(pair.englishPath)))
-	japanese, japaneseErr := os.ReadFile(filepath.Join(root, filepath.FromSlash(pair.japanesePath)))
+	english, englishErr := readRegisteredDocumentation(root, pair.englishPath)
+	japanese, japaneseErr := readRegisteredDocumentation(root, pair.japanesePath)
 	if englishErr != nil || japaneseErr != nil {
-		fmt.Fprintf(errOut, "FAIL doc-pairs: missing pair %s <-> %s\n", pair.englishPath, pair.japanesePath)
+		fmt.Fprintf(errOut, "FAIL doc-pairs: invalid pair %s <-> %s: English=%v Japanese=%v\n", pair.englishPath, pair.japanesePath, englishErr, japaneseErr)
 		return false
 	}
 
@@ -85,7 +84,11 @@ func loadChangedFiles(root string, baseRef string) (map[string]struct{}, error) 
 	if strings.TrimSpace(baseRef) == "" {
 		return nil, nil
 	}
+	if err := validateBaseCommit(baseRef); err != nil {
+		return nil, err
+	}
 
+	// #nosec G204 -- baseRef is validated as a full hexadecimal commit object ID and no shell is involved.
 	command := exec.Command("git", "diff", "--name-only", baseRef+"...HEAD", "--")
 	command.Dir = root
 	output, err := command.CombinedOutput()
