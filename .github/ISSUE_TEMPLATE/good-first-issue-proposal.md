@@ -1,6 +1,6 @@
 ---
 name: Good first issue proposal / 初心者向けIssue候補
-ndescription: Propose a small, bounded contributor task / 小さく範囲の明確なコントリビューター向けタスクを提案する
+description: Propose a small, bounded contributor task / 小さく範囲の明確なコントリビューター向けタスクを提案する
 title: "[Good First Issue] "
 labels: []
 assignees: []
