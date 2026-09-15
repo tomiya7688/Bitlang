@@ -129,4 +129,4 @@ jobs:
           cache: true
 
       - name: Cross build Bitlang CLI
-        run: go build -trimpath ./cmd/bitlang
+        run: go build -trimpath -o "$RUNNER_TEMP/bitlang-${GOOS}-${GOARCH}" ./cmd/bitlang
