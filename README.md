@@ -54,6 +54,12 @@ String and character literal contents are not canonicalized. Identifier canonica
 
 Unicode identifier normalization/case-folding is intentionally not part of the language contract yet. The current implementation uses Go's standard-library lowercase mapping as a temporary deterministic baseline.
 
+## Contributing
+
+Contributors are welcome. You do not need to understand the entire compiler to participate: implementation fixes, tests, documentation, tooling, specification review, and bug reports are all useful.
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md), or browse issues labeled [good first issue](https://github.com/tomiya7688/Bitlang/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22).
+
 ## Build
 
 Native executable:
