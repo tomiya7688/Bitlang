@@ -12,9 +12,8 @@ import (
 )
 
 type commandCheck struct {
-	name string
-	cmd  string
-	args []string
+	name    string
+	command *exec.Cmd
 }
 
 // Run executes the strict local CI gate used by developers and GitHub Actions.
@@ -26,14 +25,14 @@ func Run(root string, out io.Writer, errOut io.Writer) int {
 	}
 
 	checks := []commandCheck{
-		{name: "go-rule-checker", cmd: "go", args: []string{"run", "./tools/go-rule-checker/cmd/go-rule-checker", "."}},
-		{name: "documentation pairs", cmd: "go", args: []string{"run", "./tools/doc-pair-checker/cmd/doc-pair-checker"}},
-		{name: "go mod tidy", cmd: "go", args: []string{"mod", "tidy", "-diff"}},
-		{name: "go vet", cmd: "go", args: []string{"vet", "./..."}},
-		{name: "go test", cmd: "go", args: []string{"test", "./..."}},
-		{name: "go test shuffled/repeated", cmd: "go", args: []string{"test", "-shuffle=on", "-count=3", "./..."}},
-		{name: "go build packages", cmd: "go", args: []string{"build", "./..."}},
-		{name: "git diff check", cmd: "git", args: []string{"diff", "--check"}},
+		{name: "go-rule-checker", command: exec.Command("go", "run", "./tools/go-rule-checker/cmd/go-rule-checker", ".")},
+		{name: "documentation pairs", command: exec.Command("go", "run", "./tools/doc-pair-checker/cmd/doc-pair-checker")},
+		{name: "go mod tidy", command: exec.Command("go", "mod", "tidy", "-diff")},
+		{name: "go vet", command: exec.Command("go", "vet", "./...")},
+		{name: "go test", command: exec.Command("go", "test", "./...")},
+		{name: "go test shuffled/repeated", command: exec.Command("go", "test", "-shuffle=on", "-count=3", "./...")},
+		{name: "go build packages", command: exec.Command("go", "build", "./...")},
+		{name: "git diff check", command: exec.Command("git", "diff", "--check")},
 	}
 
 	for _, check := range checks {
@@ -77,11 +76,10 @@ func runFormatCheck(root string, out io.Writer, errOut io.Writer) bool {
 
 func runCommand(root string, check commandCheck, out io.Writer, errOut io.Writer) bool {
 	fmt.Fprintf(out, "==> %s\n", check.name)
-	command := exec.Command(check.cmd, check.args...)
-	command.Dir = root
-	command.Stdout = out
-	command.Stderr = errOut
-	if err := command.Run(); err != nil {
+	check.command.Dir = root
+	check.command.Stdout = out
+	check.command.Stderr = errOut
+	if err := check.command.Run(); err != nil {
 		fmt.Fprintf(errOut, "FAIL %s: %v\n", check.name, err)
 		return false
 	}
@@ -101,9 +99,7 @@ func runBuildCheck(root string, out io.Writer, errOut io.Writer) bool {
 	if runtime.GOOS == "windows" {
 		output += ".exe"
 	}
-	return runCommand(root, commandCheck{
-		name: "go build",
-		cmd:  "go",
-		args: []string{"build", "-o", output, "./cmd/bitlang"},
-	}, out, errOut)
+	// #nosec G204 -- output is generated inside a process-owned temporary directory; executable and other arguments are constants.
+	command := exec.Command("go", "build", "-o", output, "./cmd/bitlang")
+	return runCommand(root, commandCheck{name: "go build", command: command}, out, errOut)
 }
