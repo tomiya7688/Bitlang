@@ -8,8 +8,7 @@ on:
   merge_group:
   workflow_dispatch:
 
-permissions:
-  contents: read
+permissions: {}
 
 concurrency:
   group: strict-ci-${{ github.workflow }}-${{ github.ref }}
@@ -19,6 +18,8 @@ jobs:
   bitlang-ci:
     name: Bitlang CI (${{ matrix.os }})
     timeout-minutes: 20
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -29,10 +30,12 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Go
-        uses: actions/setup-go@v7
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
           cache: true
@@ -44,32 +47,41 @@ jobs:
     name: Documentation language sync
     if: github.event_name == 'pull_request'
     timeout-minutes: 10
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout history
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Setup Go
-        uses: actions/setup-go@v7
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
           cache: true
 
       - name: Check paired documentation changes
-        run: go run ./tools/doc-pair-checker/cmd/doc-pair-checker --base "${{ github.event.pull_request.base.sha }}"
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: go run ./tools/doc-pair-checker/cmd/doc-pair-checker --base "$BASE_SHA"
 
   race:
     name: Race detector
     timeout-minutes: 20
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Go
-        uses: actions/setup-go@v7
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
           cache: true
@@ -80,13 +92,17 @@ jobs:
   coverage:
     name: Coverage smoke
     timeout-minutes: 20
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Go
-        uses: actions/setup-go@v7
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
           cache: true
@@ -97,6 +113,8 @@ jobs:
   cross-build:
     name: Cross build (${{ matrix.goos }}/${{ matrix.goarch }})
     timeout-minutes: 15
+    permissions:
+      contents: read
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -120,10 +138,12 @@ jobs:
       GOARCH: ${{ matrix.goarch }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.1
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Setup Go
-        uses: actions/setup-go@v7
+        uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7
         with:
           go-version-file: go.mod
           cache: true
