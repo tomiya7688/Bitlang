@@ -10,6 +10,7 @@ type finding struct {
 	message string
 }
 
+// String formats one checker finding for compact terminal output.
 func (f finding) String() string {
 	if f.line > 0 {
 		return fmt.Sprintf("%s %s:%d %s %s", f.level, f.path, f.line, f.rule, f.message)

@@ -10,13 +10,13 @@ func TestPipelineRunsInOrder(t *testing.T) {
 			Name:       "preprocessor",
 			InputKind:  ArtifactSource,
 			OutputKind: ArtifactPreprocessed,
-			Transform: func(v any) (any, error) { return v.(string) + "|pre", nil },
+			Transform:  func(v any) (any, error) { return v.(string) + "|pre", nil },
 		},
 		{
 			Name:       "compiler",
 			InputKind:  ArtifactPreprocessed,
 			OutputKind: ArtifactCompiled,
-			Transform: func(v any) (any, error) { return v.(string) + "|compiled", nil },
+			Transform:  func(v any) (any, error) { return v.(string) + "|compiled", nil },
 		},
 	}
 

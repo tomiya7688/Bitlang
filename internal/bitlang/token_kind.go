@@ -7,6 +7,7 @@ package bitlang
 // implementation details.
 type TokenKind string
 
+// Canonical lexical token kinds emitted by the Bitlang lexer.
 const (
 	TokenIdentifier TokenKind = "identifier"
 	TokenNumber     TokenKind = "number"
