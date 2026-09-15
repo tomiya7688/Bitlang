@@ -6,6 +6,7 @@ import (
 )
 
 func checkFileSize(path string) ([]finding, error) {
+	// #nosec G304 -- path is an explicitly selected or WalkDir-discovered Go source; collection rejects symlink targets before inspection.
 	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
