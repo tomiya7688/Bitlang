@@ -102,6 +102,12 @@ go run ./tools/bitlang-ci/cmd/bitlang-ci
 ./bitlang canonicalize MyVariable MYVARIABLE myvariable
 ```
 
+## セキュリティ
+
+セキュリティ上重要な報告は [SECURITY.ja.md](SECURITY.ja.md)（[English](SECURITY.md)）に従ってください。exploit の詳細、credential、機密性のある再現情報を公開 Issue に書かないでください。
+
+リポジトリでは通常の Strict CI とは別に Security CI を実行し、CodeQL、到達可能な Go 脆弱性、Go の静的 security analysis、secret leak、dependency 変更、GitHub Actions の supply-chain risk を検査します。
+
 ## ライセンス
 
 このリポジトリで管理される Bitlang および Bitlang 関連資産は、明示的に別記されない限り [MIT License](LICENSE) で提供されます。
