@@ -42,10 +42,18 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `tools/go-rule-checker/file_size.go` | Check file size limits. |
 | `tools/go-rule-checker/main_file.go` | Check startup-only `main.go` structure. |
 | `tools/go-rule-checker/ignore.go` | Load and apply checker ignore rules. |
+| `tools/go-rule-checker/generated.go` | Detect generated Go source. |
+| `tools/go-rule-checker/import_check.go` | Check forbidden architecture-layer imports. |
+| `tools/go-rule-checker/role_check.go` | Check Commander and Messenger dependency responsibilities. |
+| `tools/go-rule-checker/responsibility_table.go` | Parse Go entries from the file responsibility table. |
+| `tools/go-rule-checker/responsibility_check.go` | Compare Go files with registered responsibilities. |
+| `tools/go-rule-checker/generated_test.go` | Verify generated-source detection. |
+| `tools/go-rule-checker/import_check_test.go` | Verify architecture-layer classification. |
+| `tools/go-rule-checker/role_check_test.go` | Verify architecture-role classification. |
 | `tools/go-rule-checker/README.md` | Document checker usage. |
 | `tools/go-rule-checker/IGNORE_FORMAT.md` | Document ignore configuration syntax. |
 
-Tests under `tools/go-rule-checker/*_test.go` verify the matching checker responsibility.
+Other tests under `tools/go-rule-checker/*_test.go` verify the matching checker responsibility.
 
 ## Bitlang CI
 
