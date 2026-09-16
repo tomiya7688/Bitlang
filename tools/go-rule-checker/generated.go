@@ -16,7 +16,7 @@ func isGeneratedFile(path string) (bool, error) {
 	scanner := bufio.NewScanner(file)
 	for line := 0; line < 20 && scanner.Scan(); line++ {
 		text := scanner.Text()
-		if strings.Contains(text, "Code generated") && strings.Contains(text, "DO NOT EDIT.") {
+		if strings.HasPrefix(text, "// Code generated ") && strings.HasSuffix(text, " DO NOT EDIT.") {
 			return true, nil
 		}
 	}
