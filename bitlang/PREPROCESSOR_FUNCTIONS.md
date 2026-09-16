@@ -18,6 +18,16 @@ The preprocessor-function language should support at least:
 - boolean/logical operators
 - string concatenation and basic string operations
 
+## General-purpose preprocessing computation
+
+The Bitlang preprocessing environment is not intentionally restricted to a non-general macro subset. It supports ordinary syntax decomposition and manipulation together with variables, functions, branching, looping, operators, and other shared Bitlang facilities.
+
+As a result, the preprocessing language is intended to have general-purpose computational capability and, under the ordinary theoretical assumption of sufficient memory and execution resources, is Turing-complete.
+
+The language specification does not forbid programmers from using `@preprocesser` code to implement computations that are unrelated to source generation or transformation. Such use may be unusual and may be inefficient compared with ordinary compiler-domain execution, but it is still valid preprocessing-domain code as long as it obeys the applicable preprocessing rules.
+
+This does not merge the preprocessing and compiler execution domains. General computational capability in the preprocessor does not permit a compiler-domain function body or compiler-only instruction to execute during preprocessing. The distinction between the two domains remains based on execution phase and available operations, not on the computational expressiveness of the syntax.
+
 ## Execution domains and shared syntax
 
 Bitlang source has two execution domains:
