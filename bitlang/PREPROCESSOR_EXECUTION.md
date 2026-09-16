@@ -1,0 +1,124 @@
+# Bitlang Preprocessor Execution and Activation
+
+This document defines the source-facing execution order, declaration timing, reuse rules, and activation ranges of Bitlang preprocessor functions.
+
+It is the authoritative specification for these subjects. If a shorter summary elsewhere differs from this document, this document takes precedence.
+
+## General model
+
+Bitlang preprocessing proceeds while the preprocessor reads and analyzes Bitlang source structures.
+
+Preprocessor functions are ordinary reusable functions in the preprocessing execution domain. They are not restricted to one-shot macro expansion.
+
+A preprocessor function may be declared in an applicable declaration field/scope and then reused wherever that declaration is visible according to the normal preprocessing visibility rules.
+
+The preprocessor normally executes applicable preprocessing behavior as the corresponding source structure is read.
+
+## Activation ranges
+
+A preprocessor function may be associated with an explicit start point and an explicit end point by referring to the preprocessor function together with start/end activation markers.
+
+The start marker establishes the point from which that preprocessor function applies.
+
+The end marker establishes the point after which that preprocessor function no longer applies.
+
+Conceptually:
+
+```text
+Preprocess_function + start
+    ... source affected by Preprocess_function ...
+Preprocess_function + end
+```
+
+The exact surface spelling of the start/end markers is specified separately. The semantic requirement is that the markers identify the preprocessor function and delimit its active source range.
+
+Because the target is a function, the same declared preprocessor function may be activated more than once in different declaration fields or source ranges where it is visible.
+
+## Default execution order
+
+Unless an explicit preprocessing step, execution-order rule, condition, constraint, or other preprocessing control changes the order, preprocessing follows analyzed source order.
+
+The default model is:
+
+```text
+analyze source structure
+    -> encounter applicable preprocessing declarations/rules
+    -> process them in the order the main source is read
+```
+
+Therefore ordinary textual/structural read order is the default sequencing rule, not an unspecified scheduler.
+
+Explicit preprocessing-step definitions or execution constraints may override this default. Such overrides must be represented explicitly rather than silently changing the order.
+
+## Declaration position and read timing
+
+The declaration position determines when a preprocessor declaration becomes visible to the preprocessing walk.
+
+### Outside a class declaration
+
+A preprocessor declaration outside a class is read when that file is read.
+
+Its declaration therefore enters preprocessing at the file-reading stage corresponding to its source position, subject to any explicit preprocessing-step or ordering rule.
+
+### Inside a class declaration
+
+A preprocessor declaration inside a class is read when that class is read.
+
+Class-local preprocessing declarations are read at the beginning of preprocessing that class so that they are available while the class body is subsequently preprocessed.
+
+This does not make them runtime class members. They remain preprocessing-domain declarations.
+
+### Inside a function declaration
+
+A preprocessor declaration inside a function is read when that function is read/analyzed.
+
+However, its execution follows the preprocessing walk through that function body. The function body is preprocessed from top to bottom, and preprocessing behavior executes when the walk reaches the corresponding applicable point.
+
+Conceptually:
+
+```text
+read function declaration
+    -> discover function-local preprocessing declarations
+    -> preprocess function body from top to bottom
+    -> execute applicable preprocessing behavior as its point is reached
+```
+
+Thus "the declaration is known when the function is read" and "its preprocessing effect executes at its source position while the function body is walked" are distinct rules.
+
+## Reuse
+
+Preprocessor functions are functions and may be reused within declaration fields/scopes where they are visible.
+
+Reusing a preprocessor function does not duplicate its declaration. Multiple activation ranges, calls, or preprocessing applications may refer to the same function declaration.
+
+Normal function arguments and preprocessing-visible values may be used to parameterize reusable preprocessing behavior where the function signature permits it.
+
+## Relationship to ordinary calls
+
+Preprocessor functions use ordinary Bitlang function-call syntax when called directly.
+
+Activation markers are different from an ordinary call: they establish an application range for preprocessing behavior rather than merely performing a single immediate call expression.
+
+A directly called preprocessor function executes as a preprocessing-domain function at that point in the preprocessing walk.
+
+A range-activated preprocessor function applies according to its defined preprocessing behavior while its activation range remains active.
+
+## Explicit ordering and conditions
+
+Bitlang may provide separate mechanisms for:
+
+- named preprocessing steps;
+- explicit execution ordering;
+- execution conditions;
+- activation constraints;
+- dependency constraints between preprocessing operations.
+
+When none of those mechanisms are specified, source read order remains the default.
+
+These controls do not change the source meaning of `@preprocesser`; they only control when an otherwise valid preprocessing operation is applied.
+
+## Preprocessed boundary
+
+Activation markers, preprocessing execution-order controls, preprocessing function declarations that exist only for preprocessing, and other preprocessing-only scheduling information are consumed before Bitlang Preprocessed is emitted.
+
+Only the resulting transformed and normalized Bitlang program proceeds to Bitlang Preprocessed.
