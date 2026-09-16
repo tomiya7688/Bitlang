@@ -27,7 +27,7 @@ func Run(paths []string, out io.Writer) (int, error) {
 		}
 		findings = append(findings, fileFindings...)
 	}
-	responsibilityFindings, err := checkResponsibilities(files)
+	responsibilityFindings, err := checkResponsibilities(files, isFullRepositoryCheck(paths))
 	if err != nil {
 		return 0, err
 	}
