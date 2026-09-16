@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"path"
 	"path/filepath"
 	"strings"
 )
@@ -65,13 +66,13 @@ func (c ignoreConfig) ignores(item finding) bool {
 	return false
 }
 
-func matchIgnorePath(pattern string, path string) bool {
-	cleanPattern := filepath.ToSlash(filepath.Clean(pattern))
-	cleanPath := filepath.ToSlash(filepath.Clean(path))
+func matchIgnorePath(pattern string, filePath string) bool {
+	cleanPattern := path.Clean(filepath.ToSlash(pattern))
+	cleanPath := path.Clean(filepath.ToSlash(filePath))
 	if strings.HasSuffix(cleanPattern, "/**") {
 		prefix := strings.TrimSuffix(cleanPattern, "**")
 		return strings.HasPrefix(cleanPath, prefix)
 	}
-	matched, _ := filepath.Match(cleanPattern, cleanPath)
+	matched, _ := path.Match(cleanPattern, cleanPath)
 	return matched
 }
