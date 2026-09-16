@@ -50,6 +50,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `tools/go-rule-checker/generated_test.go` | Verify generated-source detection. |
 | `tools/go-rule-checker/import_check_test.go` | Verify architecture-layer classification. |
 | `tools/go-rule-checker/role_check_test.go` | Verify architecture-role classification. |
+| `tools/go-rule-checker/responsibility_check_test.go` | Verify responsibility path and scan-scope handling. |
 | `tools/go-rule-checker/README.md` | Document checker usage. |
 | `tools/go-rule-checker/IGNORE_FORMAT.md` | Document ignore configuration syntax. |
 
