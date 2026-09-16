@@ -18,7 +18,8 @@ A Bitlang header file may contain:
 
 - ordinary header information;
 - `@preprocesser` functions;
-- preprocessor macros.
+- preprocessor macros;
+- preprocessing `export` declarations/directives.
 
 Header files therefore belong to the source/preprocessing side of the Bitlang toolchain.
 
@@ -54,11 +55,43 @@ Importing a header makes its applicable header information, preprocessor functio
 
 The exact import syntax and conflict-resolution rules are specified separately.
 
+## Header export
+
+Bitlang also provides an `export` concept for preprocessing definitions.
+
+This `export` is a **header-file-only source feature**. Ordinary Bitlang source files do not use this form of `export` to publish runtime/compiler declarations.
+
+Its purpose is to make preprocessing definitions from a header available at project scope rather than requiring every source file to import the header individually.
+
+Conceptually:
+
+```text
+header file
+    -> export preprocessing macro/function/definition
+    -> available to preprocessing across the project
+```
+
+An exported preprocessing definition may therefore be used by applicable files, classes, functions, or other source structures throughout the project according to the normal preprocessing visibility, activation, ordering, and conflict rules.
+
+`import` and header `export` solve opposite distribution problems:
+
+```text
+import
+    -> one source location explicitly brings a header into its preprocessing context
+
+header export
+    -> a header exposes preprocessing definitions to the project-wide preprocessing context
+```
+
+Header export does not turn a preprocessor function into compiler/runtime code and does not create a runtime module export. It only affects preprocessing availability.
+
+The exact surface syntax for exporting one definition, several definitions, or an entire header is specified separately. Likewise, conflict handling and explicit project-level restrictions may further constrain exported definitions.
+
 ## Preprocessed boundary
 
 Header files are preprocessing-only artifacts.
 
-They do **not** become mandatory explicit structures in Bitlang Preprocessed. The opposite rule applies: header-only information, preprocessor functions, preprocessor macros, and header association metadata are consumed during preprocessing and disappear before Bitlang Preprocessed is emitted.
+They do **not** become mandatory explicit structures in Bitlang Preprocessed. The opposite rule applies: header-only information, preprocessor functions, preprocessor macros, header association metadata, and header `export` controls are consumed during preprocessing and disappear before Bitlang Preprocessed is emitted.
 
 Only their resolved effects on the program may remain.
 
@@ -66,9 +99,9 @@ Conceptually:
 
 ```text
 Bitlang source
-+ optional imported header files
++ optional imported/exported header preprocessing definitions
         -> preprocessing
-        -> header metadata/macros/preprocesser functions are consumed
+        -> header metadata/macros/preprocesser functions/export controls are consumed
         -> resulting normalized program
         -> Bitlang Preprocessed
 ```
@@ -85,6 +118,8 @@ This document does not yet define:
 - the exact syntax and vocabulary of header information;
 - the exact syntax for associating a header with a class/module/declaration;
 - the exact source import syntax;
+- the exact header export syntax;
+- whether export applies to selected definitions or an entire header by shorthand;
 - duplicate/conflicting header handling;
 - ordering rules when several header files apply.
 
