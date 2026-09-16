@@ -33,6 +33,7 @@ The Bitlang repository should therefore explain **what source code means and how
 - [RELEASE_PROPERTIES.md](RELEASE_PROPERTIES.md) — source-facing release/disposal controls
 - [BORROW_STATE_PREPROCESSOR.md](BORROW_STATE_PREPROCESSOR.md) — preprocessing of borrow state
 - [PREPROCESSOR_FUNCTIONS.md](PREPROCESSOR_FUNCTIONS.md) — preprocessor-function model
+- [PREPROCESSOR_EXECUTION.md](PREPROCESSOR_EXECUTION.md) — preprocessing execution order, declaration timing, reuse, and start/end activation ranges
 - [HEADER_FILES.md](HEADER_FILES.md) — header information, preprocessor functions, and preprocessor macros in header files
 
 ## Canonical Preprocessed specifications
