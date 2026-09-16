@@ -11,6 +11,8 @@ It checks mechanically enforceable parts of `GO_CODING_RULES.md`. It does not de
 - `SIZE`: functions over 80/120 lines
 - `FILESIZE`: files over 400/600 lines
 - `MAIN`: functions other than `main` inside `main.go`
+- generated Go files with the standard `Code generated ... DO NOT EDIT.` marker are skipped
+- external source directories such as `vendor` are skipped during discovery
 
 ## Usage
 
