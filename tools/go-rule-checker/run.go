@@ -25,12 +25,21 @@ func Run(paths []string, out io.Writer) (int, error) {
 		if err != nil {
 			return 0, err
 		}
-		for _, item := range fileFindings {
-			if !config.ignores(item) {
-				findings = append(findings, item)
-			}
+		findings = append(findings, fileFindings...)
+	}
+	responsibilityFindings, err := checkResponsibilities(files)
+	if err != nil {
+		return 0, err
+	}
+	findings = append(findings, responsibilityFindings...)
+
+	filtered := findings[:0]
+	for _, item := range findings {
+		if !config.ignores(item) {
+			filtered = append(filtered, item)
 		}
 	}
+	findings = filtered
 	sort.Slice(findings, func(i, j int) bool {
 		if findings[i].path != findings[j].path {
 			return findings[i].path < findings[j].path
