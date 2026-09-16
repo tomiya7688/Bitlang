@@ -1,66 +1,123 @@
 # Bitlang Properties
 
-Bitlang expresses complex declaration semantics through independent properties wherever practical. These properties may be inspected and transformed by preprocessor functions before canonical Bitlang preprocessed output is produced.
+Bitlang source exposes semantic properties so programmers and preprocessor functions can control program meaning explicitly when needed, while still allowing source code to omit properties that the preprocessor can resolve safely.
 
-## Visibility properties
+The **canonical fully explicit property model is owned by `tomiya7688/Bitlang_preprocessed`**. This document defines the Bitlang source-facing role of those properties and how they participate in preprocessing.
 
-Visibility is separated into independent axes rather than represented by one broad modifier.
+Canonical property specification:
 
-### Scope visibility
+- https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/PROPERTIES.ja.md
+- borrow-state details: https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/BORROW_STATE.ja.md
 
-```text
-Public
-Private
-```
+## Source-facing principle
 
-`Public` means the declaration is visible from the enclosing visibility domain defined for that declaration kind.
+Bitlang is human-writable. A declaration may explicitly state semantic properties, or may omit properties when the preprocessor can resolve them from type, declaration kind, lexical context, ownership, lifetime, configuration, defaults, control flow, or explicit preprocessing rules.
 
-`Private` means access is restricted to its defining scope or owning declaration according to the applicable scope rules.
+Before Bitlang Preprocessed is emitted, every applicable semantic axis must be resolved to its final explicit state.
 
-### Inheritance visibility
+Therefore the source layer and Preprocessed layer have different responsibilities:
 
 ```text
-Protected
-Unprotected
+Bitlang source
+    explicit properties + omitted/inferred properties + preprocessing rules
+        -> preprocess / normalize
+Bitlang Preprocessed
+    fully resolved explicit property state
 ```
 
-`Protected` grants the declaration the inheritance-related access defined by the language.
+## Property vocabulary available to Bitlang source
 
-`Unprotected` means no such inheritance-specific access is granted.
+Bitlang source may use the same semantic vocabulary that is normalized into Bitlang Preprocessed, including the following independent axes.
 
-This axis is independent from `Public` / `Private`.
-
-### Module export visibility
+### Visibility
 
 ```text
-Exported
-Unexported
+Public / Private
+Protected / Unprotected
+Exported / Unexported
 ```
 
-`Exported` means the declaration is exposed outside its defining module through the module export boundary.
+Scope visibility, inheritance visibility, and module export visibility are separate concerns.
 
-`Unexported` means it is not exposed outside that module.
-
-Module export is independent from ordinary scope visibility. A declaration can therefore be public within a module while remaining unexported from that module.
-
-## Composition
-
-Visibility properties compose with the other independent Bitlang properties, including:
+### Access and reassignment
 
 ```text
 Readable / Unreadable
 Writeable / Unwriteable
 Reassignable / Unreassignable
+```
+
+Bitlang does not collapse these into a single broad `mutable / immutable` category. A binding may, for example, be unreassignable while the referenced object remains writeable.
+
+### Ownership and borrow
+
+```text
 Owned / Borrowed
+Unborrowed / Shared_borrowed / Exclusive_borrowed
+```
+
+Ownership responsibility and current borrow state are separate axes.
+
+### Copy and move
+
+```text
+Copyable / Uncopyable
+Movable / Unmovable
+Unmoved / Moved
+```
+
+Capability and current move state are separate.
+
+### Release / disposal
+
+```text
+Auto_release / Manual_release
+Releasable / Unreleasable
+Unreleased / Released
+```
+
+Release policy, release capability, and current release state are separate.
+
+### Initialization and nullability
+
+```text
 Initialized / Uninitialized
-Nullable / Nonnullable
+nullable / unnullable
 Optional / Required
 ```
 
-For example, a local declaration may preprocess into a form conceptually similar to:
+Nullability is not represented by an omitted default at the Preprocessed boundary. Source syntax may be compact, but preprocessing resolves the final state explicitly.
+
+### Lifetime
 
 ```text
-Private Unprotected Unexported Readable Writeable Reassignable Initialized Nonnullable Required Int10x32 a = 4
+Local_lifetime
+Function_lifetime
+Object_lifetime
+Module_lifetime
+Static_lifetime
 ```
 
-The exact set of properties emitted depends on which property axes are meaningful for that declaration kind.
+The source may state lifetime directly or leave it for preprocessing where the applicable lifetime is mechanically resolvable.
+
+### Const
+
+```text
+Const / Unconst
+```
+
+`Const` is stronger than only making one access path unwritable or unreassignable; it represents a strongly fixed semantic value.
+
+## Preprocessor behavior
+
+Preprocessor functions may inspect, add, remove, or rewrite source properties before canonical output is finalized.
+
+An ordinary inferred value may fill an omitted source property. A rewrite that deliberately weakens or changes already-resolved semantics is a semantic override and may require diagnostics.
+
+Examples include changing borrow state, move state, release state, ownership-related properties, or other restrictions. A dangerous state that cannot be proven invalid may produce a warning; a provably invalid final state must be rejected.
+
+## Stage boundary
+
+This repository defines **how Bitlang source expresses or omits these properties and how preprocessing is allowed to resolve them**.
+
+The exact canonical property set, required explicitness, final state vocabulary, and cross-property consistency rules belong to the separate Bitlang Preprocessed specification. Later compiler stages must consume that resolved representation rather than reconstructing source omissions.
