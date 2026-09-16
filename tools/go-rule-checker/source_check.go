@@ -7,6 +7,14 @@ import (
 )
 
 func inspectFile(path string) ([]finding, error) {
+	generated, err := isGeneratedFile(path)
+	if err != nil {
+		return nil, err
+	}
+	if generated {
+		return nil, nil
+	}
+
 	fileFindings, err := checkFileSize(path)
 	if err != nil {
 		return nil, err
