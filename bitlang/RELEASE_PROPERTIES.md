@@ -1,8 +1,14 @@
 # Bitlang Release and Disposal Properties
 
-Release behavior and release capability are independent semantic property axes.
+This document defines how **Bitlang source** expresses and preprocesses release/disposal semantics.
 
-## Properties
+The canonical fully explicit release-property model belongs to Bitlang Preprocessed:
+
+- https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/PROPERTIES.ja.md
+
+## Source properties
+
+Release behavior and release capability are independent semantic axes.
 
 ```text
 Auto_release
@@ -11,7 +17,7 @@ Releasable
 Unreleasable
 ```
 
-- `Auto_release`: required release/finalization may be performed automatically when the resolved lifetime ends, according to the applicable storage model.
+- `Auto_release`: source semantics allow required release/finalization to be performed automatically when the resolved lifetime ends, according to the applicable storage model.
 - `Manual_release`: automatic release must not be assumed; an explicit valid release operation is required when the resource requires release.
 - `Releasable`: release/finalization may be performed through that declaration or access path.
 - `Unreleasable`: that declaration or access path may not release or finalize the resource.
@@ -27,6 +33,10 @@ Owned Manual_release Releasable Ptr<My_type>
 Borrowed Unreleasable Ref<My_type>
 ```
 
+## Omission and preprocessing
+
 Source-facing Bitlang may state these properties explicitly or omit them. When omitted, preprocessing resolves them from ownership, type, storage model, lifetime, context, and explicit preprocessing rules.
 
 Invalid property combinations must be rejected rather than silently changing ownership or release semantics.
+
+The current release state itself (`Unreleased / Released`) is also resolved before canonical output, but the exact required Preprocessed representation and its cross-property consistency rules are defined in the separate Bitlang Preprocessed specification.
