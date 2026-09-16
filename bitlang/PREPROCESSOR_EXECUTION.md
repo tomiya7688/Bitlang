@@ -32,6 +32,17 @@ Preprocess_function + end
 
 The exact surface spelling of the start/end markers is specified separately. The semantic requirement is that the markers identify the preprocessor function and delimit its active source range.
 
+If an explicit end marker is omitted, the activation range ends automatically at the end of the declaration field that contains the start point. The activation does not implicitly escape into an enclosing or following field.
+
+Examples of the default boundary are:
+
+- a start point in a function field applies through the remainder of that function field;
+- a start point in a class field applies through the remainder of that class field;
+- a start point at file-level applies through the remainder of that file-level field;
+- a start point in another lexical/declaration field applies through the end of that field.
+
+An explicit end marker may terminate the activation earlier than that default field boundary.
+
 Because the target is a function, the same declared preprocessor function may be activated more than once in different declaration fields or source ranges where it is visible.
 
 ## Default execution order
