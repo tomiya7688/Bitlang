@@ -4,6 +4,14 @@ Bitlang supports optional header files as source-level preprocessing support fil
 
 A header file is not a required companion to a source file and is not required to share the source file's name. Its relationship to a source declaration, class, module, or other target is determined by the header information itself rather than by filename matching.
 
+## Primary purpose
+
+The primary practical purpose of a Bitlang header file is to provide a reusable place for **preprocessor macros** and related preprocessing definitions.
+
+Header information and `@preprocesser` functions are supported, but a header file should not be treated as the canonical declaration of a class, module, interface, or runtime program structure. In normal use it is closer to a reusable preprocessing-definition file than to a mandatory declaration contract.
+
+This means a header file may exist solely to collect macros and preprocessing helpers for import by ordinary Bitlang source.
+
 ## Allowed contents
 
 A Bitlang header file may contain:
