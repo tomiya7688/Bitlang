@@ -1,30 +1,45 @@
-# Nullable and Optional
+# Nullable and Optional in Bitlang source
 
-`Nullable<T>` and `Optional<T>` are distinct Bitlang types.
+This document defines **source-facing Bitlang** nullable and optional forms.
 
-- `Nullable<T>`: a value of type `T` may also be `null`.
-- `Optional<T>`: explicit presence or absence of a value is represented by the type itself.
+The canonical final nullability/optionality properties emitted after preprocessing are owned by Bitlang Preprocessed:
 
-`T`, `Nullable<T>`, and `Optional<T>` are different types.
+- https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/PROPERTIES.ja.md
 
-Values of different types cannot participate directly in arithmetic, comparison, assignment requiring exact compatibility, or other type-sensitive operations. They must first be converted, unwrapped, or otherwise made type-compatible.
+## Source forms
 
-For example:
+Bitlang source distinguishes:
 
 ```text
-Int10x32
-Nullable<Int10x32>
-Optional<Int10x32>
+T
+Nullable<T>
+Optional<T>
 ```
 
-are three different types.
+- `Nullable<T>`: source notation expressing that a value of `T` may also be `null`.
+- `Optional<T>`: source notation expressing explicit presence or absence of a value.
 
-`Nullable<T>` and `Optional<T>` are not implicitly interchangeable.
+They are not implicitly interchangeable in source semantics. Operations requiring exact compatibility must first convert, unwrap, or otherwise establish compatible semantics.
 
-Nested forms such as:
+Nested source forms such as:
 
 ```text
 Optional<Nullable<T>>
 ```
 
-are allowed when that distinction is semantically intended.
+are allowed when both distinctions are semantically intended.
+
+## Preprocessing boundary
+
+Source syntax is not the authority for the final canonical property serialization.
+
+Before Bitlang Preprocessed is emitted, preprocessing resolves the applicable state explicitly. In particular, nullability becomes the explicit canonical property pair:
+
+```text
+nullable
+unnullable
+```
+
+and cannot remain unspecified at the Preprocessed boundary when nullability is applicable.
+
+Optionality is likewise resolved into the canonical representation defined by Bitlang Preprocessed. The source notation remains documented here because it is part of what a Bitlang programmer may write; the fully normalized representation is documented in the separate Preprocessed repository.
