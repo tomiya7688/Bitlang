@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func checkResponsibilities(files []string) ([]finding, error) {
+func checkResponsibilities(files []string, fullRepository bool) ([]finding, error) {
 	records, err := loadResponsibilityTable("FILE_RESPONSIBILITIES.md")
 	if os.IsNotExist(err) {
 		return nil, nil
@@ -17,7 +17,7 @@ func checkResponsibilities(files []string) ([]finding, error) {
 
 	actual := make(map[string]bool)
 	for _, file := range files {
-		actual[filepath.ToSlash(strings.TrimPrefix(filepath.Clean(file), "./"))] = true
+		actual[normalizeResponsibilityPath(file)] = true
 	}
 	registered := make(map[string]bool)
 	var findings []finding
@@ -26,7 +26,7 @@ func checkResponsibilities(files []string) ([]finding, error) {
 		if len(record.responsibility) > 180 {
 			findings = append(findings, finding{level: "W", rule: "RESP", path: record.path, message: "broad responsibility"})
 		}
-		if !actual[record.path] {
+		if fullRepository && !actual[record.path] {
 			if _, statErr := os.Stat(record.path); os.IsNotExist(statErr) {
 				findings = append(findings, finding{level: "W", rule: "RESP", path: record.path, message: "stale entry"})
 			}
@@ -38,4 +38,12 @@ func checkResponsibilities(files []string) ([]finding, error) {
 		}
 	}
 	return findings, nil
+}
+
+func normalizeResponsibilityPath(file string) string {
+	return filepath.ToSlash(strings.TrimPrefix(filepath.Clean(file), "./"))
+}
+
+func isFullRepositoryCheck(paths []string) bool {
+	return len(paths) == 1 && filepath.Clean(paths[0]) == "."
 }
