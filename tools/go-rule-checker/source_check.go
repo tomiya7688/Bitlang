@@ -30,6 +30,7 @@ func inspectFile(path string) ([]finding, error) {
 	findings = append(findings, checkDocumentation(fileSet, parsed, path)...)
 	findings = append(findings, checkFunctionSizes(fileSet, parsed, path)...)
 	findings = append(findings, checkMainFile(fileSet, parsed, path)...)
+	findings = append(findings, checkImports(fileSet, parsed, path)...)
 	return findings, nil
 }
 
