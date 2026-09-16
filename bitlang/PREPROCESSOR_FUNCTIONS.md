@@ -18,6 +18,72 @@ The preprocessor-function language should support at least:
 - boolean/logical operators
 - string concatenation and basic string operations
 
+## Execution domains and shared syntax
+
+Bitlang source has two execution domains:
+
+```text
+@compiler
+@preprocesser
+```
+
+Ordinary declarations belong to the `@compiler` domain by default. `@compiler` may be written explicitly, but is normally unnecessary.
+
+A declaration marked with `@preprocesser` belongs to the preprocessing domain and is executed by the Bitlang preprocessor rather than becoming an ordinary runtime function.
+
+Conceptually:
+
+```bitlang
+Public void Runtime_function()
+{
+}
+
+@compiler
+Public void Explicit_runtime_function()
+{
+}
+
+@preprocesser
+Public static void Generate_code()
+{
+}
+```
+
+The two domains share the ordinary Bitlang syntax wherever the operation has meaning in both environments. Variable declarations and ordinary value syntax are intentionally common rather than defining a separate variable language for preprocessing.
+
+At minimum, the following language facilities are shared between compiler code and preprocessor code:
+
+- arithmetic and ordinary operators;
+- conditional control flow such as `if` / `else`;
+- loop control such as `for`;
+- type information and type-oriented expressions available to the corresponding environment;
+- `console.log`;
+- ordinary variable declaration and value syntax.
+
+A standard function or built-in may still be domain-specific when its operation only makes sense in one environment. A compiler-only instruction does not become executable merely because its name is referenced from a preprocessor function, and likewise a preprocessing-only operation must not survive as a runtime compiler instruction.
+
+### Calling and referencing compiler functions from preprocessing
+
+Preprocessor code uses ordinary function-call syntax. There is no special call operator solely for invoking a preprocessor function.
+
+A compiler-domain function may also be referenced from preprocessing code and may be treated as a function value. It may therefore be stored in a variable, passed to another preprocessing operation, inspected as program structure, selected as a transformation target, or used while generating compiler-domain Bitlang code.
+
+However, the body of a compiler-domain function is not executed by the preprocessor.
+
+For example, a preprocessor rule may select a compiler function and arrange for a call to that function to exist in generated Bitlang code, or may add a compiler function to files matching some structural condition. This is manipulation of the compiler program, not execution of that runtime function during preprocessing.
+
+The distinction is therefore:
+
+```text
+reference / store / pass / inspect / generate compiler function
+    -> allowed during preprocessing
+
+execute compiler function body during preprocessing
+    -> not allowed
+```
+
+Function identity and function-value handling do not imply cross-domain execution capability.
+
 ## Built-in function groups
 
 Built-ins should cover these groups:
