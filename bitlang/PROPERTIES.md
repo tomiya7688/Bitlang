@@ -1,6 +1,6 @@
 # Bitlang Properties
 
-Bitlang source exposes semantic properties so programmers and preprocessor functions can control program meaning explicitly when needed, while still allowing source code to omit properties that the preprocessor can resolve safely.
+Bitlang source exposes semantic properties so programmers and preprocessor functions can control program meaning explicitly when needed, while still allowing source code to omit or abbreviate properties that the preprocessor can resolve safely.
 
 The **canonical fully explicit property model is owned by `tomiya7688/Bitlang_preprocessed`**. This document defines the Bitlang source-facing role of those properties and how they participate in preprocessing.
 
@@ -11,7 +11,9 @@ Canonical property specification:
 
 ## Source-facing principle
 
-Bitlang is human-writable. A declaration may explicitly state semantic properties, or may omit properties when the preprocessor can resolve them from type, declaration kind, lexical context, ownership, lifetime, configuration, defaults, control flow, or explicit preprocessing rules.
+Bitlang is human-writable. A declaration may explicitly state semantic properties, may omit properties when the preprocessor can resolve them, and may use source-facing shorthand that expands into one or more canonical property axes.
+
+Resolution may use the type, declaration kind, lexical context, ownership, lifetime, module/project configuration, defaults, control flow, explicit preprocessing rules, or another source construct whose semantics are defined to imply a property.
 
 Before Bitlang Preprocessed is emitted, every applicable semantic axis must be resolved to its final explicit state.
 
@@ -19,11 +21,76 @@ Therefore the source layer and Preprocessed layer have different responsibilitie
 
 ```text
 Bitlang source
-    explicit properties + omitted/inferred properties + preprocessing rules
+    explicit properties
+    + omitted/inferred properties
+    + shorthand / aliases / property bundles
+    + type/declaration implications
+    + preprocessing rules
         -> preprocess / normalize
 Bitlang Preprocessed
     fully resolved explicit property state
 ```
+
+## Loose source notation and canonical normalization
+
+Bitlang source is intentionally allowed to be less verbose than Bitlang Preprocessed.
+
+The following are valid source-language design mechanisms:
+
+- omit an applicable property axis when preprocessing can resolve it mechanically;
+- write only the property axes that matter to the programmer and let preprocessing fill the rest;
+- use an alias for a property or a property bundle;
+- use a compact source qualifier that expands into multiple independent canonical properties;
+- let a declaration kind or type imply properties defined by that construct;
+- define module/project preprocessing rules that provide defaults or reusable property bundles;
+- use preprocessor functions to inspect and transform the source property set.
+
+These conveniences exist only on the Bitlang/source side. They must not survive as unresolved shorthand in Bitlang Preprocessed.
+
+For example, a project or language rule may define a concise source qualifier conceptually as:
+
+```text
+Mutable_value
+    -> Readable Writeable Reassignable
+```
+
+or a compact resource profile as:
+
+```text
+Owned_resource
+    -> Owned Unborrowed Movable Unmoved Releasable Unreleased
+```
+
+The names above illustrate the normalization mechanism; concrete built-in aliases are specified separately when adopted. A user-defined or module-defined alias may provide the same kind of expansion through preprocessing.
+
+A bundle does not erase the independence of the canonical axes. Any axis not fixed by the bundle is still resolved independently before Preprocessed output.
+
+This means a concise Bitlang declaration can normalize into a deliberately verbose canonical declaration without changing its semantics.
+
+Conceptually:
+
+```text
+int a = 4
+```
+
+may normalize into a form containing explicit visibility, access, reassignment, ownership, borrow state, copy/move capability, move state, release state, lifetime, initialization, nullability, optionality, const state, and any other applicable canonical properties.
+
+The exact resulting property set depends on the declaration and applicable preprocessing rules.
+
+## Conflict and precedence rules
+
+Source convenience must not create silent ambiguity.
+
+Resolution follows these principles:
+
+1. Directly stated canonical properties are explicit semantic requirements.
+2. Source shorthand and property bundles are expanded before final normalization.
+3. Inferred/default values fill only still-unresolved axes.
+4. If two explicit source requirements produce contradictory states on the same axis, preprocessing must diagnose the conflict instead of silently choosing one.
+5. A deliberate semantic override may change an already resolved state only through an explicit preprocessing rule, configuration, or source-directed transformation.
+6. The final Bitlang Preprocessed output must contain one valid resolved state for every applicable axis.
+
+Thus source syntax may be permissive in spelling and verbosity while the stage boundary remains strict.
 
 ## Property vocabulary available to Bitlang source
 
@@ -47,7 +114,9 @@ Writeable / Unwriteable
 Reassignable / Unreassignable
 ```
 
-Bitlang does not collapse these into a single broad `mutable / immutable` category. A binding may, for example, be unreassignable while the referenced object remains writeable.
+The canonical model does not collapse these into a single broad `mutable / immutable` category. A source shorthand may group them for convenience, but preprocessing must expand the shorthand back into the independent axes.
+
+A binding may, for example, be unreassignable while the referenced object remains writeable.
 
 ### Ownership and borrow
 
@@ -108,16 +177,18 @@ Const / Unconst
 
 `Const` is stronger than only making one access path unwritable or unreassignable; it represents a strongly fixed semantic value.
 
+A source shorthand named or described as immutable must not be assumed to mean `Const` unless its expansion rule explicitly says so.
+
 ## Preprocessor behavior
 
-Preprocessor functions may inspect, add, remove, or rewrite source properties before canonical output is finalized.
+Preprocessor functions may inspect, add, remove, expand, or rewrite source properties before canonical output is finalized.
 
-An ordinary inferred value may fill an omitted source property. A rewrite that deliberately weakens or changes already-resolved semantics is a semantic override and may require diagnostics.
+An ordinary inferred value may fill an omitted source property. A shorthand expansion may fill multiple axes at once. A rewrite that deliberately weakens or changes already-resolved semantics is a semantic override and may require diagnostics.
 
 Examples include changing borrow state, move state, release state, ownership-related properties, or other restrictions. A dangerous state that cannot be proven invalid may produce a warning; a provably invalid final state must be rejected.
 
 ## Stage boundary
 
-This repository defines **how Bitlang source expresses or omits these properties and how preprocessing is allowed to resolve them**.
+This repository defines **how Bitlang source expresses, abbreviates, or omits properties and how preprocessing is allowed to resolve them**.
 
-The exact canonical property set, required explicitness, final state vocabulary, and cross-property consistency rules belong to the separate Bitlang Preprocessed specification. Later compiler stages must consume that resolved representation rather than reconstructing source omissions.
+The exact canonical property set, required explicitness, final state vocabulary, and cross-property consistency rules belong to the separate Bitlang Preprocessed specification. Later compiler stages must consume that resolved representation rather than reconstructing source omissions or source-only shorthand.
