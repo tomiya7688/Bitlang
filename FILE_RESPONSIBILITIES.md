@@ -16,7 +16,10 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/lexer_comment.go` | Recognize and skip bootstrap source comments. |
 | `internal/bitlang/lexer_test.go` | Verify lexer behavior. |
 | `internal/bitlang/preprocessed_token.go` | Represent strict tokens with explicit canonical identifier forms. |
-| `internal/bitlang/preprocessed_property.go` | Define explicit final Preprocessed property states. |
+| `internal/bitlang/preprocessed_property.go` | Represent one property state without hardcoded state names. |
+| `internal/bitlang/property_spec.go` | Represent machine-readable property axes. |
+| `internal/bitlang/property_spec_loader.go` | Decode and validate property specification data. |
+| `internal/bitlang/property_spec_loader_test.go` | Verify property specification loading. |
 | `internal/bitlang/preprocessed_declaration.go` | Represent one strict declaration and its explicit properties. |
 | `internal/bitlang/preprocessed_source.go` | Represent strict token-level preprocessor output. |
 | `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
@@ -33,6 +36,12 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/stage_transition.go` | Define valid canonical stage transitions. |
 | `internal/bitlang/pipeline.go` | Order and execute stages. |
 | `internal/bitlang/pipeline_test.go` | Verify pipeline behavior. |
+
+## Machine-readable specifications
+
+| File | Responsibility |
+| --- | --- |
+| `spec/preprocessed/properties.json` | Define Preprocessed property axes and allowed states. |
 
 ## Go rule checker
 
