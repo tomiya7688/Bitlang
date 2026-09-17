@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "axes": [
+    {"name":"scope_visibility","states":["Public","Private"],"exclusive":true},
+    {"name":"inheritance_visibility","states":["Protected","Unprotected"],"exclusive":true},
+    {"name":"module_export","states":["Exported","Unexported"],"exclusive":true},
+    {"name":"readability","states":["Readable","Unreadable"],"exclusive":true},
+    {"name":"writeability","states":["Writeable","Unwriteable"],"exclusive":true},
+    {"name":"reassignment","states":["Reassignable","Unreassignable"],"exclusive":true},
+    {"name":"ownership","states":["Owned","Borrowed"],"exclusive":true},
+    {"name":"borrow_state","states":["Unborrowed","Shared_borrowed","Exclusive_borrowed"],"exclusive":true},
+    {"name":"copy_capability","states":["Copyable","Uncopyable"],"exclusive":true},
+    {"name":"move_capability","states":["Movable","Unmovable"],"exclusive":true},
+    {"name":"move_state","states":["Unmoved","Moved"],"exclusive":true},
+    {"name":"release_policy","states":["Auto_release","Manual_release"],"exclusive":true},
+    {"name":"release_capability","states":["Releasable","Unreleasable"],"exclusive":true},
+    {"name":"release_state","states":["Unreleased","Released"],"exclusive":true},
+    {"name":"lifetime","states":["Local_lifetime","Function_lifetime","Object_lifetime","Module_lifetime","Static_lifetime"],"exclusive":true},
+    {"name":"initialization","states":["Initialized","Uninitialized"],"exclusive":true},
+    {"name":"nullability","states":["nullable","unnullable"],"exclusive":true},
+    {"name":"optionality","states":["Optional","Required"],"exclusive":true},
+    {"name":"constness","states":["Const","Unconst"],"exclusive":true}
+  ]
+}
