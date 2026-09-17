@@ -10,11 +10,19 @@ func NewPreprocessor() Preprocessor {
 	return Preprocessor{}
 }
 
-// Process lexes source into the first strict PreprocessedSource form.
+// Process lexes source and makes identifier comparison semantics explicit.
 func (Preprocessor) Process(source SourceText) (PreprocessedSource, error) {
 	tokens, err := NewLexer(source).Lex()
 	if err != nil {
 		return PreprocessedSource{}, err
 	}
-	return PreprocessedSource{Path: source.Path, Tokens: tokens}, nil
+	strict := make([]PreprocessedToken, 0, len(tokens))
+	for _, token := range tokens {
+		converted, err := newPreprocessedToken(token)
+		if err != nil {
+			return PreprocessedSource{}, err
+		}
+		strict = append(strict, converted)
+	}
+	return PreprocessedSource{Path: source.Path, Tokens: strict}, nil
 }
