@@ -20,6 +20,8 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/property_spec.go` | Represent machine-readable property axes. |
 | `internal/bitlang/property_spec_loader.go` | Decode and validate property specification data. |
 | `internal/bitlang/property_spec_loader_test.go` | Verify property specification loading. |
+| `internal/bitlang/property_validator.go` | Validate explicit properties against specification axes. |
+| `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
 | `internal/bitlang/preprocessed_declaration.go` | Represent one strict declaration and its explicit properties. |
 | `internal/bitlang/preprocessed_source.go` | Represent strict token-level preprocessor output. |
 | `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
@@ -41,7 +43,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 
 | File | Responsibility |
 | --- | --- |
-| `spec/preprocessed/properties.json` | Define Preprocessed property axes and allowed states. |
+| `spec/preprocessed/properties.json` | Define property axes, states, applicability, and completeness requirements. |
 
 ## Go rule checker
 
