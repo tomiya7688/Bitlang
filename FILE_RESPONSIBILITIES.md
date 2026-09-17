@@ -16,6 +16,8 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/lexer_comment.go` | Recognize and skip bootstrap source comments. |
 | `internal/bitlang/lexer_test.go` | Verify lexer behavior. |
 | `internal/bitlang/preprocessed_token.go` | Represent strict tokens with explicit canonical identifier forms. |
+| `internal/bitlang/preprocessed_property.go` | Define explicit final Preprocessed property states. |
+| `internal/bitlang/preprocessed_declaration.go` | Represent one strict declaration and its explicit properties. |
 | `internal/bitlang/preprocessed_source.go` | Represent strict token-level preprocessor output. |
 | `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
 | `internal/bitlang/preprocessor_test.go` | Verify the Source to Preprocessed boundary. |
