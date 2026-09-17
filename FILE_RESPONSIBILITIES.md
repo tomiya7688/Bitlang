@@ -13,6 +13,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/token_kind.go` | Define lexical token categories. |
 | `internal/bitlang/token.go` | Represent one token and source location. |
 | `internal/bitlang/lexer.go` | Convert source text into tokens. |
+| `internal/bitlang/lexer_comment.go` | Recognize and skip bootstrap source comments. |
 | `internal/bitlang/lexer_test.go` | Verify lexer behavior. |
 | `internal/bitlang/preprocessed_source.go` | Represent strict token-level preprocessor output. |
 | `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
