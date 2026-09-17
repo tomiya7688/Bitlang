@@ -13,4 +13,6 @@ type PropertyAxisSpec struct {
 	Name      string   `json:"name"`
 	States    []string `json:"states"`
 	Exclusive bool     `json:"exclusive"`
+	Required  bool     `json:"required"`
+	AppliesTo []string `json:"applies_to"`
 }
