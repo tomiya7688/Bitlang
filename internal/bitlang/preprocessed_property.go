@@ -1,51 +1,6 @@
 package bitlang
 
 // PreprocessedProperty is one explicit final property state attached to a
-// strict declaration. Name uses the canonical spelling defined by the
-// Bitlang Preprocessed specification.
+// strict declaration. Valid states and their axes are defined by the external
+// Preprocessed property specification rather than duplicated as Go constants.
 type PreprocessedProperty string
-
-const (
-	PropertyPublic            PreprocessedProperty = "Public"
-	PropertyPrivate           PreprocessedProperty = "Private"
-	PropertyProtected         PreprocessedProperty = "Protected"
-	PropertyUnprotected       PreprocessedProperty = "Unprotected"
-	PropertyExported          PreprocessedProperty = "Exported"
-	PropertyUnexported        PreprocessedProperty = "Unexported"
-	PropertyReadable          PreprocessedProperty = "Readable"
-	PropertyUnreadable        PreprocessedProperty = "Unreadable"
-	PropertyWriteable         PreprocessedProperty = "Writeable"
-	PropertyUnwriteable       PreprocessedProperty = "Unwriteable"
-	PropertyReassignable      PreprocessedProperty = "Reassignable"
-	PropertyUnreassignable    PreprocessedProperty = "Unreassignable"
-	PropertyOwned             PreprocessedProperty = "Owned"
-	PropertyBorrowed          PreprocessedProperty = "Borrowed"
-	PropertyUnborrowed        PreprocessedProperty = "Unborrowed"
-	PropertySharedBorrowed    PreprocessedProperty = "Shared_borrowed"
-	PropertyExclusiveBorrowed PreprocessedProperty = "Exclusive_borrowed"
-	PropertyCopyable          PreprocessedProperty = "Copyable"
-	PropertyUncopyable        PreprocessedProperty = "Uncopyable"
-	PropertyMovable           PreprocessedProperty = "Movable"
-	PropertyUnmovable         PreprocessedProperty = "Unmovable"
-	PropertyUnmoved           PreprocessedProperty = "Unmoved"
-	PropertyMoved             PreprocessedProperty = "Moved"
-	PropertyAutoRelease       PreprocessedProperty = "Auto_release"
-	PropertyManualRelease     PreprocessedProperty = "Manual_release"
-	PropertyReleasable        PreprocessedProperty = "Releasable"
-	PropertyUnreleasable      PreprocessedProperty = "Unreleasable"
-	PropertyUnreleased        PreprocessedProperty = "Unreleased"
-	PropertyReleased          PreprocessedProperty = "Released"
-	PropertyLocalLifetime     PreprocessedProperty = "Local_lifetime"
-	PropertyFunctionLifetime  PreprocessedProperty = "Function_lifetime"
-	PropertyObjectLifetime    PreprocessedProperty = "Object_lifetime"
-	PropertyModuleLifetime    PreprocessedProperty = "Module_lifetime"
-	PropertyStaticLifetime    PreprocessedProperty = "Static_lifetime"
-	PropertyInitialized       PreprocessedProperty = "Initialized"
-	PropertyUninitialized     PreprocessedProperty = "Uninitialized"
-	PropertyNullable          PreprocessedProperty = "nullable"
-	PropertyUnnullable        PreprocessedProperty = "unnullable"
-	PropertyOptional          PreprocessedProperty = "Optional"
-	PropertyRequired          PreprocessedProperty = "Required"
-	PropertyConst             PreprocessedProperty = "Const"
-	PropertyUnconst           PreprocessedProperty = "Unconst"
-)
