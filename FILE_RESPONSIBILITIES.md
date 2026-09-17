@@ -14,6 +14,9 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/token.go` | Represent one token and source location. |
 | `internal/bitlang/lexer.go` | Convert source text into tokens. |
 | `internal/bitlang/lexer_test.go` | Verify lexer behavior. |
+| `internal/bitlang/preprocessed_source.go` | Represent strict token-level preprocessor output. |
+| `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
+| `internal/bitlang/preprocessor_test.go` | Verify the Source to Preprocessed boundary. |
 | `internal/bitlang/canonical_name.go` | Represent and canonicalize Bitlang identifiers. |
 | `internal/bitlang/canonical_name_test.go` | Verify identifier canonicalization. |
 | `internal/bitlang/symbol.go` | Represent one named semantic value. |
