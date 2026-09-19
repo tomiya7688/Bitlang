@@ -152,11 +152,13 @@ The preprocessing environment may control automatic cleanup generation.
 
 At minimum, it provides a source-facing operation conceptually named `disable_auto_release` that prevents the preprocessor from synthesizing an automatic release/`free` for the affected declaration or activation range.
 
+It may target a single variable/declaration directly. It may also be activated as a range rule, in which case every applicable variable/declaration encountered while the rule is active has automatic release generation suppressed.
+
 This operation does not make release impossible. Explicit release operations remain valid when allowed by the target's properties.
 
 The command is preprocessing-only and disappears before Bitlang Preprocessed. Its semantic result is represented through the resolved release policy, normally `Manual_release`, together with any explicit cleanup that remains in the normalized program.
 
-The operation may be applied using the normal preprocessing activation-range mechanism, so a project may disable automatic release generation for one declaration, a local range, a class/function field, or another supported preprocessing scope.
+The operation may be applied using the normal preprocessing activation-range mechanism, so a project may disable automatic release generation for one declaration, a local range, a class/function field, or another supported preprocessing scope. Range activation follows the ordinary start/end semantics; omitting the end marker keeps the suppression active until the end of the enclosing declaration field.
 
 ### Module configuration
 
