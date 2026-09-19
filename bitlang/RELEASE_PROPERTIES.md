@@ -65,7 +65,11 @@ Automatic insertion must obey ownership, borrow state, release capability, move 
 
 Source preprocessing may explicitly disable automatic release generation for a declaration or preprocessing range.
 
-The source-facing preprocessing operation is conceptually `disable_auto_release`. Its exact invocation form may be used directly or through the normal preprocessor-function activation-range mechanism.
+The target may be a specific variable/declaration, in which case only that target is affected. The operation may also be activated for an entire preprocessing range; while that range is active, automatic release generation is disabled for every applicable declaration encountered within the range.
+
+The source-facing preprocessing operation is conceptually `disable_auto_release`. Its exact invocation form may be used directly on a variable/declaration or through the normal preprocessor-function activation-range mechanism.
+
+Range activation follows the ordinary preprocessor start/end rules. An explicit end marker stops the suppression there; when the end marker is omitted, suppression continues to the end of the enclosing declaration field.
 
 Applying this operation means that the preprocessor must not synthesize an automatic `free`/release for the affected target merely because its lifetime ends without an explicit release.
 
