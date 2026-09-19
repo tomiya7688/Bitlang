@@ -144,6 +144,20 @@ Nested scopes remain distinct unless the preprocessor function explicitly traver
 - compile-time errors
 - compile-time warnings
 
+
+
+### Release-generation control
+
+The preprocessing environment may control automatic cleanup generation.
+
+At minimum, it provides a source-facing operation conceptually named `disable_auto_release` that prevents the preprocessor from synthesizing an automatic release/`free` for the affected declaration or activation range.
+
+This operation does not make release impossible. Explicit release operations remain valid when allowed by the target's properties.
+
+The command is preprocessing-only and disappears before Bitlang Preprocessed. Its semantic result is represented through the resolved release policy, normally `Manual_release`, together with any explicit cleanup that remains in the normalized program.
+
+The operation may be applied using the normal preprocessing activation-range mechanism, so a project may disable automatic release generation for one declaration, a local range, a class/function field, or another supported preprocessing scope.
+
 ### Module configuration
 
 Preprocessor functions may inspect and modify the configuration of the active Bitlang module.
