@@ -40,3 +40,41 @@ Source-facing Bitlang may state these properties explicitly or omit them. When o
 Invalid property combinations must be rejected rather than silently changing ownership or release semantics.
 
 The current release state itself (`Unreleased / Released`) is also resolved before canonical output, but the exact required Preprocessed representation and its cross-property consistency rules are defined in the separate Bitlang Preprocessed specification.
+
+
+## Preprocessing-time automatic release generation
+
+Bitlang does not require a tracing runtime garbage collector as the normal memory-management model.
+
+For owned resources that require release, the preprocessor may complete missing cleanup by generating an explicit release operation (for example, a `free`-equivalent operation for an applicable allocation model) at a provably valid lifetime boundary.
+
+Conceptually:
+
+```text
+source omits required release
+    -> preprocessing analyzes ownership and lifetime
+    -> preprocessing inserts the required explicit release
+    -> Bitlang Preprocessed contains the resolved cleanup behavior
+```
+
+This is GC-like convenience implemented as source preprocessing and explicit generated cleanup, not an implicit runtime collector.
+
+Automatic insertion must obey ownership, borrow state, release capability, move state, lifetime, and other applicable semantic rules. The preprocessor must not insert a release at a point where doing so would be invalid.
+
+## Suppressing generated release
+
+Source preprocessing may explicitly disable automatic release generation for a declaration or preprocessing range.
+
+The source-facing preprocessing operation is conceptually `disable_auto_release`. Its exact invocation form may be used directly or through the normal preprocessor-function activation-range mechanism.
+
+Applying this operation means that the preprocessor must not synthesize an automatic `free`/release for the affected target merely because its lifetime ends without an explicit release.
+
+Semantically, the affected release policy resolves to `Manual_release` unless another explicit and valid source rule provides an equivalent manual-management state.
+
+This operation suppresses **generated** release only. It does not prohibit the programmer from writing an explicit valid release operation.
+
+Because preprocessing controls are consumed before canonical output, `disable_auto_release` itself does not remain in Bitlang Preprocessed. The resulting explicit release policy and any user-written/generated runtime operations are what remain.
+
+A manual-release resource that appears to reach the end of its lifetime unreleased may still produce a warning. Explicit suppression of automatic release indicates deliberate manual management; it does not disable safety analysis or make an otherwise invalid ownership/lifetime state valid.
+
+Where the programmer deliberately transfers ownership, relies on an external lifetime, or intentionally leaves a resource for process termination, that intent should be expressible explicitly so diagnostics can distinguish it from an accidental forgotten release.
