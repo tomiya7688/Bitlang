@@ -14,6 +14,40 @@ A preprocessor function may be declared in an applicable declaration field/scope
 
 The preprocessor normally executes applicable preprocessing behavior as the corresponding source structure is read.
 
+
+
+## Multi-pass preprocessing and convergence
+
+Bitlang preprocessing is not a single-pass transformation.
+
+The normal model performs at least two preprocessing passes over the source. The first pass may discover declarations, execute preprocessing behavior, and modify the source representation. A later pass then reads the modified result again so newly generated or changed structures can themselves be analyzed and processed.
+
+More precisely, preprocessing is iterative rather than being limited to exactly two passes.
+
+After each pass, the preprocessor evaluates whether the current program has reached the `preprocess all ok` state. If that state has not been reached, preprocessing continues by applying the required fixes/transformations and running another pass over the resulting source representation.
+
+Conceptually:
+
+```text
+initial source
+    -> preprocess pass 1
+    -> modified source
+    -> preprocess pass 2
+    -> check: preprocess all ok?
+         yes -> finish preprocessing
+         no  -> modify/fix
+                -> preprocess again
+                -> repeat check
+```
+
+Therefore "the preprocessor runs twice" describes the minimum normal multi-pass behavior, not a hard maximum. Processing continues until the source reaches a stable valid preprocessing result or preprocessing terminates with an error.
+
+Each additional pass observes the result of the previous pass. Generated declarations, changed properties, inserted cleanup, macro expansion, and other preprocessing transformations may therefore participate in subsequent preprocessing passes.
+
+The default source-order execution rules still apply within each pass unless an explicit preprocessing step, ordering rule, or execution constraint changes them.
+
+A preprocessing implementation must detect a non-converging transformation cycle or another condition that prevents reaching `preprocess all ok`; such a state must not result in an unbounded silent loop.
+
 ## Activation ranges
 
 A preprocessor function may be associated with an explicit start point and an explicit end point by referring to the preprocessor function together with start/end activation markers.
