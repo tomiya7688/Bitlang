@@ -93,6 +93,27 @@ The canonical result is governed by the Bitlang Preprocessed repository, especia
 - `PROPERTIES.ja.md`
 - `BORROW_STATE.ja.md`
 
+
+
+## Legacy Preprocessed-shaped input
+
+Older Bitlang Preprocessed representations may be accepted by preprocessing as migration input when their meaning can still be reconstructed deterministically.
+
+A common version change is that a semantic property which was previously implicit becomes public and mandatory in the newer Bitlang Preprocessed specification. In that case, the older representation is no longer considered canonical current Preprocessed, because one or more semantic axes are still implicit.
+
+Conceptually, such input is treated as **Bitlang source written in a Preprocessed-shaped syntax**:
+
+```text
+old Preprocessed-shaped input
+    -> preprocess / infer formerly implicit properties
+    -> materialize newly explicit properties
+    -> current fully explicit Bitlang Preprocessed
+```
+
+The fact that the text resembles an older Preprocessed format does not grant it direct access to the compiler. The current Preprocessed boundary is defined by the current canonical specification, not by historical syntax.
+
+This keeps backward migration in the preprocessor and allows the Bitlang compiler to remain strict: it only needs to accept the current fully explicit form.
+
 ## Design intent
 
 Bitlang should be strict about **meaning**, not unnecessarily strict about **how much repetitive semantic information a human must type**.
