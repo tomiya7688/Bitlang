@@ -46,6 +46,10 @@ A primary reason for this convergence requirement is compatibility cleanliness a
 
 The Bitlang compiler is therefore allowed to assume that input crossing the preprocessing boundary has already been normalized to the currently accepted Bitlang Preprocessed form. Backward-cleanup of stale Preprocessed syntax is a preprocessing responsibility rather than something the compiler must guess around.
 
+In many Bitlang Preprocessed version transitions, the change is primarily the addition of newly explicit semantic properties rather than a change in the underlying program meaning. A property that older Preprocessed versions treated implicitly may become a required explicit property in the current version. Such older input is therefore no longer fully canonical Preprocessed input even if its surface syntax resembles it closely.
+
+For migration purposes, stale Preprocessed input of this kind is treated conceptually like Bitlang source that happens to wear a Preprocessed-like syntax: omitted semantics are reconstructed by preprocessing, the newly required properties are materialized, and only the upgraded fully explicit form may cross into the compiler.
+
 Each additional pass observes the result of the previous pass. Generated declarations, changed properties, inserted cleanup, macro expansion, and other preprocessing transformations may therefore participate in subsequent preprocessing passes.
 
 The default source-order execution rules still apply within each pass unless an explicit preprocessing step, ordering rule, or execution constraint changes them.
