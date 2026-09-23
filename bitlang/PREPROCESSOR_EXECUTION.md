@@ -42,6 +42,10 @@ initial source
 
 Therefore "the preprocessor runs twice" describes the minimum normal multi-pass behavior, not a hard maximum. Processing continues until the source reaches a stable valid preprocessing result or preprocessing terminates with an error.
 
+A primary reason for this convergence requirement is compatibility cleanliness at the boundary to Bitlang Preprocessed. The preprocessor must not leave obsolete, legacy, or otherwise outdated Preprocessed-era representations mixed into the final normalized output. If an older Bitlang Preprocessed form remains after an earlier transformation pass, a later preprocessing pass must detect and rewrite or reject it before the result is handed to the Bitlang compiler.
+
+The Bitlang compiler is therefore allowed to assume that input crossing the preprocessing boundary has already been normalized to the currently accepted Bitlang Preprocessed form. Backward-cleanup of stale Preprocessed syntax is a preprocessing responsibility rather than something the compiler must guess around.
+
 Each additional pass observes the result of the previous pass. Generated declarations, changed properties, inserted cleanup, macro expansion, and other preprocessing transformations may therefore participate in subsequent preprocessing passes.
 
 The default source-order execution rules still apply within each pass unless an explicit preprocessing step, ordering rule, or execution constraint changes them.
