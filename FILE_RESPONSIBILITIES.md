@@ -22,6 +22,8 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/property_spec_loader_test.go` | Verify property specification loading. |
 | `internal/bitlang/property_validator.go` | Validate explicit properties against specification axes. |
 | `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
+| `internal/bitlang/declaration_parser.go` | Parse one strict declaration and validate its explicit properties. |
+| `internal/bitlang/declaration_parser_test.go` | Verify strict declaration parsing and property completeness. |
 | `internal/bitlang/preprocessed_declaration.go` | Represent one strict declaration and its explicit properties. |
 | `internal/bitlang/preprocessed_source.go` | Represent strict token-level preprocessor output. |
 | `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
@@ -58,7 +60,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `tools/go-rule-checker/documentation.go` | Check exported documentation comments. |
 | `tools/go-rule-checker/function_size.go` | Check function size limits. |
 | `tools/go-rule-checker/file_size.go` | Check file size limits. |
-| `tools/go-rule-checker/main_file.go` | Check startup-only `main.go` structure. |
+| `tools/go-rule-checker/main_file.go` | Check startup-only main.go structure. |
 | `tools/go-rule-checker/ignore.go` | Load and apply checker ignore rules. |
 | `tools/go-rule-checker/generated.go` | Detect generated Go source. |
 | `tools/go-rule-checker/import_check.go` | Check forbidden architecture-layer imports. |
