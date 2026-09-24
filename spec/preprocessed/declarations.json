@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "kinds": [
+    {"name":"variable","property_target":"variable","terminator":";","layout":["properties","type","name"]},
+    {"name":"field","property_target":"field","terminator":";","layout":["properties","type","name"]},
+    {"name":"parameter","property_target":"parameter","terminator":";","layout":["properties","type","name"]},
+    {"name":"return","property_target":"return","terminator":";","layout":["properties","type","name"]},
+    {"name":"function","property_target":"function","terminator":";","layout":["properties","type","name"]},
+    {"name":"type","property_target":"type","terminator":";","layout":["properties","type","name"]}
+  ]
+}
