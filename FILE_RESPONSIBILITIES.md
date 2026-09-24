@@ -21,7 +21,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/property_spec_loader.go` | Decode and validate property specification data. |
 | `internal/bitlang/property_spec_loader_test.go` | Verify property specification loading. |
 | `internal/bitlang/property_validator.go` | Validate explicit properties against specification axes. |
-| `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
+| `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |\n| `internal/bitlang/declaration_spec.go` | Represent machine-readable declaration kinds and grammar. |\n| `internal/bitlang/declaration_spec_loader.go` | Decode and validate declaration grammar data. |\n| `internal/bitlang/declaration_spec_loader_test.go` | Verify declaration grammar loading and lookup. |
 | `internal/bitlang/declaration_parser.go` | Parse one strict declaration and validate its explicit properties. |
 | `internal/bitlang/declaration_parser_test.go` | Verify strict declaration parsing and property completeness. |
 | `internal/bitlang/declaration_sequence_parser.go` | Split and parse multiple strict declarations of one target kind. |
@@ -47,7 +47,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 
 | File | Responsibility |
 | --- | --- |
-| `spec/preprocessed/properties.json` | Define property axes, states, applicability, and completeness requirements. |
+| `spec/preprocessed/properties.json` | Define property axes, states, applicability, and completeness requirements. |\n| `spec/preprocessed/declarations.json` | Define strict declaration kinds, targets, terminators, and layout. |
 
 ## Go rule checker
 
