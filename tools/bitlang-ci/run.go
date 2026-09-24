@@ -23,6 +23,9 @@ func Run(root string, out io.Writer, errOut io.Writer) int {
 	if !runFormatCheck(root, out, errOut) {
 		failures++
 	}
+	if !runSpecificationCheck(root, out, errOut) {
+		failures++
+	}
 
 	checks := []commandCheck{
 		{name: "go-rule-checker", command: exec.Command("go", "run", "./tools/go-rule-checker/cmd/go-rule-checker", ".")},
