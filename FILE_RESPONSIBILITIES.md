@@ -24,6 +24,8 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
 | `internal/bitlang/declaration_parser.go` | Parse one strict declaration and validate its explicit properties. |
 | `internal/bitlang/declaration_parser_test.go` | Verify strict declaration parsing and property completeness. |
+| `internal/bitlang/declaration_sequence_parser.go` | Split and parse multiple strict declarations of one target kind. |
+| `internal/bitlang/declaration_sequence_parser_test.go` | Verify multi-declaration parsing and terminator errors. |
 | `internal/bitlang/preprocessed_declaration.go` | Represent one strict declaration and its explicit properties. |
 | `internal/bitlang/preprocessed_source.go` | Represent strict token-level preprocessor output. |
 | `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
