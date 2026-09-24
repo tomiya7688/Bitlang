@@ -3,7 +3,7 @@ package bitlang
 import "testing"
 
 func TestParsePreprocessedDeclarations(t *testing.T) {
-	spec := declarationSequenceTestSpec()
+	spec := declarationParserTestProperties()
 	source, err := NewPreprocessor().Process(NewSourceText(
 		"test.bit",
 		"Private unnullable Int First; Public nullable Text Second;",
@@ -11,7 +11,7 @@ func TestParsePreprocessedDeclarations(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	declarations, err := ParsePreprocessedDeclarations(spec, "variable", source.Tokens)
+	declarations, err := ParsePreprocessedDeclarations(spec, declarationParserTestKind(), source.Tokens)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -23,20 +23,12 @@ func TestParsePreprocessedDeclarations(t *testing.T) {
 	}
 }
 
-func TestParsePreprocessedDeclarationsRejectsMissingSemicolon(t *testing.T) {
-	spec := declarationSequenceTestSpec()
+func TestParsePreprocessedDeclarationsRejectsMissingTerminator(t *testing.T) {
 	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private unnullable Int First"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := ParsePreprocessedDeclarations(spec, "variable", source.Tokens); err == nil {
-		t.Fatal("expected missing semicolon error")
+	if _, err := ParsePreprocessedDeclarations(declarationParserTestProperties(), declarationParserTestKind(), source.Tokens); err == nil {
+		t.Fatal("expected missing terminator error")
 	}
-}
-
-func declarationSequenceTestSpec() PropertySpecification {
-	return PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{
-		{Name: "visibility", States: []string{"Public", "Private"}, Exclusive: true, Required: true, AppliesTo: []string{"variable"}},
-		{Name: "nullability", States: []string{"nullable", "unnullable"}, Exclusive: true, Required: true, AppliesTo: []string{"variable"}},
-	}}
 }
