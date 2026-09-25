@@ -102,7 +102,8 @@ Supported scopes include:
 file
 class/type
 namespace/module
-project/language-adapter
+project
+language-adapter
 ```
 
 These are defaults, not forced overrides. They resolve only property axes that remain omitted/unresolved for the target declaration.
@@ -117,7 +118,8 @@ explicit declaration property
 > innermost class/type default
 > file default
 > innermost namespace/module default
-> project/language-adapter default
+> project default
+> language-adapter default
 > Bitlang built-in default
 ```
 
@@ -128,6 +130,16 @@ Contradictory settings at the same precedence level are errors unless preprocess
 Bitlang itself uses `module` rather than a separate namespace construct. For language conversion, a source-language namespace may exist as preprocessing metadata/scope and is mapped into the appropriate Bitlang module/name hierarchy.
 
 Scoped-default declarations are consumed by preprocessing and do not appear in Bitlang Explicit. Only the resolved canonical properties remain.
+
+### Safety is independent of default origin
+
+Scoped defaults only determine omitted property values. They never make an unsafe operation valid.
+
+After resolution, the resulting declaration and every operation using it are checked under the ordinary Bitlang safety rules exactly as if all resolved properties had been written explicitly.
+
+If the final resolved semantics are provably unsafe or invalid, that is an error regardless of whether the relevant property came from a class, file, namespace/module, project, language-adapter, or built-in default.
+
+No default scope may suppress or downgrade a safety error. Generated code and language-conversion output follow the same rule.
 
 ## Conflict and precedence rules
 
