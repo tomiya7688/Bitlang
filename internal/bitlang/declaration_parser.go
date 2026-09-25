@@ -30,7 +30,11 @@ func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, token
 		}
 		explicit = append(explicit, PreprocessedProperty(token.Lexeme))
 	}
-	if err := ValidateProperties(specs.Properties, kind.PropertyTarget, explicit); err != nil {
+	resolved, err := ResolveProperties(specs.Properties, kind.PropertyTarget, explicit)
+	if err != nil {
+		return PreprocessedDeclaration{}, err
+	}
+	if err := ValidateProperties(specs.Properties, kind.PropertyTarget, resolved); err != nil {
 		return PreprocessedDeclaration{}, err
 	}
 
@@ -43,7 +47,7 @@ func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, token
 		return PreprocessedDeclaration{}, err
 	}
 	return PreprocessedDeclaration{
-		Name: name, Type: typeName, Properties: explicit,
+		Name: name, Type: typeName, Properties: resolved,
 		Line: nameToken.Line, Column: nameToken.Column,
 	}, nil
 }
