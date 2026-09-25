@@ -50,12 +50,21 @@
 
 型メンバ関数の意味:
 
+関数に対する `Static / Dynamic` は、**関数の実行コードそのものの寿命ではなく、関数に付随する状態**へ適用する。
+
+関数付随状態には、closure environment、captureされたstorage、first-class function objectの状態、その他の関数所有状態を含む。
+
+- `Static`: 適用可能な関数付随状態をstatic retention領域に保持する。
+- `Dynamic`: 適用可能な関数付随状態は通常のowner / lifetimeに従う。
+- 状態を持たない通常のnamed functionでは、`Static / Dynamic` によるruntime storage上の差が観測不能な場合がある。ただしproperty自体はsemantic contractとして保持する。
+- 関数付随状態の初期化・finalization時期は別のinitialization/finalization規則で決まり、`Static` 自体からは決めない。
+
 | static | Direct | 意味 |
 | --- | --- | --- |
-| なし | なし | 通常のインスタンスメソッド。レシーバ必須 |
-| あり | なし | 静的保持を持つが、呼び出しにはインスタンスが必要 |
-| なし | あり | インスタンスなしで呼べる。呼び出しをまたぐ静的保持はない |
-| あり | あり | インスタンスなしで呼べ、かつ静的保持を持つ |
+| なし | なし | instance method。receiver必須。付随状態は通常lifetime |
+| あり | なし | receiver必須。関数付随状態はstatic retention |
+| なし | あり | instanceなしで呼べる。付随状態は通常lifetime |
+| あり | あり | instanceなしで呼べる。関数付随状態はstatic retention |
 
 ### 変数
 
@@ -115,7 +124,7 @@
 
 - `Direct` なしの関数・メンバを、インスタンスなし経路から呼び出していないか / 参照していないか
 - `Direct` あり関数が、暗黙のレシーバ / `this` に依存していないか
-- `static` なし `Direct` あり関数が、静的保持であるかのように呼び出しをまたぐ状態を持とうとしていないか
+- `Dynamic Direct` 関数の付随状態が、明示された非static owner/lifetimeを越えて暗黙にstatic retentionを獲得していないか
 - override / interface 実装で `static` と `Direct` の契約が一致しているか
 - アクセス経路が所有権・借用状態・移動状態・解放状態と矛盾していないか
 - モジュールレベル `Direct` を冗長として診断しているか（将来の module-instance モデルが明示的に意味を与える場合を除く）
