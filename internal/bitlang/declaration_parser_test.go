@@ -22,6 +22,25 @@ func TestParsePreprocessedDeclaration(t *testing.T) {
 	}
 }
 
+func TestParsePreprocessedDeclarationUsesConfiguredLayout(t *testing.T) {
+	specs := declarationParserTestSpecifications()
+	specs.Declarations.Kinds[0].Layout = []string{"type", "name", "properties"}
+	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Int PlayerHP pRiVaTe UnNuLlAbLe;"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	decl, err := ParsePreprocessedDeclaration(specs, "variable", source.Tokens)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if decl.Type.Canonical != "int" || decl.Name.Canonical != "playerhp" {
+		t.Fatalf("unexpected declaration: %#v", decl)
+	}
+	if len(decl.Properties) != 2 || decl.Properties[0] != "Private" || decl.Properties[1] != "unnullable" {
+		t.Fatalf("properties = %#v", decl.Properties)
+	}
+}
+
 func TestParsePreprocessedDeclarationRejectsIncompleteProperties(t *testing.T) {
 	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Int PlayerHP;"))
 	if err != nil {
