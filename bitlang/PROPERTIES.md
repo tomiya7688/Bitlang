@@ -163,6 +163,28 @@ Direct
 
 Static retention is also distinct from the lifetime axis. `Static` and `Static_lifetime` describe related but separate semantic concerns and must satisfy the applicable consistency rules rather than being treated as the same property.
 
+### Retention domain
+
+```text
+Process_retention
+Thread_retention
+Task_retention
+```
+
+Retention domain specifies where retained state is shared:
+
+- `Process_retention`: one state for the whole process/program.
+- `Thread_retention`: one independent state per thread.
+- `Task_retention`: one independent state per task/coroutine-like execution unit.
+
+This axis is independent from `Static / Dynamic` and lifetime, and applies to variables, fields, and functions. For functions it governs the sharing domain of function-associated state.
+
+Source default:
+
+```text
+retention domain -> Process_retention
+```
+
 ## Source defaults for retention, instance access, initialization, and finalization
 
 When Bitlang source omits these properties and no stronger declaration/type/preprocessor rule determines them, the following source defaults apply.
