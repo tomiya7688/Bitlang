@@ -143,6 +143,48 @@ Direct
 
 Static retention is also distinct from the lifetime axis. `Static` and `Static_lifetime` describe related but separate semantic concerns and must satisfy the applicable consistency rules rather than being treated as the same property.
 
+## Source defaults for retention, instance access, and initialization trigger
+
+When Bitlang source omits these properties and no stronger declaration/type/preprocessor rule determines them, the following source defaults apply.
+
+### Retention default
+
+```text
+Static / Dynamic
+default -> Dynamic
+```
+
+A declaration is therefore non-static unless `Static` is written or implied by an explicit source/preprocessing rule.
+
+### Instance-access default
+
+For declarations to which the instance-access axis applies:
+
+```text
+Instance_required / Instance_unrequired
+default -> Instance_required
+```
+
+`Direct` explicitly selects `Instance_unrequired`.
+
+### Initialization-trigger defaults
+
+Initialization trigger defaults depend on declaration context because one universal trigger would not preserve the ordinary meaning of local, member, and static declarations.
+
+```text
+dynamic local variable      -> Declaration_initialization
+static local variable       -> First_reach_initialization
+dynamic instance field      -> Owner_initialization
+static field                -> Owner_initialization
+module/file-level variable  -> Owner_initialization
+```
+
+`First_use_initialization` and `Manual_initialization` are not ordinary defaults. They must be selected explicitly by source syntax, a project/module rule, a language adapter, or another explicit preprocessing rule.
+
+These are Bitlang-source defaults only. A Bitlang-family language adapter may deliberately choose a different initialization trigger when preserving that source language's semantics.
+
+Explicit properties and explicit preprocessing rules take precedence over these defaults. The resolved value is then written explicitly into Bitlang Preprocessed.
+
 ### Access and reassignment
 
 ```text
