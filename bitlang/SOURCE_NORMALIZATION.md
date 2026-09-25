@@ -69,6 +69,30 @@ Consequently, fully explicit Bitlang source may already look almost identical to
 
 This makes Bitlang usable both as a human-facing language and as a convenient transformation target for other languages.
 
+## Namespace mount normalization
+
+Preprocessing may assign outer namespace/module ownership from project-relative paths.
+
+Canonical preprocessing operations:
+
+```text
+mount_namespace_file(file_path, namespace_path)
+mount_namespace_tree(directory_path, namespace_path)
+set_parent_project(parent_project)
+```
+
+An exact file mount applies only to that file. A tree mount applies recursively to a directory and automatically extends the namespace using relative child-directory segments.
+
+Filename text is not automatically added as a namespace segment. Explicit module declarations inside a mounted file are nested under the mounted outer namespace.
+
+Resolution order is exact file mount, then most-specific tree mount, then inherited ancestor tree mount. Ambiguous equally specific mounts are errors.
+
+Project inheritance is single-parent and deterministic. Child projects inherit applicable project defaults, namespace mounts, adapter configuration, and explicitly inheritable preprocessing configuration. Child configuration overrides parent configuration.
+
+Parent-project cycles and multiple direct parents are errors. Parent project source files are not automatically included merely because configuration is inherited.
+
+Namespace/project preprocessing state is fully consumed before Bitlang Explicit.
+
 ## Scoped property defaults
 
 The preprocessor may define default property values for declarations by structural scope. This exists especially to make language adapters and generated Bitlang concise while preserving a fully explicit Bitlang Explicit result.
@@ -95,7 +119,8 @@ explicit declaration property
     > innermost class/type default
     > file default
     > innermost namespace/module default
-    > project default
+    > current project default
+    > parent-project defaults from nearest to farthest
     > language-adapter default
     > Bitlang built-in default
 ```
