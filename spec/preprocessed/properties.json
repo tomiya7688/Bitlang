@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "axes": [
     {
       "name": "scope_visibility",
@@ -265,6 +265,22 @@
         "variable",
         "field",
         "parameter"
+      ]
+    },
+    {
+      "name": "initialization_trigger",
+      "states": [
+        "Declaration_initialization",
+        "Owner_initialization",
+        "First_reach_initialization",
+        "First_use_initialization",
+        "Manual_initialization"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field"
       ]
     },
     {
