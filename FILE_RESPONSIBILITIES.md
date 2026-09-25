@@ -33,17 +33,19 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/declaration_spec.go` | Represent machine-readable declaration kinds and grammar. |
 | `internal/bitlang/declaration_spec_loader.go` | Decode and validate declaration grammar data. |
 | `internal/bitlang/declaration_spec_loader_test.go` | Verify declaration grammar loading and lookup. |
+| `internal/bitlang/declaration_context.go` | Match and validate data-defined declaration contexts. |
+| `internal/bitlang/declaration_context_test.go` | Verify context matching and unrestricted declaration kinds. |
 | `internal/bitlang/declaration_layout.go` | Resolve data-defined declaration layout order into token roles. |
 | `internal/bitlang/declaration_layout_test.go` | Verify declaration layout permutations and duplicate rejection. |
 | `internal/bitlang/declaration_parser.go` | Parse one strict declaration and validate its explicit properties. |
 | `internal/bitlang/declaration_parser_test.go` | Verify strict declaration parsing and property completeness. |
 | `internal/bitlang/declaration_sequence_parser.go` | Split and parse multiple strict declarations of one target kind. |
 | `internal/bitlang/declaration_sequence_parser_test.go` | Verify multi-declaration parsing and terminator errors. |
-| `internal/bitlang/mixed_declaration_parser.go` | Detect declaration kinds from machine-readable grammar and property applicability. |
+| `internal/bitlang/mixed_declaration_parser.go` | Detect declaration kinds from grammar, property applicability, and optional context. |
 | `internal/bitlang/mixed_declaration_parser_test.go` | Verify mixed declaration detection, ambiguity, and unknown-kind rejection. |
 | `internal/bitlang/preprocessed_declaration.go` | Represent one strict declaration and its explicit properties. |
 | `internal/bitlang/preprocessed_source.go` | Represent strict tokens together with parsed Preprocessed declarations. |
-| `internal/bitlang/preprocessed_source_parser.go` | Attach explicit-kind or auto-detected declarations to a Preprocessed source. |
+| `internal/bitlang/preprocessed_source_parser.go` | Attach explicit-kind or context-filtered declarations to a Preprocessed source. |
 | `internal/bitlang/preprocessed_source_parser_test.go` | Verify parsed declarations are retained with source metadata and tokens. |
 | `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
 | `internal/bitlang/preprocessor_test.go` | Verify the Source to Preprocessed boundary. |
