@@ -156,7 +156,7 @@ It may target a single variable/declaration directly. It may also be activated a
 
 This operation does not make release impossible. Explicit release operations remain valid when allowed by the target's properties.
 
-The command is preprocessing-only and disappears before Bitlang Preprocessed. Its semantic result is represented through the resolved release policy, normally `Manual_release`, together with any explicit cleanup that remains in the normalized program.
+The command is preprocessing-only and disappears before Bitlang Explicit. Its semantic result is represented through the resolved release policy, normally `Manual_release`, together with any explicit cleanup that remains in the normalized program.
 
 The operation may be applied using the normal preprocessing activation-range mechanism, so a project may disable automatic release generation for one declaration, a local range, a class/function field, or another supported preprocessing scope. Range activation follows the ordinary start/end semantics; omitting the end marker keeps the suppression active until the end of the enclosing declaration field.
 
@@ -174,11 +174,58 @@ The module configuration API should be able to work with module-level concerns s
 - compile-related module settings
 - module metadata and future version-related settings
 
-Preprocessor functions may therefore generate or alter module configuration before Bitlang preprocessed output is produced.
+Preprocessor functions may therefore generate or alter module configuration before Bitlang Explicit output is produced.
 
-Any source-facing shorthand introduced through module configuration must be resolved during preprocessing. Bitlang preprocessed should retain the normalized, explicit result rather than depending on source-only aliases or preprocessor state.
+Any source-facing shorthand introduced through module configuration must be resolved during preprocessing. Bitlang Explicit should retain the normalized, explicit result rather than depending on source-only aliases or preprocessor state.
 
 Module configuration changes are compile-time operations and must not silently become runtime mutation of module state.
+
+### Scoped property-default configuration
+
+The preprocessing environment must support changing default property values by structural scope.
+
+At minimum, defaults may be attached to:
+
+- the current file;
+- a class/type scope;
+- a namespace/module scope;
+- the project or language-adapter context.
+
+This facility is intended for native Bitlang projects and for conversion from other languages whose default visibility, lifetime, retention, ownership, nullability, initialization, or other property semantics differ from Bitlang's ordinary defaults.
+
+Conceptually, the preprocessing API should support operations equivalent to:
+
+```text
+set_property_default(scope, property_state)
+set_property_defaults(scope, property_state_set)
+clear_property_default(scope, property_axis)
+```
+
+The exact source spelling is defined separately; these are semantic operations, not required built-in function names.
+
+A default may optionally target declaration categories such as variables, fields, functions, parameters, returns, or types.
+
+Resolution precedence for the same property axis is:
+
+```text
+explicit declaration property
+    > declaration-targeted preprocessing rule
+    > innermost class/type default
+    > file default
+    > innermost namespace/module default
+    > project/language-adapter default
+    > Bitlang built-in default
+```
+
+Nested scopes use the innermost matching default.
+
+Defaults fill omitted/unresolved axes only. A setting that intentionally changes an already explicit/resolved property is not a default; it is an explicit semantic override and is subject to the ordinary override and safety rules.
+
+Conflicting rules at the same precedence level are errors unless their ordering or override relation is explicitly defined.
+
+Namespace scope is available to language adapters even when the source language has a namespace construct different from Bitlang's native module organization. During normalization, that namespace scope is mapped to the appropriate Bitlang module/name hierarchy.
+
+All scoped-default configuration is preprocessing-only and disappears before Bitlang Explicit. Bitlang Explicit contains only the final resolved canonical properties on each declaration.
 
 ## Property-driven semantics
 
@@ -194,9 +241,9 @@ Examples include properties such as:
 
 These properties are independent semantic axes unless a specific language rule states otherwise.
 
-Preprocessor functions may inspect, add, remove, replace, or otherwise modify these properties during preprocessing. This allows source code to use concise declarations or project-level rules while still producing a strict and explicit Bitlang preprocessed result.
+Preprocessor functions may inspect, add, remove, replace, or otherwise modify these properties during preprocessing. This allows source code to use concise declarations or project-level rules while still producing a strict and explicit Bitlang Explicit result.
 
-Property changes are compile-time transformations. They must be fully resolved before preprocessing finishes; Bitlang preprocessed must contain the resulting explicit properties and must not depend on hidden mutable preprocessor state.
+Property changes are compile-time transformations. They must be fully resolved before preprocessing finishes; Bitlang Explicit must contain the resulting explicit properties and must not depend on hidden mutable preprocessor state.
 
 A preprocessor function may change properties on a single declaration, a selected declaration set, or a current-scope variable set.
 
@@ -254,7 +301,7 @@ Warnings must not silently rewrite runtime semantics merely to make the warning 
 
 Preprocessor functions, macros, language adapters, and other transformation code are subject to the same destruction-safety rules as handwritten Bitlang.
 
-A preprocessor operation must fail with an error when it can prove that a generated or transformed release/finalization would be invalid. It must not emit a known-invalid cleanup operation into Bitlang Preprocessed and defer responsibility merely because the operation was generated.
+A preprocessor operation must fail with an error when it can prove that a generated or transformed release/finalization would be invalid. It must not emit a known-invalid cleanup operation into Bitlang Explicit and defer responsibility merely because the operation was generated.
 
 Examples include double release, release through an invalid ownership path, owner destruction while live borrows remain, and finalization at a point inconsistent with the resolved lifetime.
 
@@ -284,7 +331,7 @@ An explicit end marker may be used to terminate the active range before the natu
 
 Class-scope propagation should be representable explicitly so a rule can either remain local to the class or propagate to inheriting child classes.
 
-Preprocessor activation markers are preprocessing-only constructs. They do not remain in Bitlang preprocessed output; only their expanded and normalized effects remain.
+Preprocessor activation markers are preprocessing-only constructs. They do not remain in Bitlang Explicit output; only their expanded and normalized effects remain.
 
 ## Role in the Bitlang family
 
@@ -295,7 +342,7 @@ Bitlang family source
     -> transform
     -> Bitlang
     -> preprocessor functions
-    -> Bitlang preprocessed
+    -> Bitlang Explicit
     -> compiler
     -> Bitlang compiled
 ```
