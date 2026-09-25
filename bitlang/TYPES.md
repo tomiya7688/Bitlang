@@ -178,11 +178,11 @@ Nullability and presence are separate semantic properties.
 The nullability axis is:
 
 ```text
-Nullable
-Nonnullable
+nullable
+unnullable
 ```
 
-`Nullable` means the value may be `null`. `Nonnullable` means `null` is not a valid value.
+`nullable` means the value may be `null`. `unnullable` means `null` is not a valid value. These are the canonical property names; the source wrapper `Nullable<T>` is separate source syntax.
 
 The presence axis is:
 
@@ -193,7 +193,7 @@ Required
 
 `Optional` means the value or declaration may be absent. `Required` means it must be present.
 
-These axes are independent. For example, a value may be `Required Nullable`, meaning it must exist but may contain `null`, or `Optional Nonnullable`, meaning it may be absent but, when present, may not be `null`.
+These axes are independent. For example, a value may be `Required nullable`, meaning it must exist but may contain `null`, or `Optional unnullable`, meaning it may be absent but, when present, may not be `null`.
 
 Bitlang preprocessed must make both properties explicit whenever they apply so that absence and nullability are never inferred from omission.
 
