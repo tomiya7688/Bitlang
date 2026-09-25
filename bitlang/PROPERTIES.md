@@ -73,7 +73,7 @@ Conceptually:
 int a = 4
 ```
 
-may normalize into a form containing explicit visibility, access, reassignment, ownership, borrow state, copy/move capability, move state, release state, lifetime, initialization, nullability, optionality, const state, and any other applicable canonical properties.
+may normalize into a form containing explicit visibility, retention, instance-access requirement, access, reassignment, ownership, borrow state, copy/move capability, move state, release state, lifetime, initialization, nullability, optionality, const state, and any other applicable canonical properties.
 
 The exact resulting property set depends on the declaration and applicable preprocessing rules.
 
@@ -105,6 +105,38 @@ Exported / Unexported
 ```
 
 Scope visibility, inheritance visibility, and module export visibility are separate concerns.
+
+### Retention and instance access
+
+```text
+Static / Dynamic
+Instance_required / Instance_unrequired
+```
+
+`Static / Dynamic` is the static-retention axis.
+
+- `Static`: the target is retained statically rather than following ordinary non-static retention.
+- `Dynamic`: the target is not statically retained and follows the applicable ordinary lifetime/storage relationship.
+
+`Dynamic` in this property axis does **not** mean dynamic typing, late binding, or general mutability.
+
+`Instance_required / Instance_unrequired` is a separate access axis.
+
+- `Instance_required`: access to the applicable member requires an instance of its containing type.
+- `Instance_unrequired`: the applicable member can be accessed without an instance.
+
+These two axes are independent. A target may therefore be static while still requiring an instance, or may be non-static while not requiring an instance, when that combination is meaningful for the declaration kind.
+
+Bitlang source provides `Direct` as a source-facing shorthand for:
+
+```text
+Direct
+    -> Instance_unrequired
+```
+
+`Direct` does not imply `Static`, does not alter lifetime, and does not change initialization or ownership semantics.
+
+Static retention is also distinct from the lifetime axis. `Static` and `Static_lifetime` describe related but separate semantic concerns and must satisfy the applicable consistency rules rather than being treated as the same property.
 
 ### Access and reassignment
 
