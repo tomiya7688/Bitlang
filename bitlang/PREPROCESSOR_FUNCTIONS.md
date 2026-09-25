@@ -180,6 +180,56 @@ Any source-facing shorthand introduced through module configuration must be reso
 
 Module configuration changes are compile-time operations and must not silently become runtime mutation of module state.
 
+### Namespace Mount and Project Inheritance
+
+The preprocessor provides path-based namespace assignment and parent-project configuration inheritance.
+
+Canonical preprocessing built-ins:
+
+```text
+mount_namespace_file(file_path, namespace_path)
+mount_namespace_tree(directory_path, namespace_path)
+set_parent_project(parent_project)
+```
+
+`mount_namespace_file` assigns an outer namespace to one exact source file.
+
+`mount_namespace_tree` assigns a namespace root to a directory tree. Child directory segments automatically extend the namespace hierarchy. The filename itself is not added as a namespace segment.
+
+Example:
+
+```text
+mount_namespace_tree("src", "Game")
+```
+
+maps conceptually:
+
+```text
+src/player.bit               -> Game
+src/combat/damage.bit        -> Game.Combat
+src/combat/effects/fire.bit  -> Game.Combat.Effects
+```
+
+Bitlang still uses `module` as the canonical naming hierarchy. Namespace mounts are preprocessing metadata and normalize into the corresponding module/name hierarchy before Bitlang Explicit.
+
+Resolution is deterministic:
+
+- exact file mount > tree mount;
+- most-specific tree mount > ancestor tree mount;
+- nested tree mounts replace the inherited namespace root for their subtree;
+- equally specific incompatible mounts are errors unless an explicit order/override relation resolves them;
+- invalid directory-name segments are errors rather than silently rewritten.
+
+`set_parent_project` defines one direct parent project. A project may have at most one direct parent.
+
+Parent-project inheritance is for preprocessing/configuration, not implicit source inclusion. A child inherits applicable project defaults, namespace mounts, adapter configuration, and explicitly inheritable preprocessing settings. Parent source files are not automatically compiled or imported merely because the project is a parent.
+
+The parent chain is applied root-to-child, with the nearest child configuration winning. Parent cycles and multiple direct parents are errors.
+
+Inherited project-relative namespace mounts are evaluated relative to the child project's root, allowing a parent project to define reusable directory-layout conventions.
+
+The detailed rules are specified in [NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md](NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md).
+
 ### Scoped property-default configuration
 
 The preprocessing environment must support changing default property values by structural scope.
@@ -214,7 +264,8 @@ explicit declaration property
     > innermost class/type default
     > file default
     > innermost namespace/module default
-    > project default
+    > current project default
+    > parent-project defaults from nearest to farthest
     > language-adapter default
     > Bitlang built-in default
 ```
@@ -365,7 +416,7 @@ Bitlang family source
     -> preprocessor functions
     -> Bitlang Explicit
     -> compiler
-    -> Bitlang compiled
+    -> Bitlang Low
 ```
 
 Preprocessor functions may also be reused as part of family-language transformation infrastructure when appropriate.
