@@ -78,7 +78,8 @@ Supported default scopes include:
 - file scope;
 - class/type scope;
 - namespace/module scope;
-- project/language-adapter scope.
+- project scope;
+- language-adapter scope.
 
 A native Bitlang `module` is the normal Bitlang naming scope. A foreign-language adapter may expose its source-language namespace as a preprocessing namespace scope and map that scope into the corresponding Bitlang module/name hierarchy during normalization.
 
@@ -94,7 +95,8 @@ explicit declaration property
     > innermost class/type default
     > file default
     > innermost namespace/module default
-    > project/language-adapter default
+    > project default
+    > language-adapter default
     > Bitlang built-in default
 ```
 
@@ -113,6 +115,18 @@ class default:      Unreassignable
 ```
 
 may allow many declarations to omit those properties in source, while Bitlang Explicit still contains each final property explicitly.
+
+### Defaults never weaken safety
+
+Property defaults affect only how omitted semantic axes are resolved. They do not weaken Bitlang's safety requirements.
+
+After all applicable defaults have been resolved, the resulting program is validated exactly as if every resolved property had been written explicitly on each declaration.
+
+If the final resolved property set, operation, control flow, ownership/lifetime relation, release/finalization behavior, reference usage, or another semantic condition is provably unsafe or invalid, preprocessing must report an error.
+
+A file/class/namespace/module/project/language-adapter default cannot suppress, downgrade, or bypass that error merely because it supplied the property value.
+
+A later static-analysis/compiler stage must also reject a provably unsafe final program even if the unsafe state originated entirely from defaults or generated transformation rules.
 
 ## Conflict handling
 
