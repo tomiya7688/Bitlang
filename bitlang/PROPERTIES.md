@@ -88,7 +88,7 @@ Conceptually:
 int a = 4
 ```
 
-may normalize into a form containing explicit visibility, retention, instance-access requirement, access, reassignment, ownership, borrow state, copy/move capability, move state, release state, lifetime, initialization state, initialization trigger, nullability, optionality, const state, and any other applicable canonical properties.
+may normalize into a form containing explicit visibility, retention, instance-access requirement, access, reassignment, ownership, borrow state, copy/move capability, move state, release state, lifetime, initialization state, initialization trigger, finalization trigger, nullability, optionality, const state, and any other applicable canonical properties.
 
 The exact resulting property set depends on the declaration and applicable preprocessing rules.
 
@@ -158,7 +158,7 @@ Direct
 
 Static retention is also distinct from the lifetime axis. `Static` and `Static_lifetime` describe related but separate semantic concerns and must satisfy the applicable consistency rules rather than being treated as the same property.
 
-## Source defaults for retention, instance access, and initialization trigger
+## Source defaults for retention, instance access, initialization, and finalization
 
 When Bitlang source omits these properties and no stronger declaration/type/preprocessor rule determines them, the following source defaults apply.
 
@@ -200,6 +200,20 @@ These are Bitlang-source defaults only. A Bitlang-family language adapter may de
 
 Explicit properties and explicit preprocessing rules take precedence over these defaults. The resolved value is then written explicitly into Bitlang Preprocessed.
 
+### Finalization-trigger defaults
+
+Finalization trigger defaults follow the resolved lifetime:
+
+```text
+Local_lifetime    -> Scope_end_finalization
+Function_lifetime -> Scope_end_finalization
+Object_lifetime   -> Owner_end_finalization
+Module_lifetime   -> Module_end_finalization
+Static_lifetime   -> Program_end_finalization
+```
+
+`Manual_finalization` must be selected explicitly.
+
 ### Access and reassignment
 
 ```text
@@ -240,6 +254,46 @@ Unreleased / Released
 ```
 
 Release policy, release capability, and current release state are separate.
+
+### Finalization trigger
+
+Finalization timing is represented independently from lifetime and release policy.
+
+```text
+Scope_end_finalization
+Owner_end_finalization
+Module_end_finalization
+Program_end_finalization
+Manual_finalization
+```
+
+The states mean:
+
+- `Scope_end_finalization`: run automatic finalization when the owning lexical/function scope ends.
+- `Owner_end_finalization`: run automatic finalization when the owning object/type/storage owner ends.
+- `Module_end_finalization`: run automatic finalization when the owning module is finalized or unloaded.
+- `Program_end_finalization`: run automatic finalization during program/process termination.
+- `Manual_finalization`: do not schedule automatic finalization; finalization must be invoked explicitly when required.
+
+This axis applies canonically to variables, fields, and parameters.
+
+Finalization is not the same thing as release. A finalizer/destructor may perform arbitrary cleanup, while `Auto_release / Manual_release` determines whether release/free behavior itself may be generated automatically. A declaration may therefore have an automatic finalization trigger while still using `Manual_release`, or vice versa where the semantics are valid.
+
+#### Source defaults
+
+When omitted in Bitlang source, the finalization trigger is resolved primarily from the final lifetime:
+
+```text
+Local_lifetime    -> Scope_end_finalization
+Function_lifetime -> Scope_end_finalization
+Object_lifetime   -> Owner_end_finalization
+Module_lifetime   -> Module_end_finalization
+Static_lifetime   -> Program_end_finalization
+```
+
+`Manual_finalization` is never selected merely because information is missing; it requires an explicit source declaration, language-adapter rule, project/module rule, or other explicit preprocessing rule.
+
+A language adapter may choose a different trigger when required to preserve the source language's destruction semantics. The resolved trigger is explicit in Bitlang Preprocessed.
 
 ### Initialization and nullability
 
