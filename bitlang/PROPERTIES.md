@@ -73,7 +73,7 @@ Conceptually:
 int a = 4
 ```
 
-may normalize into a form containing explicit visibility, retention, instance-access requirement, access, reassignment, ownership, borrow state, copy/move capability, move state, release state, lifetime, initialization, nullability, optionality, const state, and any other applicable canonical properties.
+may normalize into a form containing explicit visibility, retention, instance-access requirement, access, reassignment, ownership, borrow state, copy/move capability, move state, release state, lifetime, initialization state, initialization trigger, nullability, optionality, const state, and any other applicable canonical properties.
 
 The exact resulting property set depends on the declaration and applicable preprocessing rules.
 
@@ -186,11 +186,36 @@ Release policy, release capability, and current release state are separate.
 
 ### Initialization and nullability
 
+Initialization state and initialization trigger are separate axes.
+
 ```text
 Initialized / Uninitialized
+
+Declaration_initialization
+Owner_initialization
+First_reach_initialization
+First_use_initialization
+Manual_initialization
+
 nullable / unnullable
 Optional / Required
 ```
+
+The initialization-state axis describes whether a valid value currently exists.
+
+The initialization-trigger axis describes when automatic initialization occurs:
+
+- `Declaration_initialization`: initialize when the declaration's storage instance reaches its normal declaration-initialization point.
+- `Owner_initialization`: initialize when the declaration's owning object, type, module, or corresponding owner is initialized.
+- `First_reach_initialization`: initialize once when execution first reaches the declaration for that storage instance.
+- `First_use_initialization`: initialize once on the first valid use of the declaration for that storage instance.
+- `Manual_initialization`: no automatic initialization trigger; initialization must be performed explicitly.
+
+The canonical initialization-trigger axis applies to variables and fields.
+
+`Static / Dynamic` does not itself select an initialization trigger. A language adapter, source declaration, project rule, or preprocessing rule may select the trigger required to preserve the source language's semantics.
+
+For example, a static local may use `First_reach_initialization`, while a static field may use `Owner_initialization` or `First_use_initialization` depending on the intended source-language semantics.
 
 Nullability is not represented by an omitted default at the Preprocessed boundary. Source syntax may be compact, but preprocessing resolves the final state explicitly.
 
