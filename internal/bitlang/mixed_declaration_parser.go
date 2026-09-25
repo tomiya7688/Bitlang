@@ -6,8 +6,14 @@ import (
 )
 
 // ParseMixedPreprocessedDeclarations parses a token stream containing multiple
-// declaration kinds by testing each declaration against data-defined kinds.
+// declaration kinds without applying a declaration context filter.
 func ParseMixedPreprocessedDeclarations(specs SpecificationSet, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
+	return ParseMixedPreprocessedDeclarationsInContext(specs, "", tokens)
+}
+
+// ParseMixedPreprocessedDeclarationsInContext parses mixed declarations after
+// filtering candidate kinds by the data-defined declaration context.
+func ParseMixedPreprocessedDeclarationsInContext(specs SpecificationSet, context string, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
 	groups, err := splitMixedDeclarationTokens(specs.Declarations, tokens)
 	if err != nil {
 		return nil, err
@@ -15,7 +21,7 @@ func ParseMixedPreprocessedDeclarations(specs SpecificationSet, tokens []Preproc
 
 	declarations := make([]PreprocessedDeclaration, 0, len(groups))
 	for _, group := range groups {
-		declaration, err := detectDeclarationKind(specs, group)
+		declaration, err := detectDeclarationKind(specs, context, group)
 		if err != nil {
 			return nil, fmt.Errorf("%d:%d: %w", group[0].Line, group[0].Column, err)
 		}
@@ -24,9 +30,12 @@ func ParseMixedPreprocessedDeclarations(specs SpecificationSet, tokens []Preproc
 	return declarations, nil
 }
 
-func detectDeclarationKind(specs SpecificationSet, tokens []PreprocessedToken) (PreprocessedDeclaration, error) {
+func detectDeclarationKind(specs SpecificationSet, context string, tokens []PreprocessedToken) (PreprocessedDeclaration, error) {
 	var matches []PreprocessedDeclaration
 	for _, kind := range specs.Declarations.Kinds {
+		if !declarationKindAppliesToContext(kind, context) {
+			continue
+		}
 		declaration, err := ParsePreprocessedDeclaration(specs, kind.Name, tokens)
 		if err == nil {
 			matches = append(matches, declaration)
