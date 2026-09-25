@@ -1,24 +1,315 @@
 {
-  "version": 1,
+  "version": 2,
   "axes": [
-    {"name":"scope_visibility","states":["Public","Private"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","function","type"]},
-    {"name":"inheritance_visibility","states":["Protected","Unprotected"],"exclusive":true,"required":true,"applies_to":["field","function","type"]},
-    {"name":"module_export","states":["Exported","Unexported"],"exclusive":true,"required":true,"applies_to":["variable","function","type"]},
-    {"name":"readability","states":["Readable","Unreadable"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter"]},
-    {"name":"writeability","states":["Writeable","Unwriteable"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter"]},
-    {"name":"reassignment","states":["Reassignable","Unreassignable"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter"]},
-    {"name":"ownership","states":["Owned","Borrowed"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return"]},
-    {"name":"borrow_state","states":["Unborrowed","Shared_borrowed","Exclusive_borrowed"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return"]},
-    {"name":"copy_capability","states":["Copyable","Uncopyable"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return","type"]},
-    {"name":"move_capability","states":["Movable","Unmovable"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return","type"]},
-    {"name":"move_state","states":["Unmoved","Moved"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter"]},
-    {"name":"release_policy","states":["Auto_release","Manual_release"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return"]},
-    {"name":"release_capability","states":["Releasable","Unreleasable"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return"]},
-    {"name":"release_state","states":["Unreleased","Released"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter"]},
-    {"name":"lifetime","states":["Local_lifetime","Function_lifetime","Object_lifetime","Module_lifetime","Static_lifetime"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return"]},
-    {"name":"initialization","states":["Initialized","Uninitialized"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter"]},
-    {"name":"nullability","states":["nullable","unnullable"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return"]},
-    {"name":"optionality","states":["Optional","Required"],"exclusive":true,"required":true,"applies_to":["field","parameter","return"]},
-    {"name":"constness","states":["Const","Unconst"],"exclusive":true,"required":true,"applies_to":["variable","field","parameter","return"]}
+    {
+      "name": "scope_visibility",
+      "states": [
+        "Public",
+        "Private"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "function",
+        "type"
+      ]
+    },
+    {
+      "name": "inheritance_visibility",
+      "states": [
+        "Protected",
+        "Unprotected"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "field",
+        "function",
+        "type"
+      ]
+    },
+    {
+      "name": "module_export",
+      "states": [
+        "Exported",
+        "Unexported"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "function",
+        "type"
+      ]
+    },
+    {
+      "name": "retention",
+      "states": [
+        "Static",
+        "Dynamic"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "function"
+      ]
+    },
+    {
+      "name": "instance_access",
+      "states": [
+        "Instance_required",
+        "Instance_unrequired"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "field",
+        "function"
+      ]
+    },
+    {
+      "name": "readability",
+      "states": [
+        "Readable",
+        "Unreadable"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter"
+      ]
+    },
+    {
+      "name": "writeability",
+      "states": [
+        "Writeable",
+        "Unwriteable"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter"
+      ]
+    },
+    {
+      "name": "reassignment",
+      "states": [
+        "Reassignable",
+        "Unreassignable"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter"
+      ]
+    },
+    {
+      "name": "ownership",
+      "states": [
+        "Owned",
+        "Borrowed"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return"
+      ]
+    },
+    {
+      "name": "borrow_state",
+      "states": [
+        "Unborrowed",
+        "Shared_borrowed",
+        "Exclusive_borrowed"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return"
+      ]
+    },
+    {
+      "name": "copy_capability",
+      "states": [
+        "Copyable",
+        "Uncopyable"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return",
+        "type"
+      ]
+    },
+    {
+      "name": "move_capability",
+      "states": [
+        "Movable",
+        "Unmovable"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return",
+        "type"
+      ]
+    },
+    {
+      "name": "move_state",
+      "states": [
+        "Unmoved",
+        "Moved"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter"
+      ]
+    },
+    {
+      "name": "release_policy",
+      "states": [
+        "Auto_release",
+        "Manual_release"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return"
+      ]
+    },
+    {
+      "name": "release_capability",
+      "states": [
+        "Releasable",
+        "Unreleasable"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return"
+      ]
+    },
+    {
+      "name": "release_state",
+      "states": [
+        "Unreleased",
+        "Released"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter"
+      ]
+    },
+    {
+      "name": "lifetime",
+      "states": [
+        "Local_lifetime",
+        "Function_lifetime",
+        "Object_lifetime",
+        "Module_lifetime",
+        "Static_lifetime"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return"
+      ]
+    },
+    {
+      "name": "initialization",
+      "states": [
+        "Initialized",
+        "Uninitialized"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter"
+      ]
+    },
+    {
+      "name": "nullability",
+      "states": [
+        "nullable",
+        "unnullable"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return"
+      ]
+    },
+    {
+      "name": "optionality",
+      "states": [
+        "Optional",
+        "Required"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "field",
+        "parameter",
+        "return"
+      ]
+    },
+    {
+      "name": "constness",
+      "states": [
+        "Const",
+        "Unconst"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter",
+        "return"
+      ]
+    }
   ]
 }
