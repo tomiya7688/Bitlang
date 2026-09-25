@@ -25,6 +25,7 @@ The Bitlang repository should therefore explain **what source code means and how
 ## Main specification documents
 
 - [LANGUAGE_SPEC.md](LANGUAGE_SPEC.md) — overall Bitlang source language semantics
+- [STATIC_AND_DIRECT.md](STATIC_AND_DIRECT.md) ([日本語](STATIC_AND_DIRECT.ja.md)) — `static` (static retention) and `Direct` (instance-free access)
 - [SOURCE_NORMALIZATION.md](SOURCE_NORMALIZATION.md) — relaxed source notation and canonical normalization rules
 - [PROPERTIES.md](PROPERTIES.md) — source-facing semantic properties and preprocessing behavior
 - [TYPES.md](TYPES.md) — source type system
