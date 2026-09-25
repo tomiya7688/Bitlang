@@ -13,4 +13,5 @@ type DeclarationKindSpec struct {
 	PropertyTarget string   `json:"property_target"`
 	Terminator     string   `json:"terminator"`
 	Layout         []string `json:"layout"`
+	Contexts       []string `json:"contexts,omitempty"`
 }
