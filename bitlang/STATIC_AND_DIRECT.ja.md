@@ -41,6 +41,37 @@ Task_retention
 
 functionではfunction-associated stateの共有範囲を表す。`Static / Dynamic`、lifetime、initialization/finalizationとは独立して明示する。
 
+## static保持状態の初期化・終了順序
+
+static保持状態の初期化順序は、依存関係を表すgraphから決定する。
+
+graphには少なくとも次を含める。
+
+- source / language adapter / preprocessingが与える明示的な初期化順序制約
+- initializerが利用する、静的に判明した依存対象
+- owner / moduleの初期化依存関係
+
+依存先を必ず先に初期化する。
+
+依存関係だけでは順序が決まらない場合は、結果を毎回同じにするため次のtie-breakを使う。
+
+1. 同一declaration field内ではsourceの宣言順
+2. 無関係なfield / module間ではcanonical fully-qualified declaration name順
+
+`First_reach_initialization` / `First_use_initialization` はlazyのままとし、全体順序のためだけにeager化しない。実際にtriggerされた時点で未初期化の依存先を先に初期化する。`Manual_initialization` は自動順序から除外する。
+
+静的に循環初期化を証明できる場合はcompile error。lazy/dynamicな再入によってruntimeでしか循環が判明しない場合は、初期化途中の値を見せずruntime errorとする。
+
+自動finalizationの既定順序は、**各retention-domain instanceにおける実際に成功した初期化順序の逆順**とする。
+
+これにより、通常はdependentを先にfinalizeし、その依存先を後にfinalizeできる。
+
+- 初期化が完了していない状態は自動finalization対象にしない。
+- explicitなfinalization order制約は既定順序を調整できるが、dependency safetyと矛盾してはならない。
+- 矛盾する順序はerror。
+- `Thread_retention` / `Task_retention` は各thread/taskごとに個別の実初期化順と逆finalization順を持つ。
+- finalization triggerは「いつfinalization対象になるか」、この順序規則は「対象同士をどの順にfinalizeするか」を決める。
+
 ## 4つの直交状態
 
 両方の修飾子が適用可能な対象では、次の4組み合わせを **構文上すべて許可** する。
@@ -178,4 +209,3 @@ override および interface 実装では、static と Direct の
 - 静的保持領域の開始・終了タイミング
 - destructor 相当の終了処理との関係
 - 将来の module-instance モデルがモジュールレベル `Direct` に意味を与えるかどうか
-- static 対象の初期化順序の詳細規則
