@@ -21,7 +21,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/property_spec_loader.go` | Decode and validate property specification data. |
 | `internal/bitlang/property_spec_loader_test.go` | Verify property specification loading. |
 | `internal/bitlang/property_validator.go` | Validate explicit properties against specification axes. |
-| `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
+| `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |\n| `internal/bitlang/property_resolver.go` | Resolve case-insensitive property spelling to specification-defined states. |\n| `internal/bitlang/property_resolver_test.go` | Verify specification-driven property spelling resolution. |
 | `internal/bitlang/spec_consistency.go` | Validate invariants across machine-readable specifications. |
 | `internal/bitlang/spec_consistency_test.go` | Verify cross-specification consistency checks. |
 | `internal/bitlang/specification_set.go` | Group validated machine-readable specifications for shared use. |
