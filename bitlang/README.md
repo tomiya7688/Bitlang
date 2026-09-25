@@ -39,7 +39,7 @@ The Bitlang repository should therefore explain **what authors may write or omit
 - [PREPROCESSOR_EXECUTION.md](PREPROCESSOR_EXECUTION.md) — preprocessing execution order, declaration timing, reuse, and start/end activation ranges
 - [HEADER_FILES.md](HEADER_FILES.md) — header information, preprocessor functions, and preprocessor macros in header files
 
-## Canonical Preprocessed specifications
+## Canonical Bitlang Explicit specifications
 
 The final resolved representation is not specified here. Its canonical home is:
 
@@ -47,4 +47,4 @@ The final resolved representation is not specified here. Its canonical home is:
 - https://github.com/tomiya7688/Bitlang-Explicit/blob/main/PROPERTIES.ja.md
 - https://github.com/tomiya7688/Bitlang-Explicit/blob/main/BORROW_STATE.ja.md
 
-This repository separation is an ownership boundary for documentation and implementation, not a statement that source and Preprocessed are different semantic languages.
+This repository separation is an ownership boundary for documentation and implementation, not a statement that source and Explicit are different semantic languages.
