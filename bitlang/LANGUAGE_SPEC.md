@@ -16,7 +16,7 @@ Bitlang family language
     -> Bitlang
     -> preprocess + normalize
     -> Bitlang preprocessed
-    -> compile
+    -> Bitlang Lowerer
     -> Bitlang Low
 ```
 
@@ -152,7 +152,7 @@ Bit Function lang
     -> Bitlang functional-semantic representation
     -> preprocess + normalize
     -> Bitlang preprocessed canonical representation
-    -> compile
+    -> Bitlang Lowerer
     -> Bitlang Low procedural representation
 ```
 
