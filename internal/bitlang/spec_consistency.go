@@ -31,10 +31,14 @@ func validateUniquePropertyStates(spec PropertySpecification) error {
 			if state == "" {
 				return fmt.Errorf("property axis %q contains an empty state", axis.Name)
 			}
-			if owner, exists := owners[state]; exists {
-				return fmt.Errorf("property state %q is shared by axes %q and %q", state, owner, axis.Name)
+			canonical, err := CanonicalizeIdentifier(state)
+			if err != nil {
+				return err
 			}
-			owners[state] = axis.Name
+			if owner, exists := owners[canonical]; exists {
+				return fmt.Errorf("property state %q collides case-insensitively between axes %q and %q", state, owner, axis.Name)
+			}
+			owners[canonical] = axis.Name
 		}
 	}
 	return nil
