@@ -7,7 +7,7 @@ import (
 )
 
 func isGeneratedFile(path string) (bool, error) {
-	file, err := os.Open(path)
+	// #nosec G304 -- path comes from collectGoFiles, which rejects symlinked Go scan targets.\n	file, err := os.Open(path)
 	if err != nil {
 		return false, err
 	}
