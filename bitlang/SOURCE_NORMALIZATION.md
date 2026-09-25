@@ -1,8 +1,8 @@
 # Bitlang Source Normalization
 
-Bitlang source is intentionally more permissive and concise than Bitlang Preprocessed.
+Bitlang source is intentionally more permissive and concise than Bitlang Preprocessed, but they share the same underlying Bitlang semantic property system.
 
-The source language is allowed to optimize for human readability. The preprocessor is responsible for converting those convenient forms into the strict, explicit canonical representation defined by `tomiya7688/Bitlang_preprocessed`.
+Bitlang source is allowed to optimize for human readability by omitting information or using conveniences. The preprocessor converts those forms into the fully explicit normalized Bitlang form defined by `tomiya7688/Bitlang_preprocessed`.
 
 ## Core rule
 
@@ -57,11 +57,15 @@ After expansion, any still-missing axes are resolved independently.
 
 A compact source form therefore does not weaken the Preprocessed model. It only reduces what the programmer must write manually.
 
-## Explicit detail is still allowed
+## Explicit detail is always allowed
 
 Bitlang does not force users to use the relaxed form.
 
-A programmer, generator, language adapter, or debugging tool may write a highly explicit Bitlang declaration containing many semantic properties. The preprocessor preserves valid explicit requirements while filling only what remains unresolved.
+**Every canonical property available in Bitlang Preprocessed is also available to Bitlang source when applicable.** Preprocessing does not own a hidden property vocabulary that source authors are forbidden to write.
+
+A programmer, generator, language adapter, or debugging tool may therefore write a fully explicit Bitlang declaration containing every applicable property. The preprocessor preserves valid explicit requirements and fills only what remains unresolved.
+
+Consequently, fully explicit Bitlang source may already look almost identical to Bitlang Preprocessed. The difference is that source is allowed to omit or abbreviate information, while the Preprocessed boundary is not.
 
 This makes Bitlang usable both as a human-facing language and as a convenient transformation target for other languages.
 
@@ -78,7 +82,7 @@ Relaxed syntax must not mean ambiguous semantics.
 
 ## Canonical boundary
 
-At the Bitlang -> Bitlang Preprocessed boundary:
+At the Bitlang source -> fully explicit Bitlang Preprocessed boundary:
 
 - all applicable semantic property axes are resolved;
 - all source aliases are expanded;
@@ -118,4 +122,4 @@ This keeps backward migration in the preprocessor and allows the Bitlang compile
 
 Bitlang should be strict about **meaning**, not unnecessarily strict about **how much repetitive semantic information a human must type**.
 
-The strictness belongs at the normalized boundary. The source layer may remain comparatively comfortable as long as preprocessing can transform it into one unambiguous canonical form.
+The strictness of mandatory explicitness belongs at the normalized boundary. The source form may remain comparatively comfortable, but it retains access to the complete Bitlang property vocabulary at all times.
