@@ -50,7 +50,7 @@ func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, token
 		return PreprocessedDeclaration{}, err
 	}
 	return PreprocessedDeclaration{
-		Name: name, Type: typeName, Properties: resolved,
+		Kind: kind.Name, Name: name, Type: typeName, Properties: resolved,
 		Line: parts.nameToken.Line, Column: parts.nameToken.Column,
 	}, nil
 }
