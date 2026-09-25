@@ -37,3 +37,22 @@ func TestDeclarationKindRejectsUnknownName(t *testing.T) {
 		t.Fatal("expected unknown declaration kind error")
 	}
 }
+
+
+func TestLoadDeclarationSpecificationAcceptsContexts(t *testing.T) {
+	data := []byte(`{"version":1,"kinds":[{"name":"field","property_target":"field","terminator":";","layout":["properties","type","name"],"contexts":["member"]}]}`)
+	spec, err := LoadDeclarationSpecification(data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(spec.Kinds[0].Contexts) != 1 || spec.Kinds[0].Contexts[0] != "member" {
+		t.Fatalf("unexpected contexts: %#v", spec.Kinds[0].Contexts)
+	}
+}
+
+func TestLoadDeclarationSpecificationRejectsDuplicateContexts(t *testing.T) {
+	data := []byte(`{"version":1,"kinds":[{"name":"field","property_target":"field","terminator":";","layout":["properties","type","name"],"contexts":["member","MeMbEr"]}]}`)
+	if _, err := LoadDeclarationSpecification(data); err == nil {
+		t.Fatal("expected duplicate context error")
+	}
+}
