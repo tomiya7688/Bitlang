@@ -11,7 +11,7 @@ Bitlang source
     -> Bitlang preprocessor
     -> Bitlang Preprocessed
     -> static analysis / compiler
-    -> Bitlang Compiled
+    -> Bitlang Low
 ```
 
 Bitlang source and Bitlang Preprocessed are **not separate semantic languages**. They are two normalization states of Bitlang.
@@ -20,7 +20,7 @@ Bitlang source and Bitlang Preprocessed are **not separate semantic languages**.
 - Bitlang source may explicitly write every canonical property that Bitlang Preprocessed can contain.
 - Bitlang Preprocessed is the fully resolved form of the same language: applicable properties are explicit and source/preprocessing-only shorthand has been removed.
 - The repositories are separate only to keep source-facing normalization rules and the canonical fully explicit representation independently maintainable.
-- `tomiya7688/Bitlang_compiled` remains the separate lower-level compiled language.
+- `tomiya7688/Bitlang_low` remains the separate lower-level compiled language.
 
 The Bitlang repository should therefore explain **what authors may write or omit and how Bitlang is normalized**, while `tomiya7688/Bitlang_preprocessed` is the canonical home for the requirements of the fully explicit form.
 
