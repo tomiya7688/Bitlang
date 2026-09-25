@@ -3,7 +3,6 @@ package bitlang
 import "testing"
 
 func TestParsePreprocessedDeclarations(t *testing.T) {
-	spec := declarationParserTestProperties()
 	source, err := NewPreprocessor().Process(NewSourceText(
 		"test.bit",
 		"Private unnullable Int First; Public nullable Text Second;",
@@ -11,7 +10,7 @@ func TestParsePreprocessedDeclarations(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	declarations, err := ParsePreprocessedDeclarations(spec, declarationParserTestKind(), source.Tokens)
+	declarations, err := ParsePreprocessedDeclarations(declarationParserTestSpecifications(), "variable", source.Tokens)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +27,7 @@ func TestParsePreprocessedDeclarationsRejectsMissingTerminator(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := ParsePreprocessedDeclarations(declarationParserTestProperties(), declarationParserTestKind(), source.Tokens); err == nil {
+	if _, err := ParsePreprocessedDeclarations(declarationParserTestSpecifications(), "variable", source.Tokens); err == nil {
 		t.Fatal("expected missing terminator error")
 	}
 }
