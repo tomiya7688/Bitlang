@@ -274,6 +274,28 @@ Instance_unrequired
 
 Retention and lifetime also remain distinct. `Static / Dynamic` is not a replacement for lifetime properties such as `Static_lifetime`; preprocessing and static analysis must ensure that the resolved retention and lifetime states are consistent.
 
+### Function retention semantics
+
+For a function declaration, `Static / Dynamic` governs function-associated semantic state rather than executable-code lifetime.
+
+Function-associated state may include closure environments, captured storage, first-class function-object state, or other state owned by the function representation.
+
+```text
+Static function
+    -> function-associated state uses static retention
+
+Dynamic function
+    -> function-associated state follows its ordinary owner/lifetime
+```
+
+The function's executable code is not considered to be created and destroyed on each invocation merely because the function is `Dynamic`.
+
+For an ordinary stateless named function, the retention property may have no observable runtime storage effect. It still remains explicit in Bitlang Explicit because it is part of the declaration's semantic contract.
+
+`Instance_required / Instance_unrequired` remains independent. Therefore all meaningful combinations of function retention and instance access remain representable.
+
+Initialization and finalization of function-associated state are controlled by their own properties/rules; `Static` does not imply a specific initialization or destruction time.
+
 ### Source default resolution
 
 When omitted in ordinary Bitlang source:
