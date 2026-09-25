@@ -118,7 +118,8 @@ explicit declaration property
 > innermost class/type default
 > file default
 > innermost namespace/module default
-> project default
+> current project default
+> parent-project defaults from nearest to farthest
 > language-adapter default
 > Bitlang built-in default
 ```
