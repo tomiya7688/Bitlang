@@ -3,7 +3,7 @@ package bitlang
 import "testing"
 
 func TestParsePreprocessedDeclaration(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private unnullable Int PlayerHP;"))
+	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "pRiVaTe UnNuLlAbLe Int PlayerHP;"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -16,6 +16,9 @@ func TestParsePreprocessedDeclaration(t *testing.T) {
 	}
 	if decl.Type.Canonical != "int" {
 		t.Fatalf("unexpected type: %#v", decl.Type)
+	}
+	if len(decl.Properties) != 2 || decl.Properties[0] != "Private" || decl.Properties[1] != "unnullable" {
+		t.Fatalf("properties = %#v", decl.Properties)
 	}
 }
 
