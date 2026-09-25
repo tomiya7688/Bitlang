@@ -416,6 +416,36 @@ Initialization state is independent from readability, writability, reassignment,
 
 Bitlang source may omit some initialization-state detail when it is directly inferable from the declaration syntax, but preprocessing must resolve that state explicitly.
 
+## Initialization trigger
+
+Bitlang represents the timing of automatic initialization independently from both retention and current initialization state.
+
+The canonical initialization-trigger states are:
+
+```text
+Declaration_initialization
+Owner_initialization
+First_reach_initialization
+First_use_initialization
+Manual_initialization
+```
+
+Their meanings are:
+
+- `Declaration_initialization`: initialize at the ordinary declaration-initialization point for each storage instance.
+- `Owner_initialization`: initialize when the owning object, type, module, or corresponding owner is initialized.
+- `First_reach_initialization`: initialize once when execution first reaches the declaration for that storage instance.
+- `First_use_initialization`: initialize once when that storage instance is first validly used.
+- `Manual_initialization`: perform no automatic initialization; a valid explicit initialization operation is required before use.
+
+This axis applies to variables and fields.
+
+The trigger is independent from `Static / Dynamic`. In particular, `Static` does not imply eager initialization, first-use initialization, or first-reach initialization.
+
+This separation exists so Bitlang-family language adapters can preserve different source-language initialization semantics without overloading the meaning of `Static`.
+
+The trigger is also independent from `Initialized / Uninitialized`: the trigger describes the policy/timing, while the initialization-state axis describes the current semantic state.
+
 ## Const
 
 `Const` is separate from `Readable`, `Unreadable`, `Writeable`, `Unwriteable`, `Reassignable`, and `Unreassignable`.
