@@ -2,7 +2,7 @@
 
 Bitlang source exposes semantic properties so programmers and preprocessor functions can control program meaning explicitly when needed, while still allowing source code to omit or abbreviate properties that the preprocessor can resolve safely.
 
-The **canonical fully explicit property model is owned by `tomiya7688/Bitlang_preprocessed`**. This document defines the Bitlang source-facing role of those properties and how they participate in preprocessing.
+The **canonical fully explicit property requirements are owned by `tomiya7688/Bitlang_preprocessed`**. This does not make those properties unavailable to source: Bitlang source may explicitly use the entire canonical property vocabulary. This document defines when source may omit, abbreviate, default, or preprocess those properties.
 
 Canonical property specification:
 
@@ -30,6 +30,21 @@ Bitlang source
 Bitlang Preprocessed
     fully resolved explicit property state
 ```
+
+## Shared property vocabulary
+
+Bitlang source and Bitlang Preprocessed share the same canonical semantic property vocabulary.
+
+For every property state defined by the Bitlang Preprocessed property model, ordinary Bitlang source may write that property explicitly when it applies to the target.
+
+The distinction is only whether explicit spelling is mandatory:
+
+```text
+Bitlang source       -> explicit property OR omission/inference/shorthand
+Bitlang Preprocessed -> resolved explicit property required
+```
+
+A property must not be described as "Preprocessed-only" merely because it is mandatory at the Preprocessed boundary.
 
 ## Loose source notation and canonical normalization
 
@@ -293,6 +308,6 @@ Examples include changing borrow state, move state, release state, ownership-rel
 
 ## Stage boundary
 
-This repository defines **how Bitlang source expresses, abbreviates, or omits properties and how preprocessing is allowed to resolve them**.
+This repository defines **how Bitlang source may explicitly express the full Bitlang property vocabulary, and how it may additionally abbreviate or omit properties for preprocessing to resolve**.
 
 The exact canonical property set, required explicitness, final state vocabulary, and cross-property consistency rules belong to the separate Bitlang Preprocessed specification. Later compiler stages must consume that resolved representation rather than reconstructing source omissions or source-only shorthand.
