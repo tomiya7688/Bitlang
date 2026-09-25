@@ -7,4 +7,5 @@ type PreprocessedSource struct {
 	Path         string
 	Tokens       []PreprocessedToken
 	Declarations []PreprocessedDeclaration
+	Scope        *PreprocessedScope
 }
