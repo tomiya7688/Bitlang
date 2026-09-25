@@ -120,6 +120,32 @@ The same source declaration may instead explicitly specify one or more of those 
 
 Bitlang Explicit must contain the resolved final property set and must not require later compiler stages to reconstruct omitted property semantics.
 
+### Scoped default property configuration
+
+Property defaults may be changed by preprocessing for a file, class/type, namespace/module, or project/language-adapter scope.
+
+This is intended to let large Bitlang projects and foreign-language converters express source-language defaults once instead of repeating canonical properties on every declaration.
+
+Defaults only fill omitted property axes. They do not silently override properties written directly on a declaration.
+
+For the same unresolved axis, precedence is:
+
+```text
+explicit declaration
+> declaration-targeted preprocessing rule
+> innermost class/type default
+> file default
+> innermost namespace/module default
+> project/language-adapter default
+> Bitlang built-in default
+```
+
+Rules at the same precedence level that conflict without an explicit ordering/override relation are errors.
+
+Bitlang has no separate native `namespace` construct; `module` is the native naming hierarchy. A language adapter may nevertheless expose a foreign namespace as preprocessing scope and normalize it into the appropriate Bitlang module/name hierarchy.
+
+These default-setting directives exist only during preprocessing. Bitlang Explicit contains the resulting resolved properties, not the default directives themselves.
+
 ## Functional-language support
 
 Bitlang must be able to represent functional-programming semantics even though Bitlang itself does not need to be primarily written as a functional language.
