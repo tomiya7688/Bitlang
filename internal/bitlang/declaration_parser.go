@@ -2,9 +2,14 @@ package bitlang
 
 import "fmt"
 
-// ParsePreprocessedDeclaration parses one declaration using its data-defined
-// strict grammar and property target.
-func ParsePreprocessedDeclaration(properties PropertySpecification, kind DeclarationKindSpec, tokens []PreprocessedToken) (PreprocessedDeclaration, error) {
+// ParsePreprocessedDeclaration parses one declaration using a validated shared
+// specification set and a data-defined declaration kind name.
+func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, tokens []PreprocessedToken) (PreprocessedDeclaration, error) {
+	kind, err := specs.Declarations.DeclarationKind(kindName)
+	if err != nil {
+		return PreprocessedDeclaration{}, err
+	}
+
 	body := declarationBody(tokens)
 	if len(body) < 3 {
 		return PreprocessedDeclaration{}, fmt.Errorf("declaration requires properties, type, and name")
@@ -25,7 +30,7 @@ func ParsePreprocessedDeclaration(properties PropertySpecification, kind Declara
 		}
 		explicit = append(explicit, PreprocessedProperty(token.Lexeme))
 	}
-	if err := ValidateProperties(properties, kind.PropertyTarget, explicit); err != nil {
+	if err := ValidateProperties(specs.Properties, kind.PropertyTarget, explicit); err != nil {
 		return PreprocessedDeclaration{}, err
 	}
 
