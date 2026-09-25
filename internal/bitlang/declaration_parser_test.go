@@ -14,6 +14,9 @@ func TestParsePreprocessedDeclaration(t *testing.T) {
 	if decl.Name.Spelling != "PlayerHP" || decl.Name.Canonical != "playerhp" {
 		t.Fatalf("unexpected declaration name: %#v", decl.Name)
 	}
+	if decl.Kind != "variable" {
+		t.Fatalf("declaration kind = %q, want variable", decl.Kind)
+	}
 	if decl.Type.Canonical != "int" {
 		t.Fatalf("unexpected type: %#v", decl.Type)
 	}
