@@ -10,7 +10,7 @@ func TestFullRepositoryCheck(t *testing.T) {
 		{paths: []string{"."}, want: true},
 		{paths: []string{"./"}, want: true},
 		{paths: []string{"internal/bitlang"}, want: false},
-		{paths: []string{"." , "tools"}, want: false},
+		{paths: []string{".", "tools"}, want: false},
 	}
 	for _, item := range cases {
 		if got := isFullRepositoryCheck(item.paths); got != item.want {
