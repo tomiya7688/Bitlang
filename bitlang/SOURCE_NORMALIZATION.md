@@ -1,20 +1,20 @@
 # Bitlang Source Normalization
 
-Bitlang source is intentionally more permissive and concise than Bitlang Preprocessed, but they share the same underlying Bitlang semantic property system.
+Bitlang source is intentionally more permissive and concise than Bitlang Explicit, but they share the same underlying Bitlang semantic property system.
 
-Bitlang source is allowed to optimize for human readability by omitting information or using conveniences. The preprocessor converts those forms into the fully explicit normalized Bitlang form defined by `tomiya7688/Bitlang_preprocessed`.
+Bitlang source is allowed to optimize for human readability by omitting information or using conveniences. The preprocessor converts those forms into the fully explicit normalized Bitlang form defined by `tomiya7688/Bitlang-Explicit`.
 
 ## Core rule
 
 ```text
 human-friendly Bitlang
     -> preprocessing / normalization
-    -> fully explicit Bitlang Preprocessed
+    -> fully explicit Bitlang Explicit
 ```
 
-A Bitlang source construct is acceptable when its semantics can be resolved deterministically before the Preprocessed boundary.
+A Bitlang source construct is acceptable when its semantics can be resolved deterministically before the Explicit boundary.
 
-Bitlang Preprocessed must not inherit unresolved source shorthand, missing semantic axes, or context-dependent aliases.
+Bitlang Explicit must not inherit unresolved source shorthand, missing semantic axes, or context-dependent aliases.
 
 ## Forms that may be normalized
 
@@ -31,7 +31,7 @@ Bitlang source may use:
 - source sugar that expands into more explicit statements or declarations;
 - source-only names or short references that resolve into canonical qualified references.
 
-All such forms are resolved before Bitlang Preprocessed is produced.
+All such forms are resolved before Bitlang Explicit is produced.
 
 ## Property normalization
 
@@ -55,19 +55,64 @@ These names are examples of the normalization mechanism, not a declaration that 
 
 After expansion, any still-missing axes are resolved independently.
 
-A compact source form therefore does not weaken the Preprocessed model. It only reduces what the programmer must write manually.
+A compact source form therefore does not weaken the Explicit model. It only reduces what the programmer must write manually.
 
 ## Explicit detail is always allowed
 
 Bitlang does not force users to use the relaxed form.
 
-**Every canonical property available in Bitlang Preprocessed is also available to Bitlang source when applicable.** Preprocessing does not own a hidden property vocabulary that source authors are forbidden to write.
+**Every canonical property available in Bitlang Explicit is also available to Bitlang source when applicable.** Preprocessing does not own a hidden property vocabulary that source authors are forbidden to write.
 
 A programmer, generator, language adapter, or debugging tool may therefore write a fully explicit Bitlang declaration containing every applicable property. The preprocessor preserves valid explicit requirements and fills only what remains unresolved.
 
-Consequently, fully explicit Bitlang source may already look almost identical to Bitlang Preprocessed. The difference is that source is allowed to omit or abbreviate information, while the Preprocessed boundary is not.
+Consequently, fully explicit Bitlang source may already look almost identical to Bitlang Explicit. The difference is that source is allowed to omit or abbreviate information, while the Explicit boundary is not.
 
 This makes Bitlang usable both as a human-facing language and as a convenient transformation target for other languages.
+
+## Scoped property defaults
+
+The preprocessor may define default property values for declarations by structural scope. This exists especially to make language adapters and generated Bitlang concise while preserving a fully explicit Bitlang Explicit result.
+
+Supported default scopes include:
+
+- file scope;
+- class/type scope;
+- namespace/module scope;
+- project/language-adapter scope.
+
+A native Bitlang `module` is the normal Bitlang naming scope. A foreign-language adapter may expose its source-language namespace as a preprocessing namespace scope and map that scope into the corresponding Bitlang module/name hierarchy during normalization.
+
+A scoped default may set one property axis or a reusable set of property axes, and may optionally restrict the declaration kinds it applies to.
+
+Defaults fill unresolved axes only. They do not silently overwrite a directly written canonical property or an already stronger explicit preprocessing requirement.
+
+When multiple defaults apply to the same unresolved axis, precedence is:
+
+```text
+explicit declaration property
+    > declaration-targeted preprocessing rule
+    > innermost class/type default
+    > file default
+    > innermost namespace/module default
+    > project/language-adapter default
+    > Bitlang built-in default
+```
+
+Within nested class/type or namespace/module scopes, the innermost matching scope wins.
+
+If two rules at the same precedence level assign contradictory defaults to the same target and axis, preprocessing must report an error unless an explicit ordering/override relation between those rules has been defined.
+
+A scoped default is preprocessing state only. The default declaration itself disappears before Bitlang Explicit; each affected declaration receives the resolved canonical property value.
+
+Conceptually:
+
+```text
+file default:       Dynamic Process_retention
+namespace default:  Public
+class default:      Unreassignable
+```
+
+may allow many declarations to omit those properties in source, while Bitlang Explicit still contains each final property explicitly.
 
 ## Conflict handling
 
@@ -82,7 +127,7 @@ Relaxed syntax must not mean ambiguous semantics.
 
 ## Canonical boundary
 
-At the Bitlang source -> fully explicit Bitlang Preprocessed boundary:
+At the Bitlang source -> fully explicit Bitlang Explicit boundary:
 
 - all applicable semantic property axes are resolved;
 - all source aliases are expanded;
@@ -91,7 +136,7 @@ At the Bitlang source -> fully explicit Bitlang Preprocessed boundary:
 - all source sugar relevant to later semantic analysis is expanded;
 - no later compiler stage is required to guess what omitted source notation meant.
 
-The canonical result is governed by the Bitlang Preprocessed repository, especially:
+The canonical result is governed by the Bitlang Explicit repository, especially:
 
 - `LANGUAGE_SPEC.ja.md`
 - `PROPERTIES.ja.md`
@@ -99,22 +144,22 @@ The canonical result is governed by the Bitlang Preprocessed repository, especia
 
 
 
-## Legacy Preprocessed-shaped input
+## Legacy Explicit-shaped input
 
-Older Bitlang Preprocessed representations may be accepted by preprocessing as migration input when their meaning can still be reconstructed deterministically.
+Older Bitlang Explicit representations may be accepted by preprocessing as migration input when their meaning can still be reconstructed deterministically.
 
-A common version change is that a semantic property which was previously implicit becomes public and mandatory in the newer Bitlang Preprocessed specification. In that case, the older representation is no longer considered canonical current Preprocessed, because one or more semantic axes are still implicit.
+A common version change is that a semantic property which was previously implicit becomes public and mandatory in the newer Bitlang Explicit specification. In that case, the older representation is no longer considered canonical current Explicit, because one or more semantic axes are still implicit.
 
-Conceptually, such input is treated as **Bitlang source written in a Preprocessed-shaped syntax**:
+Conceptually, such input is treated as **Bitlang source written in a Explicit-shaped syntax**:
 
 ```text
-old Preprocessed-shaped input
+old Explicit-shaped input
     -> preprocess / infer formerly implicit properties
     -> materialize newly explicit properties
-    -> current fully explicit Bitlang Preprocessed
+    -> current fully explicit Bitlang Explicit
 ```
 
-The fact that the text resembles an older Preprocessed format does not grant it direct access to the compiler. The current Preprocessed boundary is defined by the current canonical specification, not by historical syntax.
+The fact that the text resembles an older Explicit format does not grant it direct access to the compiler. The current Explicit boundary is defined by the current canonical specification, not by historical syntax.
 
 This keeps backward migration in the preprocessor and allows the Bitlang compiler to remain strict: it only needs to accept the current fully explicit form.
 
