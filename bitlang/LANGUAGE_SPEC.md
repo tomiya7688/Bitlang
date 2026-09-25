@@ -17,7 +17,7 @@ Bitlang family language
     -> preprocess + normalize
     -> Bitlang preprocessed
     -> compile
-    -> Bitlang compiled
+    -> Bitlang Low
 ```
 
 This allows family languages to focus on their own syntax and usability while Bitlang remains the shared language for expressing the meaning of the program.
@@ -153,7 +153,7 @@ Bit Function lang
     -> preprocess + normalize
     -> Bitlang preprocessed canonical representation
     -> compile
-    -> Bitlang compiled procedural representation
+    -> Bitlang Low procedural representation
 ```
 
 ## Assignment and increment syntax
