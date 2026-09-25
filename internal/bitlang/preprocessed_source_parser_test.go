@@ -41,3 +41,25 @@ func TestPreprocessorLeavesDeclarationsUnparsed(t *testing.T) {
 		t.Fatalf("preprocessor unexpectedly parsed declarations: %#v", source.Declarations)
 	}
 }
+
+
+func TestParseMixedPreprocessedSourceStoresDetectedKinds(t *testing.T) {
+	source, err := NewPreprocessor().Process(NewSourceText(
+		"test.bit",
+		"Private Int Count; Private Protected Text Name;",
+	))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	parsed, err := ParseMixedPreprocessedSource(mixedDeclarationTestSpecifications(), source)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(parsed.Declarations) != 2 {
+		t.Fatalf("declaration count = %d, want 2", len(parsed.Declarations))
+	}
+	if parsed.Declarations[0].Kind != "variable" || parsed.Declarations[1].Kind != "field" {
+		t.Fatalf("unexpected declaration kinds: %#v", parsed.Declarations)
+	}
+}
