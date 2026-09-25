@@ -60,23 +60,19 @@ The reason for preferring `snake_case` internally is that Bitlang identifiers ar
 
 Preprocessor-generated canonical names are normally normalized so that the first character is uppercase and the remaining letters of each word are lowercase. Multi-word canonical names preserve `_` as the word separator.
 
+Case differences do not create distinct identifiers, but underscores are significant characters and are preserved as part of identifier identity.
+
 Conceptually:
 
 ```text
-currentScope
-CurrentScope
-CURRENT_SCOPE
+currentScope == CurrentScope
+current_scope == CURRENT_SCOPE
+currentScope != current_scope
 ```
 
-may all resolve to the same semantic name and normalize to a canonical spelling such as:
+Canonical case formatting may normalize capitalization, but generic identifier normalization must not insert, remove, or ignore `_`.
 
-```text
-Current_scope
-```
-
-where the initial capitalization is canonical formatting rather than semantic identity.
-
-Because Bitlang names are semantically case-insensitive, differences in capitalization do not create distinct identifiers. Naming-style normalization may therefore be performed by preprocessing where a canonical internal name is required.
+Bitlang-defined standard-library names and built-in instructions formed from two or more words use `snake_case`. User-defined identifiers remain free to use other naming styles, but a differently placed underscore still denotes a different identifier.
 
 ## Property declaration and preprocessing
 
@@ -201,7 +197,58 @@ Unreassignable
 
 For example, an `Unreassignable Writeable` reference may remain bound to the same object while still allowing that object's writable state to be changed.
 
-These qualifiers describe individual capabilities. Bitlang should prefer combinations of these explicit properties rather than broad source-language-style categories such as `mutable`, `dynamic`, or `flexible` when those categories can be represented more precisely by the independent qualifiers.
+These qualifiers describe individual capabilities. Bitlang should prefer combinations of these explicit properties rather than broad source-language-style categories such as `mutable` or `flexible` when those categories can be represented more precisely by the independent qualifiers. `Dynamic` is reserved for the explicit opposite of `Static` on the retention axis and does not mean general dynamism or mutability.
+
+## Static retention and instance access
+
+Bitlang separates static retention from whether an instance is required for access.
+
+The retention axis is:
+
+```text
+Static
+Dynamic
+```
+
+`Static` means the target is statically retained. `Dynamic` is its explicit opposite and means the target is not statically retained, instead following the applicable ordinary non-static retention/lifetime relationship.
+
+This use of `Dynamic` does not mean dynamic typing, dynamic dispatch, or general runtime mutability.
+
+The instance-access axis is:
+
+```text
+Instance_required
+Instance_unrequired
+```
+
+`Instance_required` means access to an applicable type member requires an instance. `Instance_unrequired` means the member can be accessed without an instance.
+
+These axes are independent:
+
+```text
+Static  + Instance_required
+Static  + Instance_unrequired
+Dynamic + Instance_required
+Dynamic + Instance_unrequired
+```
+
+A combination is only valid when the declaration kind can meaningfully support it.
+
+Bitlang source provides the convenience modifier:
+
+```text
+Direct
+```
+
+which normalizes to:
+
+```text
+Instance_unrequired
+```
+
+`Direct` does not imply `Static`. It changes only the instance-access requirement.
+
+Retention and lifetime also remain distinct. `Static / Dynamic` is not a replacement for lifetime properties such as `Static_lifetime`; preprocessing and static analysis must ensure that the resolved retention and lifetime states are consistent.
 
 ## Ownership qualifiers
 
