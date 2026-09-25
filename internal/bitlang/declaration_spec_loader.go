@@ -23,7 +23,7 @@ func LoadDeclarationSpecification(data []byte) (DeclarationSpecification, error)
 			return DeclarationSpecification{}, fmt.Errorf("duplicate declaration kind %q", kind.Name)
 		}
 		seen[kind.Name] = true
-		if !supportedDeclarationLayout(kind.Layout) {
+		if !validDeclarationLayout(kind.Layout) {
 			return DeclarationSpecification{}, fmt.Errorf("unsupported declaration layout for %q", kind.Name)
 		}
 	}
@@ -40,6 +40,3 @@ func (s DeclarationSpecification) DeclarationKind(name string) (DeclarationKindS
 	return DeclarationKindSpec{}, fmt.Errorf("unknown declaration kind %q", name)
 }
 
-func supportedDeclarationLayout(layout []string) bool {
-	return len(layout) == 3 && layout[0] == "properties" && layout[1] == "type" && layout[2] == "name"
-}
