@@ -11,20 +11,23 @@ func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, token
 	}
 
 	body := declarationBody(tokens)
-	if len(body) < 3 {
-		return PreprocessedDeclaration{}, fmt.Errorf("declaration requires properties, type, and name")
+	if len(body) < 2 {
+		return PreprocessedDeclaration{}, fmt.Errorf("declaration does not satisfy configured layout")
 	}
 	if body[len(body)-1].Lexeme != kind.Terminator {
 		return PreprocessedDeclaration{}, fmt.Errorf("declaration must end with %q", kind.Terminator)
 	}
-	typeToken := body[len(body)-3]
-	nameToken := body[len(body)-2]
-	if typeToken.Kind != TokenIdentifier || nameToken.Kind != TokenIdentifier {
+
+	parts, err := parseDeclarationLayout(kind.Layout, body[:len(body)-1])
+	if err != nil {
+		return PreprocessedDeclaration{}, err
+	}
+	if parts.typeToken.Kind != TokenIdentifier || parts.nameToken.Kind != TokenIdentifier {
 		return PreprocessedDeclaration{}, fmt.Errorf("declaration type and name must be identifiers")
 	}
 
-	explicit := make([]PreprocessedProperty, 0, len(body)-3)
-	for _, token := range body[:len(body)-3] {
+	explicit := make([]PreprocessedProperty, 0, len(parts.properties))
+	for _, token := range parts.properties {
 		if token.Kind != TokenIdentifier {
 			return PreprocessedDeclaration{}, fmt.Errorf("property %q must be an identifier", token.Lexeme)
 		}
@@ -38,17 +41,17 @@ func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, token
 		return PreprocessedDeclaration{}, err
 	}
 
-	name, err := NewCanonicalName(nameToken.Lexeme)
+	name, err := NewCanonicalName(parts.nameToken.Lexeme)
 	if err != nil {
 		return PreprocessedDeclaration{}, err
 	}
-	typeName, err := NewCanonicalName(typeToken.Lexeme)
+	typeName, err := NewCanonicalName(parts.typeToken.Lexeme)
 	if err != nil {
 		return PreprocessedDeclaration{}, err
 	}
 	return PreprocessedDeclaration{
 		Name: name, Type: typeName, Properties: resolved,
-		Line: nameToken.Line, Column: nameToken.Column,
+		Line: parts.nameToken.Line, Column: parts.nameToken.Column,
 	}, nil
 }
 
