@@ -250,6 +250,21 @@ The intended distinction is:
 
 Warnings must not silently rewrite runtime semantics merely to make the warning disappear. Any automatic correction that changes program meaning requires an explicit preprocessing rule or configuration.
 
+### Generated destruction is not trusted
+
+Preprocessor functions, macros, language adapters, and other transformation code are subject to the same destruction-safety rules as handwritten Bitlang.
+
+A preprocessor operation must fail with an error when it can prove that a generated or transformed release/finalization would be invalid. It must not emit a known-invalid cleanup operation into Bitlang Preprocessed and defer responsibility merely because the operation was generated.
+
+Examples include double release, release through an invalid ownership path, owner destruction while live borrows remain, and finalization at a point inconsistent with the resolved lifetime.
+
+The ordinary warning/error distinction remains:
+
+- **warning**: suspicious, but invalidity is not proven;
+- **error**: invalid destruction/finalization is proven.
+
+Generated code receives no weaker safety standard.
+
 ## Activation scope
 
 A preprocessor macro or preprocessor function may define an explicit activation start point and may optionally define an explicit end point.
