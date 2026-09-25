@@ -250,6 +250,29 @@ Instance_unrequired
 
 Retention and lifetime also remain distinct. `Static / Dynamic` is not a replacement for lifetime properties such as `Static_lifetime`; preprocessing and static analysis must ensure that the resolved retention and lifetime states are consistent.
 
+### Source default resolution
+
+When omitted in ordinary Bitlang source:
+
+```text
+retention       -> Dynamic
+instance access -> Instance_required
+```
+
+Initialization-trigger defaults are context-sensitive:
+
+```text
+dynamic local variable      -> Declaration_initialization
+static local variable       -> First_reach_initialization
+dynamic instance field      -> Owner_initialization
+static field                -> Owner_initialization
+module/file-level variable  -> Owner_initialization
+```
+
+`First_use_initialization` and `Manual_initialization` require explicit selection unless a language adapter or explicit preprocessing rule supplies them.
+
+These defaults belong to Bitlang source normalization. Bitlang Preprocessed never relies on them implicitly; it contains the resolved property explicitly.
+
 ## Ownership qualifiers
 
 Ownership is represented independently from pointer/reference type and independently from read, write, and reassignment capability.
