@@ -127,6 +127,11 @@ Instance_required / Instance_unrequired
 
 These two axes are independent. A target may therefore be static while still requiring an instance, or may be non-static while not requiring an instance, when that combination is meaningful for the declaration kind.
 
+The canonical applicability is:
+
+- `Static / Dynamic`: variables, fields, and functions;
+- `Instance_required / Instance_unrequired`: fields and functions.
+
 Bitlang source provides `Direct` as a source-facing shorthand for:
 
 ```text
