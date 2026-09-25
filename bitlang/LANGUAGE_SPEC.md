@@ -15,18 +15,18 @@ Bitlang family language
     -> transform
     -> Bitlang
     -> preprocess + normalize
-    -> Bitlang preprocessed
+    -> Bitlang Explicit
     -> Bitlang Lowerer
     -> Bitlang Low
 ```
 
 This allows family languages to focus on their own syntax and usability while Bitlang remains the shared language for expressing the meaning of the program.
 
-## Source and Preprocessed are the same language
+## Source and Explicit are the same language
 
-Bitlang source and Bitlang Preprocessed use the same underlying semantic property system.
+Bitlang source and Bitlang Explicit use the same underlying semantic property system.
 
-Every canonical property that may appear in Bitlang Preprocessed may also be written explicitly in ordinary Bitlang source when that property applies to the declaration.
+Every canonical property that may appear in Bitlang Explicit may also be written explicitly in ordinary Bitlang source when that property applies to the declaration.
 
 The difference is normalization strictness:
 
@@ -35,12 +35,12 @@ Bitlang source
     -> properties may be explicit or omitted
     -> source sugar and preprocessing-only constructs may exist
 
-Bitlang Preprocessed
+Bitlang Explicit
     -> the same applicable properties are all resolved and explicit
     -> source sugar and preprocessing-only constructs have been consumed
 ```
 
-Therefore Bitlang Preprocessed is the fully explicit normalized form/profile of Bitlang, not a separate semantic language with a property system unavailable to source authors.
+Therefore Bitlang Explicit is the fully explicit normalized form/profile of Bitlang, not a separate semantic language with a property system unavailable to source authors.
 
 A programmer is allowed to write source that is already highly explicit. If all applicable properties are supplied and no source-only constructs remain, preprocessing may have very little semantic information left to add.
 
@@ -62,7 +62,7 @@ Game.Combat.Player.attack
 
 may identify `attack` as a member reached through the `Game` and `Combat` module hierarchy and the `Player` type.
 
-Bitlang preprocessed should use fully qualified references wherever practical so that the referenced declaration is explicit and unambiguous. Source-level aliases or shortened forms may be provided through preprocessing rules, but they must normalize to the canonical fully qualified representation.
+Bitlang Explicit should use fully qualified references wherever practical so that the referenced declaration is explicit and unambiguous. Source-level aliases or shortened forms may be provided through preprocessing rules, but they must normalize to the canonical fully qualified representation.
 
 ## Naming style
 
@@ -100,7 +100,7 @@ Bitlang-defined standard-library names and built-in instructions formed from two
 
 ## Property declaration and preprocessing
 
-Bitlang source may explicitly declare **any canonical Bitlang property** that can appear in Bitlang Preprocessed when that property applies to the declaration. Source authors are never required to rely on inference merely because a property is normally filled by preprocessing.
+Bitlang source may explicitly declare **any canonical Bitlang property** that can appear in Bitlang Explicit when that property applies to the declaration. Source authors are never required to rely on inference merely because a property is normally filled by preprocessing.
 
 When an applicable property is omitted in source code, the preprocessor determines and fills in the appropriate property from the declaration kind, lexical context, module configuration, defaults, static analysis, or explicit preprocessor rules.
 
@@ -114,11 +114,11 @@ Conceptually:
 int a = 4
 ```
 
-may omit visibility, readability, writability, reassignment, initialization, nullability, optionality, lifetime, and other applicable properties. Preprocessing resolves those omitted properties before Bitlang preprocessed is produced.
+may omit visibility, readability, writability, reassignment, initialization, nullability, optionality, lifetime, and other applicable properties. Preprocessing resolves those omitted properties before Bitlang Explicit is produced.
 
 The same source declaration may instead explicitly specify one or more of those properties when desired. Preprocessor functions may also inspect, add, remove, or change properties before canonical output is finalized.
 
-Bitlang preprocessed must contain the resolved final property set and must not require later compiler stages to reconstruct omitted property semantics.
+Bitlang Explicit must contain the resolved final property set and must not require later compiler stages to reconstruct omitted property semantics.
 
 ## Functional-language support
 
@@ -142,7 +142,7 @@ Bitlang should therefore be able to represent concepts such as:
 - Option/Result-like values
 - partial application and currying semantics where required by a family language
 
-These features may have multiple convenient source-level notations in Bitlang or in Bitlang-family languages, but they must be normalized before reaching Bitlang preprocessed.
+These features may have multiple convenient source-level notations in Bitlang or in Bitlang-family languages, but they must be normalized before reaching Bitlang Explicit.
 
 The intended functional pipeline is:
 
@@ -151,7 +151,7 @@ Bit Function lang
     -> transform
     -> Bitlang functional-semantic representation
     -> preprocess + normalize
-    -> Bitlang preprocessed canonical representation
+    -> Bitlang Explicit canonical representation
     -> Bitlang Lowerer
     -> Bitlang Low procedural representation
 ```
@@ -174,7 +174,7 @@ a = a + b
 
 Prefix increment and decrement forms such as `++a` and `--a` are not part of Bitlang. They are intentionally unsupported because they combine mutation and expression evaluation in a way that is easy to misuse.
 
-Postfix increment and decrement forms such as `a++` and `a--` are also not part of the canonical language. If convenience syntax of this kind is ever accepted by a source-facing Bitlang mode or family language, it must be restricted to a standalone mutation statement and normalized before Bitlang preprocessed. It must not be usable as a value-producing expression.
+Postfix increment and decrement forms such as `a++` and `a--` are also not part of the canonical language. If convenience syntax of this kind is ever accepted by a source-facing Bitlang mode or family language, it must be restricted to a standalone mutation statement and normalized before Bitlang Explicit. It must not be usable as a value-producing expression.
 
 The preferred explicit forms are:
 
@@ -295,7 +295,7 @@ module/file-level variable  -> Owner_initialization
 
 `First_use_initialization` and `Manual_initialization` require explicit selection unless a language adapter or explicit preprocessing rule supplies them.
 
-These defaults belong to Bitlang source normalization. Bitlang Preprocessed never relies on them implicitly; it contains the resolved property explicitly.
+These defaults belong to Bitlang source normalization. Bitlang Explicit never relies on them implicitly; it contains the resolved property explicitly.
 
 ## Ownership qualifiers
 
@@ -343,7 +343,7 @@ Exclusive_borrowed
 
 Borrow state is distinct from the `Borrowed` ownership qualifier. `Borrowed` answers whether a declaration owns a resource, while borrow state describes the current borrowing condition of a resource or declaration.
 
-Source-facing Bitlang may write a borrow-state property explicitly or omit it. When omitted, preprocessing resolves the state from context and emits the final state in Bitlang preprocessed.
+Source-facing Bitlang may write a borrow-state property explicitly or omit it. When omitted, preprocessing resolves the state from context and emits the final state in Bitlang Explicit.
 
 Preprocessor rules may deliberately change borrow state. Because forcing a state such as `Exclusive_borrowed -> Unborrowed` can re-enable access while a real borrow may still exist, such a rewrite is a semantic override and must be explicit. Unsafe overrides may produce warnings or errors.
 
@@ -372,7 +372,7 @@ Unmovable
 
 Copyability and movability are independent from ownership. A common owned-resource form may therefore be `Owned Uncopyable Movable`, while ordinary scalar values may be `Copyable Movable`.
 
-Source-facing Bitlang may specify these properties explicitly or omit them. When omitted, preprocessing resolves them from the type, declaration kind, ownership state, context, and explicit preprocessor rules. The final resolved properties must be emitted in Bitlang preprocessed.
+Source-facing Bitlang may specify these properties explicitly or omit them. When omitted, preprocessing resolves them from the type, declaration kind, ownership state, context, and explicit preprocessor rules. The final resolved properties must be emitted in Bitlang Explicit.
 
 ## Move state
 
@@ -440,7 +440,7 @@ Lifetime properties do not by themselves define ownership. For example, a `Borro
 
 The compiler and static-analysis stages must reject uses where a borrowed reference or other dependent value can outlive the value on which it depends.
 
-Source-facing Bitlang may explicitly specify a lifetime property. When omitted, preprocessing resolves the applicable lifetime from context and emits it explicitly in Bitlang preprocessed.
+Source-facing Bitlang may explicitly specify a lifetime property. When omitted, preprocessing resolves the applicable lifetime from context and emits it explicitly in Bitlang Explicit.
 
 ## Initialization state
 
@@ -561,7 +561,7 @@ Preprocessor functions may be used for three broad purposes:
 2. **Generate** - generate Bitlang declarations, functions, types, or other source structures.
 3. **Transform** - transform existing source or another supported representation into Bitlang.
 
-The output of preprocessing must be valid **Bitlang preprocessed** input.
+The output of preprocessing must be valid **Bitlang Explicit** input.
 
 Preprocessor functions are intended both to make strict Bitlang somewhat easier to write and to remove transformation/code-generation bottlenecks. They are also part of the infrastructure that can be used by Bitlang-family language transformers.
 
