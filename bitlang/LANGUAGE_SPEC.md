@@ -274,6 +274,34 @@ Instance_unrequired
 
 Retention and lifetime also remain distinct. `Static / Dynamic` is not a replacement for lifetime properties such as `Static_lifetime`; preprocessing and static analysis must ensure that the resolved retention and lifetime states are consistent.
 
+### Retention domain
+
+Static retention and the execution domain in which retained state is shared are separate semantic axes.
+
+The retention-domain axis is:
+
+```text
+Process_retention
+Thread_retention
+Task_retention
+```
+
+- `Process_retention`: one retained state is shared across the process/program.
+- `Thread_retention`: each thread owns an independent retained state.
+- `Task_retention`: each task/coroutine-like execution unit owns an independent retained state.
+
+This axis applies to variables, fields, and functions. For functions it applies to the same function-associated state governed by `Static / Dynamic`.
+
+`Static / Dynamic`, lifetime, and retention domain are independent properties. A source-language adapter may therefore preserve thread-local or task-local static semantics without redefining `Static`.
+
+When omitted in ordinary Bitlang source:
+
+```text
+retention domain -> Process_retention
+```
+
+Bitlang Explicit must always contain the resolved retention-domain state where the axis applies.
+
 ### Function retention semantics
 
 For a function declaration, `Static / Dynamic` governs function-associated semantic state rather than executable-code lifetime.
