@@ -74,3 +74,54 @@ func mixedDeclarationTestSpecifications() SpecificationSet {
 		}},
 	}
 }
+
+
+func TestParseMixedPreprocessedDeclarationsUsesContext(t *testing.T) {
+	specs := SpecificationSet{
+		Properties: PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{{
+			Name: "visibility", States: []string{"Public", "Private"},
+			Exclusive: true, Required: true, AppliesTo: []string{"variable", "field"},
+		}}},
+		Declarations: DeclarationSpecification{Version: 1, Kinds: []DeclarationKindSpec{
+			{
+				Name: "variable", PropertyTarget: "variable", Terminator: ";",
+				Layout: []string{"properties", "type", "name"}, Contexts: []string{"outer"},
+			},
+			{
+				Name: "field", PropertyTarget: "field", Terminator: ";",
+				Layout: []string{"properties", "type", "name"}, Contexts: []string{"member"},
+			},
+		}},
+	}
+	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	declarations, err := ParseMixedPreprocessedDeclarationsInContext(specs, "MeMbEr", source.Tokens)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(declarations) != 1 || declarations[0].Kind != "field" {
+		t.Fatalf("unexpected declarations: %#v", declarations)
+	}
+}
+
+func TestParseMixedPreprocessedDeclarationsRequiresConfiguredContext(t *testing.T) {
+	specs := SpecificationSet{
+		Properties: PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{{
+			Name: "visibility", States: []string{"Public", "Private"},
+			Exclusive: true, Required: true, AppliesTo: []string{"variable"},
+		}}},
+		Declarations: DeclarationSpecification{Version: 1, Kinds: []DeclarationKindSpec{{
+			Name: "variable", PropertyTarget: "variable", Terminator: ";",
+			Layout: []string{"properties", "type", "name"}, Contexts: []string{"outer"},
+		}}},
+	}
+	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := ParseMixedPreprocessedDeclarations(specs, source.Tokens); err == nil {
+		t.Fatal("expected missing context error")
+	}
+}
