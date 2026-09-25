@@ -10,7 +10,7 @@ This directory owns source-facing syntax and normalization rules: what a program
 Bitlang source
     -> Bitlang preprocessor
     -> Bitlang Explicit
-    -> static analysis / compiler
+    -> Bitlang Lowerer
     -> Bitlang Low
 ```
 
