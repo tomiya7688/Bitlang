@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 4,
   "axes": [
     {
       "name": "scope_visibility",
@@ -251,6 +251,23 @@
         "field",
         "parameter",
         "return"
+      ]
+    },
+    {
+      "name": "finalization_trigger",
+      "states": [
+        "Scope_end_finalization",
+        "Owner_end_finalization",
+        "Module_end_finalization",
+        "Program_end_finalization",
+        "Manual_finalization"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "parameter"
       ]
     },
     {
