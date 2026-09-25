@@ -189,7 +189,8 @@ At minimum, defaults may be attached to:
 - the current file;
 - a class/type scope;
 - a namespace/module scope;
-- the project or language-adapter context.
+- the project scope;
+- the language-adapter context.
 
 This facility is intended for native Bitlang projects and for conversion from other languages whose default visibility, lifetime, retention, ownership, nullability, initialization, or other property semantics differ from Bitlang's ordinary defaults.
 
@@ -213,7 +214,8 @@ explicit declaration property
     > innermost class/type default
     > file default
     > innermost namespace/module default
-    > project/language-adapter default
+    > project default
+    > language-adapter default
     > Bitlang built-in default
 ```
 
@@ -226,6 +228,25 @@ Conflicting rules at the same precedence level are errors unless their ordering 
 Namespace scope is available to language adapters even when the source language has a namespace construct different from Bitlang's native module organization. During normalization, that namespace scope is mapped to the appropriate Bitlang module/name hierarchy.
 
 All scoped-default configuration is preprocessing-only and disappears before Bitlang Explicit. Bitlang Explicit contains only the final resolved canonical properties on each declaration.
+
+### Defaults do not grant safety exceptions
+
+Scoped defaults are only a preprocessing convenience for resolving omitted properties.
+
+Once defaults are applied, all affected declarations and operations are checked under the same semantic and safety rules as explicitly annotated Bitlang.
+
+If the resolved result is provably unsafe or invalid, preprocessing must emit an error regardless of whether the relevant properties came from:
+
+- a file default;
+- a class/type default;
+- a namespace/module default;
+- a project default;
+- a language-adapter default;
+- a built-in Bitlang default.
+
+Default provenance must not suppress or downgrade a safety error.
+
+Later static analysis/compiler stages must also reject provably unsafe results even if preprocessing produced them from defaults.
 
 ## Property-driven semantics
 
