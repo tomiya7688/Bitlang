@@ -147,6 +147,11 @@ The canonical applicability is:
 - `Static / Dynamic`: variables, fields, and functions;
 - `Instance_required / Instance_unrequired`: fields and functions.
 
+For functions, retention applies to function-associated state rather than executable-code lifetime. Function-associated state may include closure environments, captured storage, first-class function-object state, and other state owned by the function representation.
+
+A `Static` function statically retains such applicable state. A `Dynamic` function's applicable state follows its ordinary owner/lifetime. Stateless named functions may have no observable runtime difference between the two states, but the canonical property remains explicit.
+
+
 Bitlang source provides `Direct` as a source-facing shorthand for:
 
 ```text
