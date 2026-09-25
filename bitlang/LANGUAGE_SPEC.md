@@ -122,7 +122,7 @@ Bitlang Explicit must contain the resolved final property set and must not requi
 
 ### Scoped default property configuration
 
-Property defaults may be changed by preprocessing for a file, class/type, namespace/module, or project/language-adapter scope.
+Property defaults may be changed by preprocessing for a file, class/type, namespace/module, project, or language-adapter scope.
 
 This is intended to let large Bitlang projects and foreign-language converters express source-language defaults once instead of repeating canonical properties on every declaration.
 
@@ -136,7 +136,8 @@ explicit declaration
 > innermost class/type default
 > file default
 > innermost namespace/module default
-> project/language-adapter default
+> project default
+> language-adapter default
 > Bitlang built-in default
 ```
 
@@ -145,6 +146,16 @@ Rules at the same precedence level that conflict without an explicit ordering/ov
 Bitlang has no separate native `namespace` construct; `module` is the native naming hierarchy. A language adapter may nevertheless expose a foreign namespace as preprocessing scope and normalize it into the appropriate Bitlang module/name hierarchy.
 
 These default-setting directives exist only during preprocessing. Bitlang Explicit contains the resulting resolved properties, not the default directives themselves.
+
+### Safety is checked after default resolution
+
+Scoped defaults are preprocessing conveniences only. They do not relax Bitlang's safety model.
+
+After default resolution, the program is checked as though every resolved property had been written explicitly.
+
+If the final resolved operation or semantic state is provably unsafe or invalid, preprocessing/static analysis/compiler must report an error regardless of whether the relevant property originated from a file, class/type, namespace/module, project, language-adapter, or built-in default.
+
+A default can change which property value is selected for an omitted axis, but cannot turn an unsafe operation into a valid one or suppress a required safety error.
 
 ## Functional-language support
 
