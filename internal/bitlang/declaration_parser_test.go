@@ -3,12 +3,11 @@ package bitlang
 import "testing"
 
 func TestParsePreprocessedDeclaration(t *testing.T) {
-	spec := declarationParserTestProperties()
 	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private unnullable Int PlayerHP;"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	decl, err := ParsePreprocessedDeclaration(spec, declarationParserTestKind(), source.Tokens)
+	decl, err := ParsePreprocessedDeclaration(declarationParserTestSpecifications(), "variable", source.Tokens)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -25,18 +24,19 @@ func TestParsePreprocessedDeclarationRejectsIncompleteProperties(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if _, err := ParsePreprocessedDeclaration(declarationParserTestProperties(), declarationParserTestKind(), source.Tokens); err == nil {
+	if _, err := ParsePreprocessedDeclaration(declarationParserTestSpecifications(), "variable", source.Tokens); err == nil {
 		t.Fatal("expected missing property error")
 	}
 }
 
-func declarationParserTestKind() DeclarationKindSpec {
-	return DeclarationKindSpec{Name: "variable", PropertyTarget: "variable", Terminator: ";", Layout: []string{"properties", "type", "name"}}
-}
-
-func declarationParserTestProperties() PropertySpecification {
-	return PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{
-		{Name: "visibility", States: []string{"Public", "Private"}, Exclusive: true, Required: true, AppliesTo: []string{"variable"}},
-		{Name: "nullability", States: []string{"nullable", "unnullable"}, Exclusive: true, Required: true, AppliesTo: []string{"variable"}},
-	}}
+func declarationParserTestSpecifications() SpecificationSet {
+	return SpecificationSet{
+		Properties: PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{
+			{Name: "visibility", States: []string{"Public", "Private"}, Exclusive: true, Required: true, AppliesTo: []string{"variable"}},
+			{Name: "nullability", States: []string{"nullable", "unnullable"}, Exclusive: true, Required: true, AppliesTo: []string{"variable"}},
+		}},
+		Declarations: DeclarationSpecification{Version: 1, Kinds: []DeclarationKindSpec{{
+			Name: "variable", PropertyTarget: "variable", Terminator: ";", Layout: []string{"properties", "type", "name"},
+		}}},
+	}
 }
