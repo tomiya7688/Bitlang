@@ -15,7 +15,7 @@ Bitlang is human-writable. A declaration may explicitly state semantic propertie
 
 Resolution may use the type, declaration kind, lexical context, ownership, lifetime, module/project configuration, defaults, control flow, explicit preprocessing rules, or another source construct whose semantics are defined to imply a property.
 
-Before Bitlang Preprocessed is emitted, every applicable semantic axis must be resolved to its final explicit state.
+Before Bitlang Explicit is emitted, every applicable semantic axis must be resolved to its final explicit state.
 
 Therefore the source layer and Preprocessed layer have different responsibilities:
 
@@ -27,28 +27,28 @@ Bitlang source
     + type/declaration implications
     + preprocessing rules
         -> preprocess / normalize
-Bitlang Preprocessed
+Bitlang Explicit
     fully resolved explicit property state
 ```
 
 ## Shared property vocabulary
 
-Bitlang source and Bitlang Preprocessed share the same canonical semantic property vocabulary.
+Bitlang source and Bitlang Explicit share the same canonical semantic property vocabulary.
 
-For every property state defined by the Bitlang Preprocessed property model, ordinary Bitlang source may write that property explicitly when it applies to the target.
+For every property state defined by the Bitlang Explicit property model, ordinary Bitlang source may write that property explicitly when it applies to the target.
 
 The distinction is only whether explicit spelling is mandatory:
 
 ```text
 Bitlang source       -> explicit property OR omission/inference/shorthand
-Bitlang Preprocessed -> resolved explicit property required
+Bitlang Explicit -> resolved explicit property required
 ```
 
 A property must not be described as "Preprocessed-only" merely because it is mandatory at the Preprocessed boundary.
 
 ## Loose source notation and canonical normalization
 
-Bitlang source is intentionally allowed to be less verbose than Bitlang Preprocessed.
+Bitlang source is intentionally allowed to be less verbose than Bitlang Explicit.
 
 The following are valid source-language design mechanisms:
 
@@ -60,7 +60,7 @@ The following are valid source-language design mechanisms:
 - define module/project preprocessing rules that provide defaults or reusable property bundles;
 - use preprocessor functions to inspect and transform the source property set.
 
-These conveniences exist only on the Bitlang/source side. They must not survive as unresolved shorthand in Bitlang Preprocessed.
+These conveniences exist only on the Bitlang/source side. They must not survive as unresolved shorthand in Bitlang Explicit.
 
 For example, a project or language rule may define a concise source qualifier conceptually as:
 
@@ -92,6 +92,43 @@ may normalize into a form containing explicit visibility, retention, instance-ac
 
 The exact resulting property set depends on the declaration and applicable preprocessing rules.
 
+## Scoped default property rules
+
+Bitlang preprocessing may provide canonical-property defaults at multiple structural scopes.
+
+Supported scopes include:
+
+```text
+file
+class/type
+namespace/module
+project/language-adapter
+```
+
+These are defaults, not forced overrides. They resolve only property axes that remain omitted/unresolved for the target declaration.
+
+A rule may provide one state or a set of states and may be restricted to selected declaration kinds.
+
+For an unresolved axis, precedence is:
+
+```text
+explicit declaration property
+> declaration-targeted preprocessing rule
+> innermost class/type default
+> file default
+> innermost namespace/module default
+> project/language-adapter default
+> Bitlang built-in default
+```
+
+Nested class/type and namespace/module scopes use the innermost applicable setting.
+
+Contradictory settings at the same precedence level are errors unless preprocessing has an explicit order or override relation that makes the result deterministic.
+
+Bitlang itself uses `module` rather than a separate namespace construct. For language conversion, a source-language namespace may exist as preprocessing metadata/scope and is mapped into the appropriate Bitlang module/name hierarchy.
+
+Scoped-default declarations are consumed by preprocessing and do not appear in Bitlang Explicit. Only the resolved canonical properties remain.
+
 ## Conflict and precedence rules
 
 Source convenience must not create silent ambiguity.
@@ -103,13 +140,13 @@ Resolution follows these principles:
 3. Inferred/default values fill only still-unresolved axes.
 4. If two explicit source requirements produce contradictory states on the same axis, preprocessing must diagnose the conflict instead of silently choosing one.
 5. A deliberate semantic override may change an already resolved state only through an explicit preprocessing rule, configuration, or source-directed transformation.
-6. The final Bitlang Preprocessed output must contain one valid resolved state for every applicable axis.
+6. The final Bitlang Explicit output must contain one valid resolved state for every applicable axis.
 
 Thus source syntax may be permissive in spelling and verbosity while the stage boundary remains strict.
 
 ## Property vocabulary available to Bitlang source
 
-Bitlang source may use the same semantic vocabulary that is normalized into Bitlang Preprocessed, including the following independent axes.
+Bitlang source may use the same semantic vocabulary that is normalized into Bitlang Explicit, including the following independent axes.
 
 ### Visibility
 
@@ -225,7 +262,7 @@ module/file-level variable  -> Owner_initialization
 
 These are Bitlang-source defaults only. A Bitlang-family language adapter may deliberately choose a different initialization trigger when preserving that source language's semantics.
 
-Explicit properties and explicit preprocessing rules take precedence over these defaults. The resolved value is then written explicitly into Bitlang Preprocessed.
+Explicit properties and explicit preprocessing rules take precedence over these defaults. The resolved value is then written explicitly into Bitlang Explicit.
 
 ### Finalization-trigger defaults
 
@@ -320,7 +357,7 @@ Static_lifetime   -> Program_end_finalization
 
 `Manual_finalization` is never selected merely because information is missing; it requires an explicit source declaration, language-adapter rule, project/module rule, or other explicit preprocessing rule.
 
-A language adapter may choose a different trigger when required to preserve the source language's destruction semantics. The resolved trigger is explicit in Bitlang Preprocessed.
+A language adapter may choose a different trigger when required to preserve the source language's destruction semantics. The resolved trigger is explicit in Bitlang Explicit.
 
 ### Initialization and nullability
 
@@ -391,4 +428,4 @@ Examples include changing borrow state, move state, release state, ownership-rel
 
 This repository defines **how Bitlang source may explicitly express the full Bitlang property vocabulary, and how it may additionally abbreviate or omit properties for preprocessing to resolve**.
 
-The exact canonical property set, required explicitness, final state vocabulary, and cross-property consistency rules belong to the separate Bitlang Preprocessed specification. Later compiler stages must consume that resolved representation rather than reconstructing source omissions or source-only shorthand.
+The exact canonical property set, required explicitness, final state vocabulary, and cross-property consistency rules belong to the separate Bitlang Explicit specification. Later compiler stages must consume that resolved representation rather than reconstructing source omissions or source-only shorthand.
