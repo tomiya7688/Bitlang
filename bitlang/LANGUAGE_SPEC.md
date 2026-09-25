@@ -493,6 +493,44 @@ This separation exists so Bitlang-family language adapters can preserve differen
 
 The trigger is also independent from `Initialized / Uninitialized`: the trigger describes the policy/timing, while the initialization-state axis describes the current semantic state.
 
+## Finalization trigger
+
+Bitlang represents destruction/finalization timing independently from lifetime, retention, and release policy.
+
+The canonical finalization-trigger states are:
+
+```text
+Scope_end_finalization
+Owner_end_finalization
+Module_end_finalization
+Program_end_finalization
+Manual_finalization
+```
+
+Their meanings are:
+
+- `Scope_end_finalization`: finalize automatically when the owning lexical/function scope ends.
+- `Owner_end_finalization`: finalize automatically when the owning object/type/storage owner ends.
+- `Module_end_finalization`: finalize automatically when the owning module is finalized or unloaded.
+- `Program_end_finalization`: finalize automatically during program/process termination.
+- `Manual_finalization`: no automatic finalization trigger; explicit finalization is required when applicable.
+
+The canonical axis applies to variables, fields, and parameters.
+
+Finalization is distinct from `Auto_release / Manual_release`. Finalization may run destructor/finalizer logic without necessarily performing memory/resource release, and release policy may generate release independently when valid.
+
+When omitted in Bitlang source, the default is derived from resolved lifetime:
+
+```text
+Local_lifetime    -> Scope_end_finalization
+Function_lifetime -> Scope_end_finalization
+Object_lifetime   -> Owner_end_finalization
+Module_lifetime   -> Module_end_finalization
+Static_lifetime   -> Program_end_finalization
+```
+
+`Manual_finalization` requires explicit selection unless supplied by an explicit language-adapter or preprocessing rule.
+
 ## Const
 
 `Const` is separate from `Readable`, `Unreadable`, `Writeable`, `Unwriteable`, `Reassignable`, and `Unreassignable`.
