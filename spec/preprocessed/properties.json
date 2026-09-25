@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "axes": [
     {
       "name": "scope_visibility",
@@ -50,6 +50,21 @@
       "states": [
         "Static",
         "Dynamic"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "variable",
+        "field",
+        "function"
+      ]
+    },
+    {
+      "name": "retention_domain",
+      "states": [
+        "Process_retention",
+        "Thread_retention",
+        "Task_retention"
       ],
       "exclusive": true,
       "required": true,
