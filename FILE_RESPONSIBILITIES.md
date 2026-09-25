@@ -33,6 +33,8 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/declaration_spec.go` | Represent machine-readable declaration kinds and grammar. |
 | `internal/bitlang/declaration_spec_loader.go` | Decode and validate declaration grammar data. |
 | `internal/bitlang/declaration_spec_loader_test.go` | Verify declaration grammar loading and lookup. |
+| `internal/bitlang/declaration_layout.go` | Resolve data-defined declaration layout order into token roles. |
+| `internal/bitlang/declaration_layout_test.go` | Verify declaration layout permutations and duplicate rejection. |
 | `internal/bitlang/declaration_parser.go` | Parse one strict declaration and validate its explicit properties. |
 | `internal/bitlang/declaration_parser_test.go` | Verify strict declaration parsing and property completeness. |
 | `internal/bitlang/declaration_sequence_parser.go` | Split and parse multiple strict declarations of one target kind. |
