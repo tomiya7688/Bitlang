@@ -26,6 +26,9 @@ func LoadDeclarationSpecification(data []byte) (DeclarationSpecification, error)
 		if !validDeclarationLayout(kind.Layout) {
 			return DeclarationSpecification{}, fmt.Errorf("unsupported declaration layout for %q", kind.Name)
 		}
+		if err := validateDeclarationContexts(kind); err != nil {
+			return DeclarationSpecification{}, err
+		}
 	}
 	return spec, nil
 }
