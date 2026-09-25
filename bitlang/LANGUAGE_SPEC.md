@@ -64,6 +64,51 @@ may identify `attack` as a member reached through the `Game` and `Combat` module
 
 Bitlang Explicit should use fully qualified references wherever practical so that the referenced declaration is explicit and unambiguous. Source-level aliases or shortened forms may be provided through preprocessing rules, but they must normalize to the canonical fully qualified representation.
 
+## Namespace mounts and project inheritance
+
+Bitlang source supports preprocessing-time namespace assignment by file and directory path.
+
+The canonical preprocessing operations are:
+
+```text
+mount_namespace_file(file_path, namespace_path)
+mount_namespace_tree(directory_path, namespace_path)
+set_parent_project(parent_project)
+```
+
+A file mount applies an outer namespace to exactly one file. A tree mount applies a namespace root to a directory tree, with child directory segments extending the namespace hierarchy deterministically.
+
+Bitlang itself continues to use `module` as the canonical naming hierarchy. Namespace mounts are consumed during preprocessing and become ordinary module/name ownership before Bitlang Explicit.
+
+Path resolution follows deterministic precedence:
+
+```text
+exact file mount
+> most-specific matching tree mount
+> inherited ancestor tree mount
+```
+
+Conflicting equally specific mounts without an explicit override relation are errors.
+
+Projects may form a single-parent inheritance chain for preprocessing configuration. A child project inherits applicable project defaults, namespace mounts, language-adapter configuration, and other explicitly inheritable preprocessing settings.
+
+A parent project is not the same as a dependency: parenthood does not automatically include or compile the parent's source files.
+
+A project may have at most one direct parent. Cycles are errors. Child configuration overrides inherited parent configuration.
+
+Project-level property-default precedence therefore includes the parent chain:
+
+```text
+current project default
+> nearest parent project default
+> next ancestor project default
+> ...
+> language-adapter default
+> Bitlang built-in default
+```
+
+The complete rules are defined in [NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md](NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md).
+
 ## Naming style
 
 Bitlang does not force source-code authors to use snake_case, camelCase, PascalCase, or another naming style. Source-facing code may use whichever naming style is convenient, subject to the language's normal identifier rules.
