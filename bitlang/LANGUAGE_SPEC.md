@@ -302,6 +302,43 @@ retention domain -> Process_retention
 
 Bitlang Explicit must always contain the resolved retention-domain state where the axis applies.
 
+### Static initialization and finalization order
+
+Retained state uses deterministic initialization and finalization ordering.
+
+Initialization order is derived from a dependency graph. The graph includes:
+
+- explicit initialization-order constraints supplied by source, a language adapter, or preprocessing;
+- statically known dependencies used by an initializer;
+- owner/module initialization dependencies required by the declaration.
+
+Dependencies are initialized before dependents.
+
+When multiple declarations are otherwise unordered, Bitlang uses deterministic tie-breaking:
+
+1. declarations in the same declaration field use lexical declaration order;
+2. declarations in unrelated fields/modules use canonical fully qualified declaration-name order.
+
+A language adapter may supply explicit ordering constraints when preserving another language's initialization semantics. Exact source syntax for those constraints is defined separately; the semantic relation itself must survive into Bitlang Explicit when required.
+
+Lazy triggers remain lazy:
+
+- `First_reach_initialization` and `First_use_initialization` are not eagerly initialized merely to establish global order;
+- when triggered, any unresolved dependencies required by that state are initialized first using the same dependency rules;
+- `Manual_initialization` is excluded from automatic initialization ordering.
+
+Initialization cycles that are provable statically are compile errors. If a lazy/dynamic initialization cycle can only be discovered by runtime re-entry into a state whose initialization is already in progress, the runtime must fail explicitly rather than observe a partially initialized value.
+
+Finalization defaults to the reverse of the **actual successful initialization order** within each retention-domain instance. This rule naturally handles lazy initialization and means a dependency normally remains alive while its dependent is finalized.
+
+Only states whose initialization completed successfully participate in automatic finalization.
+
+If explicit finalization-order constraints are supplied, they may refine the default order but must not contradict required dependency safety. A contradictory order is an error.
+
+For `Thread_retention` and `Task_retention`, each thread/task instance maintains its own actual initialization order and therefore its own reverse finalization order. `Process_retention` uses the process-wide retained-state order.
+
+The finalization trigger determines **when** a state becomes eligible for finalization; this ordering rule determines the relative order among states being finalized. Cross-trigger combinations must still satisfy lifetime and destruction-safety rules.
+
 ### Function retention semantics
 
 For a function declaration, `Static / Dynamic` governs function-associated semantic state rather than executable-code lifetime.
