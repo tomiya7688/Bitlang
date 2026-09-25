@@ -12,7 +12,8 @@ type responsibilityRecord struct {
 }
 
 func loadResponsibilityTable(path string) ([]responsibilityRecord, error) {
-	// #nosec G304 -- path is the repository-owned FILE_RESPONSIBILITIES.md selected by the checker.\n	file, err := os.Open(path)
+	// #nosec G304 -- path is the repository-owned FILE_RESPONSIBILITIES.md selected by the checker.
+	file, err := os.Open(path)
 	if err != nil {
 		return nil, err
 	}
