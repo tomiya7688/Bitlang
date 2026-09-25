@@ -22,6 +22,30 @@ Bitlang family language
 
 This allows family languages to focus on their own syntax and usability while Bitlang remains the shared language for expressing the meaning of the program.
 
+## Source and Preprocessed are the same language
+
+Bitlang source and Bitlang Preprocessed use the same underlying semantic property system.
+
+Every canonical property that may appear in Bitlang Preprocessed may also be written explicitly in ordinary Bitlang source when that property applies to the declaration.
+
+The difference is normalization strictness:
+
+```text
+Bitlang source
+    -> properties may be explicit or omitted
+    -> source sugar and preprocessing-only constructs may exist
+
+Bitlang Preprocessed
+    -> the same applicable properties are all resolved and explicit
+    -> source sugar and preprocessing-only constructs have been consumed
+```
+
+Therefore Bitlang Preprocessed is the fully explicit normalized form/profile of Bitlang, not a separate semantic language with a property system unavailable to source authors.
+
+A programmer is allowed to write source that is already highly explicit. If all applicable properties are supplied and no source-only constructs remain, preprocessing may have very little semantic information left to add.
+
+The repositories are separated to keep stage-specific specifications and implementations manageable; repository separation does not imply language-semantic separation.
+
 ## Modules and naming hierarchy
 
 Bitlang does not provide a separate `namespace` construct.
@@ -76,7 +100,7 @@ Bitlang-defined standard-library names and built-in instructions formed from two
 
 ## Property declaration and preprocessing
 
-Bitlang source may explicitly declare semantic properties when the programmer wants direct control over them.
+Bitlang source may explicitly declare **any canonical Bitlang property** that can appear in Bitlang Preprocessed when that property applies to the declaration. Source authors are never required to rely on inference merely because a property is normally filled by preprocessing.
 
 When an applicable property is omitted in source code, the preprocessor determines and fills in the appropriate property from the declaration kind, lexical context, module configuration, defaults, static analysis, or explicit preprocessor rules.
 
