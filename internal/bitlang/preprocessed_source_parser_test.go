@@ -40,8 +40,10 @@ func TestPreprocessorLeavesDeclarationsUnparsed(t *testing.T) {
 	if len(source.Declarations) != 0 {
 		t.Fatalf("preprocessor unexpectedly parsed declarations: %#v", source.Declarations)
 	}
+	if source.Scope != nil {
+		t.Fatalf("preprocessor unexpectedly assigned scope: %#v", source.Scope)
+	}
 }
-
 
 func TestParseMixedPreprocessedSourceStoresDetectedKinds(t *testing.T) {
 	source, err := NewPreprocessor().Process(NewSourceText(
@@ -64,9 +66,32 @@ func TestParseMixedPreprocessedSourceStoresDetectedKinds(t *testing.T) {
 	}
 }
 
+func TestParseMixedPreprocessedSourceUsesAttachedScope(t *testing.T) {
+	specs := contextSourceTestSpecifications()
+	scope, err := NewPreprocessedScope("MeMbEr", nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	source.Scope = &scope
 
-func TestParseMixedPreprocessedSourceInContextStoresDetectedKind(t *testing.T) {
-	specs := SpecificationSet{
+	parsed, err := ParseMixedPreprocessedSource(specs, source)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if parsed.Scope == nil || parsed.Scope.Context.Canonical != "member" {
+		t.Fatalf("unexpected scope: %#v", parsed.Scope)
+	}
+	if len(parsed.Declarations) != 1 || parsed.Declarations[0].Kind != "field" {
+		t.Fatalf("unexpected declarations: %#v", parsed.Declarations)
+	}
+}
+
+func contextSourceTestSpecifications() SpecificationSet {
+	return SpecificationSet{
 		Properties: PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{{
 			Name: "visibility", States: []string{"Public", "Private"},
 			Exclusive: true, Required: true, AppliesTo: []string{"variable", "field"},
@@ -81,17 +106,5 @@ func TestParseMixedPreprocessedSourceInContextStoresDetectedKind(t *testing.T) {
 				Layout: []string{"properties", "type", "name"}, Contexts: []string{"member"},
 			},
 		}},
-	}
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	parsed, err := ParseMixedPreprocessedSourceInContext(specs, "member", source)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(parsed.Declarations) != 1 || parsed.Declarations[0].Kind != "field" {
-		t.Fatalf("unexpected declarations: %#v", parsed.Declarations)
 	}
 }
