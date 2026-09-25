@@ -1,8 +1,8 @@
 # Bitlang
 
-Bitlang is the **human-writable source language** in the Bitlang toolchain.
+Bitlang is the human-writable form of the Bitlang language.
 
-This directory owns source-facing syntax and semantics: what a programmer may write, what may be omitted, which properties may be stated explicitly, what preprocessing rules may transform, and how source conveniences are normalized before the strict intermediate language is produced.
+This directory owns source-facing syntax and normalization rules: what a programmer may omit, which conveniences and preprocessing-only constructs may be used, and how ordinary Bitlang is normalized into fully explicit Bitlang Preprocessed.
 
 ## Stage boundary
 
@@ -14,13 +14,15 @@ Bitlang source
     -> Bitlang Compiled
 ```
 
-Bitlang source and Bitlang Preprocessed are intentionally separate languages/projects.
+Bitlang source and Bitlang Preprocessed are **not separate semantic languages**. They are two normalization states of Bitlang.
 
-- This repository defines the human-facing language and preprocessing inputs.
-- `tomiya7688/Bitlang_preprocessed` defines the fully resolved canonical language emitted by preprocessing.
-- `tomiya7688/Bitlang_compiled` defines the lower-level compiled language.
+- Bitlang source is the authoring form. It may omit applicable properties, use sugar, and contain preprocessing-only constructs.
+- Bitlang source may explicitly write every canonical property that Bitlang Preprocessed can contain.
+- Bitlang Preprocessed is the fully resolved form of the same language: applicable properties are explicit and source/preprocessing-only shorthand has been removed.
+- The repositories are separate only to keep source-facing normalization rules and the canonical fully explicit representation independently maintainable.
+- `tomiya7688/Bitlang_compiled` remains the separate lower-level compiled language.
 
-The Bitlang repository should therefore explain **what source code means and how it is normalized**, without duplicating the complete canonical Preprocessed representation.
+The Bitlang repository should therefore explain **what authors may write or omit and how Bitlang is normalized**, while `tomiya7688/Bitlang_preprocessed` is the canonical home for the requirements of the fully explicit form.
 
 ## Main specification documents
 
@@ -45,4 +47,4 @@ The final resolved representation is not specified here. Its canonical home is:
 - https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/PROPERTIES.ja.md
 - https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/BORROW_STATE.ja.md
 
-This separation keeps Bitlang documentation substantial and useful for language authors while preventing two repositories from independently defining the same canonical intermediate-language rules.
+This repository separation is an ownership boundary for documentation and implementation, not a statement that source and Preprocessed are different semantic languages.
