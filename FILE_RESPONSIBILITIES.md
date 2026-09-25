@@ -15,13 +15,16 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/lexer.go` | Convert source text into tokens. |
 | `internal/bitlang/lexer_comment.go` | Recognize and skip bootstrap source comments. |
 | `internal/bitlang/lexer_test.go` | Verify lexer behavior. |
+| `internal/bitlang/lexer_fuzz_test.go` | Fuzz lexer inputs to verify panic-free tokenization. |
 | `internal/bitlang/preprocessed_token.go` | Represent strict tokens with explicit canonical identifier forms. |
 | `internal/bitlang/preprocessed_property.go` | Represent one property state without hardcoded state names. |
 | `internal/bitlang/property_spec.go` | Represent machine-readable property axes. |
 | `internal/bitlang/property_spec_loader.go` | Decode and validate property specification data. |
 | `internal/bitlang/property_spec_loader_test.go` | Verify property specification loading. |
 | `internal/bitlang/property_validator.go` | Validate explicit properties against specification axes. |
-| `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |\n| `internal/bitlang/property_resolver.go` | Resolve case-insensitive property spelling to specification-defined states. |\n| `internal/bitlang/property_resolver_test.go` | Verify specification-driven property spelling resolution. |
+| `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
+| `internal/bitlang/property_resolver.go` | Resolve case-insensitive property spelling to specification-defined states. |
+| `internal/bitlang/property_resolver_test.go` | Verify specification-driven property spelling resolution. |
 | `internal/bitlang/spec_consistency.go` | Validate invariants across machine-readable specifications. |
 | `internal/bitlang/spec_consistency_test.go` | Verify cross-specification consistency checks. |
 | `internal/bitlang/specification_set.go` | Group validated machine-readable specifications for shared use. |
@@ -79,6 +82,9 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `tools/go-rule-checker/responsibility_table.go` | Parse Go entries from the file responsibility table. |
 | `tools/go-rule-checker/responsibility_check.go` | Compare Go files with registered responsibilities. |
 | `tools/go-rule-checker/generated_test.go` | Verify generated-source detection. |
+| `tools/go-rule-checker/documentation_test.go` | Verify exported documentation checks. |
+| `tools/go-rule-checker/file_discovery_test.go` | Verify safe Go source discovery. |
+| `tools/go-rule-checker/naming_test.go` | Verify responsibility-obscuring name detection. |
 | `tools/go-rule-checker/import_check_test.go` | Verify architecture-layer classification. |
 | `tools/go-rule-checker/role_check_test.go` | Verify architecture-role classification. |
 | `tools/go-rule-checker/responsibility_check_test.go` | Verify responsibility path and scan-scope handling. |
@@ -86,6 +92,16 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `tools/go-rule-checker/IGNORE_FORMAT.md` | Document ignore configuration syntax. |
 
 Other tests under `tools/go-rule-checker/*_test.go` verify the matching checker responsibility.
+
+## Documentation pair checker
+
+| File | Responsibility |
+| --- | --- |
+| `tools/doc-pair-checker/cmd/doc-pair-checker/main.go` | Start bilingual documentation validation and map its exit status. |
+| `tools/doc-pair-checker/documentation_pairs.go` | Validate required English and Japanese documentation pairs. |
+| `tools/doc-pair-checker/documentation_pairs_test.go` | Verify documentation pair validation behavior. |
+| `tools/doc-pair-checker/security.go` | Constrain documentation and Git comparison paths to safe inputs. |
+| `tools/doc-pair-checker/security_test.go` | Verify documentation path and base commit security checks. |
 
 ## Bitlang CI
 
