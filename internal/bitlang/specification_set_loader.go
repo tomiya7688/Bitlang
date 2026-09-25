@@ -15,7 +15,7 @@ func LoadSpecificationSet(propertiesData []byte, declarationsData []byte) (Speci
 		return SpecificationSet{}, err
 	}
 	return SpecificationSet{
-		Properties: properties,
+		Properties:   properties,
 		Declarations: declarations,
 	}, nil
 }
