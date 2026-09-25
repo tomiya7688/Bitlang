@@ -23,6 +23,24 @@
 - 正式キーワードは `Direct` である。
 - `Direct` は `static` と完全に独立（直交）する。
 
+## retention domain
+
+static retentionの共有範囲は、`Static / Dynamic` とは別のproperty軸で表す。
+
+```text
+Process_retention
+Thread_retention
+Task_retention
+```
+
+- `Process_retention`: process / program全体で1つの保持状態を共有する。
+- `Thread_retention`: threadごとに独立した保持状態を持つ。
+- `Task_retention`: task / coroutine相当の実行単位ごとに独立した保持状態を持つ。
+
+既定値は `Process_retention`。
+
+functionではfunction-associated stateの共有範囲を表す。`Static / Dynamic`、lifetime、initialization/finalizationとは独立して明示する。
+
 ## 4つの直交状態
 
 両方の修飾子が適用可能な対象では、次の4組み合わせを **構文上すべて許可** する。
@@ -158,8 +176,6 @@ override および interface 実装では、static と Direct の
 次は本文書では決めない。
 
 - 静的保持領域の開始・終了タイミング
-- thread / task 単位の保持範囲
 - destructor 相当の終了処理との関係
-- Bitlang Preprocessed / Compiled における `static` と `Direct` の具体表現
 - 将来の module-instance モデルがモジュールレベル `Direct` に意味を与えるかどうか
 - static 対象の初期化順序の詳細規則
