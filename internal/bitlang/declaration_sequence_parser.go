@@ -2,16 +2,20 @@ package bitlang
 
 import "fmt"
 
-// ParsePreprocessedDeclarations parses a sequence of declarations using one
-// data-defined declaration kind.
-func ParsePreprocessedDeclarations(properties PropertySpecification, kind DeclarationKindSpec, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
+// ParsePreprocessedDeclarations parses a sequence of declarations using a
+// validated shared specification set and one declaration kind name.
+func ParsePreprocessedDeclarations(specs SpecificationSet, kindName string, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
+	kind, err := specs.Declarations.DeclarationKind(kindName)
+	if err != nil {
+		return nil, err
+	}
 	groups, err := splitDeclarationTokens(tokens, kind.Terminator)
 	if err != nil {
 		return nil, err
 	}
 	declarations := make([]PreprocessedDeclaration, 0, len(groups))
 	for _, group := range groups {
-		declaration, err := ParsePreprocessedDeclaration(properties, kind, group)
+		declaration, err := ParsePreprocessedDeclaration(specs, kindName, group)
 		if err != nil {
 			return nil, fmt.Errorf("%d:%d: %w", group[0].Line, group[0].Column, err)
 		}
