@@ -1,11 +1,20 @@
 package bitlang
 
 // ParsePreprocessedSource parses declarations from an existing strict token
-// stream and returns the same source with semantic declarations attached.
-// One declaration kind is accepted per call until mixed-kind source grammar is
-// explicitly defined.
+// stream using one explicitly selected declaration kind.
 func ParsePreprocessedSource(specs SpecificationSet, kindName string, source PreprocessedSource) (PreprocessedSource, error) {
 	declarations, err := ParsePreprocessedDeclarations(specs, kindName, source.Tokens)
+	if err != nil {
+		return PreprocessedSource{}, err
+	}
+	source.Declarations = declarations
+	return source, nil
+}
+
+// ParseMixedPreprocessedSource parses declarations whose kinds are determined
+// from the machine-readable declaration and property specifications.
+func ParseMixedPreprocessedSource(specs SpecificationSet, source PreprocessedSource) (PreprocessedSource, error) {
+	declarations, err := ParseMixedPreprocessedDeclarations(specs, source.Tokens)
 	if err != nil {
 		return PreprocessedSource{}, err
 	}
