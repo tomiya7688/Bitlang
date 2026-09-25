@@ -24,6 +24,9 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
 | `internal/bitlang/spec_consistency.go` | Validate invariants across machine-readable specifications. |
 | `internal/bitlang/spec_consistency_test.go` | Verify cross-specification consistency checks. |
+| `internal/bitlang/specification_set.go` | Group validated machine-readable specifications for shared use. |
+| `internal/bitlang/specification_set_loader.go` | Decode and cross-validate one shared specification set. |
+| `internal/bitlang/specification_set_loader_test.go` | Verify shared specification set loading. |
 | `internal/bitlang/declaration_spec.go` | Represent machine-readable declaration kinds and grammar. |
 | `internal/bitlang/declaration_spec_loader.go` | Decode and validate declaration grammar data. |
 | `internal/bitlang/declaration_spec_loader_test.go` | Verify declaration grammar loading and lookup. |
@@ -91,6 +94,7 @@ Other tests under `tools/go-rule-checker/*_test.go` verify the matching checker 
 | `tools/bitlang-ci/cmd/bitlang-ci/main.go` | Start the shared strict CI gate and map its exit status. |
 | `tools/bitlang-ci/run.go` | Coordinate strict project-owned validation checks. |
 | `tools/bitlang-ci/spec_check.go` | Validate machine-readable specifications during strict CI. |
+| `tools/bitlang-ci/spec_file_loader.go` | Load repository specification files into one validated set. |
 | `tools/bitlang-ci/spec_check_test.go` | Verify strict CI specification validation. |
 | `tools/bitlang-ci/README.md` | Document strict CI behavior and failure policy. |
 | `.github/workflows/strict-ci.yml` | Run Bitlang CI and additional hosted checks on supported runner OSes. |
