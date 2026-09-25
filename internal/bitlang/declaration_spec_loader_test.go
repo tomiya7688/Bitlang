@@ -17,6 +17,13 @@ func TestLoadDeclarationSpecification(t *testing.T) {
 	}
 }
 
+func TestLoadDeclarationSpecificationAcceptsReorderedLayout(t *testing.T) {
+	data := []byte(`{"version":1,"kinds":[{"name":"variable","property_target":"variable","terminator":";","layout":["type","name","properties"]}]}`)
+	if _, err := LoadDeclarationSpecification(data); err != nil {
+		t.Fatal(err)
+	}
+}
+
 func TestLoadDeclarationSpecificationRejectsUnknownLayout(t *testing.T) {
 	data := []byte(`{"version":1,"kinds":[{"name":"variable","property_target":"variable","terminator":";","layout":["name","type"]}]}`)
 	if _, err := LoadDeclarationSpecification(data); err == nil {
