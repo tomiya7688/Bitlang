@@ -31,6 +31,34 @@ Bitlang source
 
 中間 stage の境界は、将来的に実装言語をまたぐ契約として扱う予定です。将来 Bitlang で書かれたコンパイラも、Go 固有の実装詳細を引き継がず、同等の artifact を入出力できることを目標とします。
 
+## コンパイル時間と実行性能の方針
+
+Bitlang は、仕様上コンパイルが重くなりやすいことを前提とする。
+
+preprocessing、他言語からの変換、propertyの完全解決、複数pass、静的解析、ownership / borrow / lifetime / release / finalization の検証、安全性確認、低レベル化などをコンパイル時に行うため、コンパイル速度そのものを最優先目標にはしない。
+
+設計上の優先順位は次の通り。
+
+```text
+正しい意味変換
+    ↓
+安全性の検証
+    ↓
+高品質な低レベル化
+    ↓
+高速なnative実行物
+    ↓
+コンパイル時間
+```
+
+したがって、コンパイルを速くするために必要な安全性検査や正規化を省略することは原則として行わない。
+
+一方、最終native実行物では高級なsource機能やpreprocessing処理をruntimeへ持ち越さず、Bitlang LowからC/backend assembly等へ低レベル化することで、一般的なnative applicationとして高い実行性能を目標とする。
+
+Bitlangの考え方は、**開発時のコンパイル時間よりも、完成したapplicationが高速かつ安全であることを優先する**、というものである。
+
+Bitlang VMはこのnative実行性能目標とは別枠であり、移植性・検証・デバッグ用途を含む独自の性能目標を持つ。
+
 ## Bootstrap と self-hosting の目標
 
 想定している発展段階は次の通りです。
