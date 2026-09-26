@@ -2,6 +2,35 @@
 
 This document defines the Bitlang language specification.
 
+## Design principle: write it your way
+
+Bitlang's slogan is:
+
+```text
+好きなコードを 好きな書き方で
+```
+
+The slogan is a language-design requirement.
+
+Bitlang itself should be reasonably writable while remaining explicit and strongly safety-oriented. However, Bitlang must also be a practical semantic target for other programming languages and source styles.
+
+Therefore, when a source-language difference can be represented safely and deterministically, Bitlang should prefer to preserve that difference through explicit properties, preprocessing configuration, language adapters, scoped defaults, namespace/project mapping, or other normalization mechanisms rather than require the foreign language to imitate ordinary Bitlang source style manually.
+
+This principle does not weaken safety. Source syntax, adapters, defaults, and preprocessing may vary, but after normalization the resolved program must satisfy the same Bitlang semantic rules. A transformation that produces an unsafe final operation remains an error.
+
+Conceptually:
+
+```text
+many source styles / languages
+        -> translation + preprocessing
+        -> Bitlang
+        -> fully explicit Bitlang Explicit
+        -> safety validation + lowering
+        -> Bitlang Low
+```
+
+The goal is not "any code is accepted". The goal is that code may be expressed in many convenient ways **when its meaning can be mapped deterministically into valid Bitlang semantics**.
+
 ## Role of Bitlang in the Bitlang family
 
 Bitlang is the common semantic target of the Bitlang language family.
