@@ -4,6 +4,18 @@ Bitlang is the human-writable form of the Bitlang language.
 
 This directory owns source-facing syntax and normalization rules: what a programmer may omit, which conveniences and preprocessing-only constructs may be used, and how ordinary Bitlang is normalized into fully explicit Bitlang Explicit.
 
+## Slogan and design intent
+
+> **好きなコードを 好きな書き方で**
+
+Bitlang is designed so programmers are not forced into one surface syntax or one source-language culture in order to obtain Bitlang's safety model.
+
+Ordinary Bitlang source is intended to remain writable even though it is comparatively explicit and strict. At the same time, the language deliberately makes translation from other languages a first-class design concern.
+
+Language adapters, preprocessing functions, scoped property defaults, namespace mounts, project inheritance, aliases, and normalization are therefore not secondary conveniences. They are part of the mechanism that allows different source styles to converge on the same safe Bitlang semantics.
+
+Freedom is provided at the source and transformation layers; safety is enforced on the resolved program. A source language or adapter may choose different syntax and defaults, but it may not use that freedom to bypass Bitlang's final semantic safety checks.
+
 ## Stage boundary
 
 ```text
