@@ -4,6 +4,11 @@ English | [日本語](README.ja.md)
 
 Bitlang is a strict language and translation pipeline designed around explicit, inspectable lowering stages.
 
+> **好きなコードを 好きな書き方で**  
+> *Write the code you want, the way you want.*
+
+This slogan is a design requirement, not only branding. Bitlang itself is intended to be reasonably writable and very safe, but the ecosystem is also deliberately designed so other languages and source styles can be translated into Bitlang without discarding their semantics. Preprocessing, language adapters, scoped defaults, namespace mounting, and explicit normalization exist in part to make that possible while keeping the final safety rules strict.
+
 The initial implementation is written in **Go** so development builds can be turned into standalone executables immediately and cross-compiled without introducing a runtime dependency.
 
 Go is only the bootstrap implementation language. The compiler core is intentionally written in a language-portable style so equivalent implementations can be created in other languages and, ultimately, Bitlang can implement Bitlang itself.
@@ -15,9 +20,9 @@ See [CODING_RULES.md](CODING_RULES.md) for the portability and self-hosting rule
 ```text
 Bitlang source
   -> preprocessor
-  -> Bitlang preprocessed
+  -> Bitlang Explicit
   -> static analysis / advisor
-  -> Bitlang compiled
+  -> Bitlang Low
   -> tree object
   -> Bitlang VM assembly
   -> VM or architecture translator
