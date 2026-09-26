@@ -59,6 +59,24 @@ Bitlangの考え方は、**開発時のコンパイル時間よりも、完成�
 
 Bitlang VMはこのnative実行性能目標とは別枠であり、移植性・検証・デバッグ用途を含む独自の性能目標を持つ。
 
+### 他言語からの変換時
+
+他言語またはBitlang family languageからビルドする場合は、通常のBitlangコンパイルより前に、その言語をBitlang sourceへ変換するfrontend translation段階が追加される。
+
+```text
+foreign / family language
+    -> language adapter / translator
+    -> Bitlang source
+    -> Bitlang preprocessor
+    -> Bitlang Explicit
+    -> Bitlang Lowerer
+    -> Bitlang Low
+    -> C / target assembly / native backend
+```
+
+したがって他言語からのbuildは、native Bitlang sourceからのbuildよりさらにcompile-time costが大きくなり得る。これは設計上想定内であり、変換精度・意味保存・安全性検証を犠牲にして短縮しない。
+
+
 ## Bootstrap と self-hosting の目標
 
 想定している発展段階は次の通りです。
