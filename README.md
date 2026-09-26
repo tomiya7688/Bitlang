@@ -32,6 +32,30 @@ Each stage is represented explicitly. A stage consumes one artifact kind and pro
 
 Intermediate stage boundaries are intended to become cross-implementation contracts. A future compiler written in Bitlang should be able to consume and produce equivalent artifacts without inheriting Go-specific implementation details.
 
+## Compile-time and runtime performance
+
+Bitlang assumes that compilation may be expensive by design.
+
+Preprocessing, cross-language translation, full property resolution, repeated normalization passes, static analysis, ownership/borrow/lifetime/release/finalization validation, safety checks, and low-level lowering are intentionally performed before runtime. Compile speed is therefore not the highest-priority optimization target.
+
+The design priority is:
+
+```text
+correct semantic translation
+    -> safety validation
+    -> high-quality lowering
+    -> fast native output
+    -> compile time
+```
+
+Bitlang should not remove required normalization or safety analysis merely to make compilation faster.
+
+For native output, high-level source facilities and preprocessing work should not survive as avoidable runtime overhead. Bitlang Low is lowered to C, target assembly, or another native backend representation so the resulting application can target strong native execution performance.
+
+The project therefore values **a fast and safety-validated finished application more than a fast compiler**.
+
+Bitlang VM has a separate performance target because it also prioritizes portability, inspection, testing, and debugging.
+
 ## Bootstrap and self-hosting target
 
 The intended evolution is:
