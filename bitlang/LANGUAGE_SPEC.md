@@ -75,6 +75,31 @@ A programmer is allowed to write source that is already highly explicit. If all 
 
 The repositories are separated to keep stage-specific specifications and implementations manageable; repository separation does not imply language-semantic separation.
 
+## Compile-time cost is intentional
+
+Bitlang's compilation pipeline is allowed to be slow when that cost comes from semantic normalization, transformation, optimization, or safety validation required to produce better native output.
+
+The compiler/preprocessor may spend substantial time on:
+
+- language-adapter translation;
+- multi-pass preprocessing and normalization;
+- canonical property resolution;
+- whole-program or cross-module static analysis where required;
+- ownership, borrow, lifetime, release, finalization, initialization, and destruction-safety validation;
+- deterministic dependency/order analysis;
+- lowering of high-level constructs before native backend emission;
+- native optimization work delegated to downstream C/assembly/toolchain backends.
+
+Compile-time performance is therefore subordinate to semantic correctness, safety, and native output quality.
+
+The compiler must not intentionally drop required safety checks or semantic validation merely to reduce compilation time.
+
+For native builds, work that can be resolved at compile time should generally not survive as avoidable runtime overhead. The intended pipeline lowers the validated program through Bitlang Explicit and Bitlang Low into C, target assembly, or another native backend form.
+
+The design target is a program that may take longer to build, but whose resulting native application is fast and safety-validated.
+
+This principle applies to native output. Bitlang VM has separate goals because portability, inspection, testing, and debugging are also primary concerns for the VM.
+
 ## Modules and naming hierarchy
 
 Bitlang does not provide a separate `namespace` construct.
