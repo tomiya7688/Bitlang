@@ -4,6 +4,10 @@
 
 Bitlang は、明示的で検査可能な多段 lowering を中心に設計された、厳格なプログラミング言語および変換パイプラインです。
 
+> **好きなコードを 好きな書き方で**
+
+これは宣伝文句だけではなく、Bitlang の設計原則です。Bitlang 自体も多少冗長ながら書きやすく非常に安全な言語を目指しますが、それだけでなく、他言語や異なる記述スタイルから意味を保ったまま容易に Bitlang へ変換できることを重視します。preprocessor、language adapter、scope 単位の property default、namespace mount、完全明示化は、その自由さと安全性を両立するための仕組みです。
+
 初期実装は **Go** で作られています。これにより、開発中のビルドをすぐに単体実行可能ファイルへでき、ランタイム依存を増やさずクロスコンパイルできます。
 
 Go はあくまで bootstrap 実装言語です。コンパイラ中核は特定言語への依存を避ける方針で実装し、将来的には他言語で同等実装を作成でき、最終的には Bitlang 自身で Bitlang を実装できることを目標にしています。
@@ -15,9 +19,9 @@ Go はあくまで bootstrap 実装言語です。コンパイラ中核は特定
 ```text
 Bitlang source
   -> preprocessor
-  -> Bitlang preprocessed
+  -> Bitlang Explicit
   -> static analysis / advisor
-  -> Bitlang compiled
+  -> Bitlang Low
   -> tree object
   -> Bitlang VM assembly
   -> VM or architecture translator
