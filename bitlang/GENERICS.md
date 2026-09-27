@@ -251,3 +251,32 @@ Variance may establish assignment/substitution compatibility between distinct sp
 A value does not change from one specialization type to another implicitly. Changing to another type requires an explicit Bitlang type-conversion operation whose legality is defined separately.
 
 Preprocessing must therefore assign a deterministic concrete type identity from the generic declaration identity plus its resolved concrete type arguments.
+
+
+## Specialization-local static state
+
+Static state declared inside a generic declaration belongs to each concrete specialization independently.
+
+For example:
+
+```text
+class Box<T>
+{
+    Static Int10x32 count;
+}
+```
+
+produces independent retained state for:
+
+```text
+Box<Int10x32>.count
+Box<Str>.count
+```
+
+These are not the same storage.
+
+The same rule applies to function-associated static state in generic functions: each concrete specialization owns its own retained state.
+
+If multiple specializations must intentionally share state, that state must be declared outside the generic specialization, such as in an explicit module/static declaration, and referenced deliberately.
+
+This follows the rule that distinct generic specializations are distinct concrete types/declarations after preprocessing.
