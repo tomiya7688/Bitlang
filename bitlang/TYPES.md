@@ -225,6 +225,7 @@ Generic parameters may be declared on:
 
 - classes;
 - structs;
+- interfaces;
 - functions.
 
 Conceptually:
@@ -232,12 +233,19 @@ Conceptually:
 ```text
 class Box<T> { ... }
 struct Pair<T> { ... }
+interface Comparable<T> { ... }
 T identity<T>(T value) { ... }
 ```
 
 A generic function is therefore a compile-time family of functions parameterized by type. After preprocessing, each used specialization has concrete types.
 
-The exact syntax for constraints and other advanced generic features is defined separately.
+Generic language differences are represented through properties wherever they affect semantics. A language adapter may therefore select generic-parameter properties that preserve the source language's behavior instead of redefining a separate generic system.
+
+Only semantic differences belong in these properties. Pure implementation choices that do not change observable program meaning, such as whether a specialization is emitted as duplicated machine code or shared internally, are compiler/lowering decisions rather than source semantic properties.
+
+The generic declaration is fully resolved during preprocessing. Any generic-specific source/preprocessing properties that still matter must be materialized into the resulting concrete declarations and types before Bitlang Explicit.
+
+The exact property axes, constraints, and advanced generic syntax are defined separately in [GENERICS.md](GENERICS.md).
 
 ## Arrays
 
