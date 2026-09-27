@@ -43,6 +43,7 @@ The Bitlang repository should therefore explain **what authors may write or omit
 - [SOURCE_NORMALIZATION.md](SOURCE_NORMALIZATION.md) — relaxed source notation and canonical normalization rules
 - [PROPERTIES.md](PROPERTIES.md) — source-facing semantic properties and preprocessing behavior
 - [TYPES.md](TYPES.md) — source type system
+- [GENERICS.md](GENERICS.md) — compile-time generics and property-driven cross-language semantics
 - [TYPE_ALIASES.md](TYPE_ALIASES.md) — type alias behavior
 - [NULLABLE_OPTIONAL.md](NULLABLE_OPTIONAL.md) — source-facing nullable/optional forms
 - [RELEASE_PROPERTIES.md](RELEASE_PROPERTIES.md) — source-facing release/disposal controls
