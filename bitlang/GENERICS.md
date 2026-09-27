@@ -105,3 +105,35 @@ Variance never authorizes an otherwise unsafe write, ownership transfer, borrow,
 Generic semantic differences will be finalized one property axis at a time.
 
 Variance is finalized. A generic constraint is a compile-time requirement on the concrete type supplied for a generic parameter. Constraint checks happen during preprocessing rather than at runtime. The next generic semantic area to define is which constraint categories Bitlang supports.
+
+
+## Preprocessor-function constraints
+
+A generic constraint may be supplied by a preprocessing-domain function.
+
+This allows reusable type-acceptance rules to be defined once, imported, and attached to generic declarations.
+
+Conceptually:
+
+```text
+constraint preprocessor function
+    -> inspect candidate type and its canonical properties
+    -> prove that the candidate satisfies the required rule
+    -> accept or emit compile-time error
+```
+
+A generic declaration may use an imported constraint function, or may express an equivalent constraint directly at the declaration site.
+
+The exact source syntax and function signature are defined separately. The semantic requirements are:
+
+- the constraint executes during preprocessing;
+- it may inspect type identity, implemented interfaces, inheritance relationships, canonical properties, and other compile-time type metadata exposed by the preprocessing environment;
+- it must not defer the decision to runtime;
+- a rejected candidate type is a compile-time error;
+- when the constraint requires a safety property and preprocessing cannot prove that property, the specialization is rejected with an error;
+- imported constraint functions are reusable preprocessing definitions and do not remain in Bitlang Explicit;
+- after successful resolution, only the concrete type and the ordinary resolved Bitlang semantics remain.
+
+This mechanism is intended to absorb source-language-specific generic restrictions without creating separate generic systems for each source language.
+
+Inline constraints and imported preprocessing constraints are semantically equivalent ways to express the acceptance rule. Their exact combination/precedence rules are defined separately.
