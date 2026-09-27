@@ -100,6 +100,26 @@ The design target is a program that may take longer to build, but whose resultin
 
 This principle applies to native output. Bitlang VM has separate goals because portability, inspection, testing, and debugging are also primary concerns for the VM.
 
+## Discouraged language features
+
+Bitlang may support a feature without recommending that ordinary source code use it heavily.
+
+### Generics
+
+Native Bitlang generics are supported, but their direct use is discouraged when a simpler concrete type or ordinary function can express the same program clearly.
+
+Generics increase source-level indirection and can make concrete type relationships harder to see. Bitlang therefore prefers explicit concrete types where practical.
+
+This is a style/design recommendation, not a validity restriction:
+
+- generic declarations remain valid language features;
+- standard-library and reusable infrastructure code may use generics when they materially reduce duplication or express a genuine reusable type relationship;
+- language adapters may generate generic source when needed before preprocessing;
+- generic type arguments remain explicit in ordinary Bitlang source;
+- all generics are fully resolved during preprocessing and leave no runtime generic machinery.
+
+A generic should normally be introduced because the abstraction is genuinely useful, not merely because the language permits it.
+
 ## Modules and naming hierarchy
 
 Bitlang does not provide a separate `namespace` construct.
