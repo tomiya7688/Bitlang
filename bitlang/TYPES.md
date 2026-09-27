@@ -211,6 +211,34 @@ A bounded string form specifies a maximum number of characters explicitly.
 
 The first `1` in `Str1x1` is currently reserved and does not yet have a finalized semantic meaning. It may be assigned a useful string-representation property later.
 
+## Generics
+
+Bitlang generics are compile-time type parameterization.
+
+A generic type parameter represents a type, not a runtime value. Supplying a generic argument is not a cast and does not change the type of an existing value.
+
+Generic parameters are resolved during preprocessing. Bitlang Explicit must not contain unresolved generic type parameters.
+
+The same generic declaration instantiated with the same type arguments denotes the same specialization and may be reused rather than regenerated independently.
+
+Generic parameters may be declared on:
+
+- classes;
+- structs;
+- functions.
+
+Conceptually:
+
+```text
+class Box<T> { ... }
+struct Pair<T> { ... }
+T identity<T>(T value) { ... }
+```
+
+A generic function is therefore a compile-time family of functions parameterized by type. After preprocessing, each used specialization has concrete types.
+
+The exact syntax for constraints and other advanced generic features is defined separately.
+
 ## Arrays
 
 Bitlang source may describe array dimensionality and fixed lengths as attributes inside the `Array<...>` form rather than requiring the programmer to write repeated nested array constructors manually.
