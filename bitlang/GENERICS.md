@@ -26,6 +26,29 @@ Generic arguments are resolved by preprocessing. Bitlang Explicit must not conta
 
 The same generic declaration with the same type arguments denotes the same specialization.
 
+## No runtime generic machinery
+
+Bitlang generics are fully resolved during preprocessing.
+
+After preprocessing, the generic mechanism itself does not remain as runtime machinery.
+
+Conceptually:
+
+```text
+generic declaration + concrete type arguments
+    -> preprocessing
+    -> concrete specialized declarations/types
+    -> Bitlang Explicit
+```
+
+Bitlang Explicit must not require runtime generic dispatch, runtime generic substitution, runtime generic constraint checks, or unresolved generic type parameters.
+
+This rule exists to avoid carrying generic-resolution overhead into the finished application.
+
+If a source language has explicitly observable runtime type/reflection behavior related to generics, the adapter/preprocessor must translate that behavior into ordinary concrete Bitlang metadata or operations that are actually required by the program. Such metadata is not treated as retained generic machinery and must not be emitted when it is unobservable or unnecessary.
+
+The compiler may deduplicate or share generated machine code internally when doing so preserves all observable semantics, but that optimization must not reintroduce runtime generic resolution.
+
 ## Property-driven language compatibility
 
 Different source languages define generics differently.
@@ -48,7 +71,7 @@ A property belongs to the generic system only when changing it changes observabl
 Examples of differences that may require generic properties include:
 
 - variance / assignment compatibility between different generic arguments;
-- runtime visibility of the original generic type argument when source-language behavior depends on it;
+- source-language generic reflection requirements, when explicitly observable, must be materialized as ordinary concrete metadata/operations rather than by retaining a runtime generic mechanism;
 - rules governing what kinds of types satisfy a generic parameter;
 - source-language-specific generic compatibility rules that cannot be represented by an ordinary type/interface constraint alone.
 
