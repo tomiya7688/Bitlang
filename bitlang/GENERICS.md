@@ -137,3 +137,41 @@ The exact source syntax and function signature are defined separately. The seman
 This mechanism is intended to absorb source-language-specific generic restrictions without creating separate generic systems for each source language.
 
 Inline constraints and imported preprocessing constraints are semantically equivalent ways to express the acceptance rule. Their exact combination/precedence rules are defined separately.
+
+
+## Constraint composition
+
+When multiple constraints are attached to the same generic parameter without an explicit boolean operator, they are combined with logical AND.
+
+Conceptually:
+
+```text
+T requires A
+T requires B
+
+==
+
+T requires (A AND B)
+```
+
+AND may also be written explicitly.
+
+OR is never inferred from multiple constraint declarations. If a parameter may satisfy either one condition or another, OR must be written explicitly.
+
+Conceptually:
+
+```text
+T requires (A OR B)
+```
+
+This rule applies equally to inline constraints and imported preprocessor-function constraints.
+
+Parentheses may be used to group compound constraint expressions. Exact surface syntax is defined separately, but the semantic boolean model is:
+
+```text
+implicit multiple constraints -> AND
+explicit AND                 -> AND
+explicit OR                  -> OR
+```
+
+Constraint evaluation remains compile-time only. If the final composed constraint cannot be proven satisfied for the supplied concrete type, preprocessing reports an error.
