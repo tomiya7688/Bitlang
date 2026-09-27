@@ -198,3 +198,25 @@ explicit OR                  -> OR
 ```
 
 Constraint evaluation remains compile-time only. If the final composed constraint cannot be proven satisfied for the supplied concrete type, preprocessing reports an error.
+
+
+## Explicit generic arguments
+
+Ordinary Bitlang source requires generic type arguments to be written explicitly when a generic declaration is instantiated or called.
+
+Conceptually:
+
+```text
+identity<Int10x32>(10)
+Box<Str>
+```
+
+Bitlang does not perform implicit generic type-argument inference as a core language rule.
+
+The reason is semantic visibility and determinism: the concrete type used to specialize a generic declaration must be visible in source rather than reconstructed from surrounding expressions.
+
+A language adapter or explicit preprocessing rule may implement source-language-specific generic inference before ordinary Bitlang generic resolution. Such inference is preprocessing behavior, not native Bitlang generic semantics. Its resolved output must contain explicit concrete type arguments before the generic specialization is accepted.
+
+If inferred generic information is ambiguous, incomplete, or cannot be proven safe, preprocessing reports an error.
+
+This keeps native Bitlang generic usage deliberately explicit and avoids hidden type specialization.
