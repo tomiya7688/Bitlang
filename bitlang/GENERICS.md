@@ -70,8 +70,38 @@ Before Bitlang Explicit is produced:
 
 If generic resolution is ambiguous, contradictory, or unsafe, preprocessing fails rather than selecting a behavior silently.
 
+## Variance
+
+Variance is a canonical generic-parameter property axis.
+
+The states are:
+
+```text
+Invariant
+Covariant
+Contravariant
+```
+
+Meaning:
+
+- `Invariant`: no substitution compatibility is derived merely from compatibility between the type arguments.
+- `Covariant`: if `Dog` is usable as `Animal`, a corresponding generic specialization may be usable in the same direction, subject to all other Bitlang safety and type rules.
+- `Contravariant`: the generic specialization may be usable in the opposite direction, again subject to all other Bitlang safety and type rules.
+
+The ordinary Bitlang default is:
+
+```text
+Invariant
+```
+
+This is the safety-oriented default. A source language, declaration, or language adapter may explicitly select `Covariant` or `Contravariant` when required to preserve source semantics.
+
+Variance applies per generic type parameter, so a multi-parameter generic may assign a different variance state to each parameter.
+
+Variance never authorizes an otherwise unsafe write, ownership transfer, borrow, lifetime extension, or other invalid operation. If a variance declaration would make a concrete specialization unsafe or internally inconsistent, preprocessing must reject it.
+
 ## Decisions
 
 Generic semantic differences will be finalized one property axis at a time.
 
-The first axis to define is variance: whether a generic specialization may be substituted for another specialization when their type arguments have an inheritance/compatibility relationship.
+Variance is finalized. The next generic semantic area to define is the constraint model: what a generic parameter may require from an accepted concrete type.
