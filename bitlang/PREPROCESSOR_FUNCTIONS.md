@@ -160,6 +160,18 @@ The command is preprocessing-only and disappears before Bitlang Explicit. Its se
 
 The operation may be applied using the normal preprocessing activation-range mechanism, so a project may disable automatic release generation for one declaration, a local range, a class/function field, or another supported preprocessing scope. Range activation follows the ordinary start/end semantics; omitting the end marker keeps the suppression active until the end of the enclosing declaration field.
 
+### Generic constraint functions
+
+Preprocessor functions may be used as reusable generic type constraints.
+
+A constraint function is referenced by a generic declaration and is evaluated for each concrete type argument during preprocessing. It may inspect compile-time type metadata and canonical Bitlang properties in order to decide whether the concrete type satisfies the required contract.
+
+Constraint functions may be imported and reused across files/modules. The same condition may also be expressed directly at the generic declaration site when reuse is unnecessary.
+
+A constraint decision is compile-time only. If the candidate type is rejected, or if a required safety condition cannot be proven, preprocessing emits an error. Constraint functions and their preprocessing-only metadata disappear before Bitlang Explicit.
+
+Exact source syntax and callable signature are specified by the generic syntax specification.
+
 ### Module configuration
 
 Preprocessor functions may inspect and modify the configuration of the active Bitlang module.
