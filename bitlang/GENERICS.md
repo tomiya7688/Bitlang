@@ -104,4 +104,4 @@ Variance never authorizes an otherwise unsafe write, ownership transfer, borrow,
 
 Generic semantic differences will be finalized one property axis at a time.
 
-Variance is finalized. The next generic semantic area to define is the constraint model: what a generic parameter may require from an accepted concrete type.
+Variance is finalized. A generic constraint is a compile-time requirement on the concrete type supplied for a generic parameter. Constraint checks happen during preprocessing rather than at runtime. The next generic semantic area to define is which constraint categories Bitlang supports.
