@@ -70,6 +70,90 @@ For example, an `Int2x32` and an `Int10x32` are not directly compatible operands
 
 Bitwise operations are performed over the fixed-width bit representation after operand types have been made compatible. Radix-2 exposes individual bits directly, radix-8 groups bits in sets of three, and radix-16 provides a compact bit-oriented form.
 
+## Shift operations
+
+Bitlang distinguishes **bit-representation shifting** from **radix/digit shifting**.
+
+These are different semantic operations and must not be silently substituted for one another.
+
+### Bit shift
+
+Canonical operation family:
+
+```text
+bit_shift_left(value, count)
+bit_shift_right_zero(value, count)
+bit_shift_right_sign(value, count)
+```
+
+A bit shift moves the fixed-width bit representation itself.
+
+Conceptually:
+
+```text
+00010
+bit_shift_left by 1
+-> 00100
+```
+
+Rules:
+
+- the result keeps the same numeric type and semantic bit width;
+- `bit_shift_left` shifts zero bits in from the right;
+- `bit_shift_right_zero` shifts zero bits in from the left;
+- `bit_shift_right_sign` preserves the sign bit and is valid only for signed integer types whose canonical signed-bit representation is defined;
+- bits shifted outside the semantic bit width are discarded by definition; this is a representation operation and is not treated as ordinary numeric overflow;
+- `count` is a non-negative integer bit count and is not required to have the same radix as `value`;
+- ordinary bit-shift count must satisfy `0 <= count < bit_width`;
+- an invalid constant count is a compile-time error;
+- an invalid count known only at runtime uses the ordinary Bitlang runtime error/trap path.
+
+Bit-shift semantics are defined by Bitlang's canonical semantic bit representation, not by C's implementation-specific signed-shift behavior.
+
+### Radix shift
+
+Canonical operation family:
+
+```text
+radix_shift_left(value, count)
+radix_shift_right(value, count)
+```
+
+A radix shift moves the value by digits of the value's own radix rather than by individual bits.
+
+For a type with radix `R`:
+
+```text
+radix_shift_left(value, n)
+    = value * R^n
+
+radix_shift_right(value, n)
+    = value / R^n
+```
+
+For integer types, right radix shift uses the language's ordinary integer-division result and therefore truncates toward zero.
+
+Examples:
+
+```text
+Int10x32: 10 radix_shift_left 1 -> 100
+Int16x32: 0x10 radix_shift_left 1 -> 0x100
+Int8x32:  010 radix_shift_left 1 -> 0100
+```
+
+Rules:
+
+- the result keeps the same type and radix;
+- `count` is a non-negative integer digit count;
+- left radix shift is checked numeric scaling, so an unrepresentable result is an overflow error;
+- right radix shift does not use C implementation-defined signed shift behavior;
+- radix shift does not discard high bits merely to fit the width;
+- a language adapter may map source-language digit/scale operations to radix shift when their semantics match.
+
+For radix 2, a left radix shift and a left bit shift may produce the same value while no significant bit is discarded, but they remain distinct operations: bit shift explicitly manipulates the fixed-width representation, while radix shift performs checked numeric scaling.
+
+Exact source-level operator sugar for these canonical operations is specified separately.
+
 ## Literals and type inference
 
 Literals use ordinary type inference unless an explicit type is supplied.
@@ -134,7 +218,7 @@ represents a two-dimensional array whose dimensions have fixed lengths 10 and 20
 
 These source-level dimension and length attributes are convenience information. The preprocessor expands dimensionality into nested canonical `Array` types. Fixed-length information is attached to the corresponding canonical array level rather than retained as a separate multidimensional-array abstraction.
 
-Therefore programmers may write dimensionality compactly, while Bitlang preprocessed uses ordinary nested arrays internally.
+Therefore programmers may write dimensionality compactly, while Bitlang Explicit uses ordinary nested arrays internally.
 
 ## Pointer and reference types
 
@@ -195,7 +279,7 @@ Required
 
 These axes are independent. For example, a value may be `Required nullable`, meaning it must exist but may contain `null`, or `Optional unnullable`, meaning it may be absent but, when present, may not be `null`.
 
-Bitlang preprocessed must make both properties explicit whenever they apply so that absence and nullability are never inferred from omission.
+Bitlang Explicit must make both properties explicit whenever they apply so that absence and nullability are never inferred from omission.
 
 ## Explicit type conversion
 
@@ -227,8 +311,8 @@ If two operands have different types, they must first be made compatible explici
 
 The preprocessing system may provide explicit opt-in automation rules. For example, a preprocessor function or attribute may mark a declaration as automatically widenable or otherwise permit a specific safe conversion. Such behavior is generated preprocessing logic, not a built-in implicit-conversion rule of Bitlang.
 
-Any automatically generated conversion must be explicit in Bitlang preprocessed output so that canonical semantics remain unambiguous.
+Any automatically generated conversion must be explicit in Bitlang Explicit output so that canonical semantics remain unambiguous.
 
 ## Preprocessing rule
 
-Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand, inferred types, defaults, compact array-dimension notation, and explicitly configured conversion automation into the concrete canonical type representation and explicit operations used by Bitlang preprocessed.
+Source-level shorthand is for convenience only. Bitlang preprocessing resolves shorthand, inferred types, defaults, compact array-dimension notation, and explicitly configured conversion automation into the concrete canonical type representation and explicit operations used by Bitlang Explicit.
