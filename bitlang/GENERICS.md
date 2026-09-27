@@ -26,6 +26,14 @@ Generic arguments are resolved by preprocessing. Bitlang Explicit must not conta
 
 The same generic declaration with the same type arguments denotes the same specialization.
 
+## Usage recommendation
+
+Generics are a supported Bitlang feature, but direct use in ordinary native Bitlang source is discouraged when a concrete type or non-generic function is simpler and clearer.
+
+This recommendation does not ban generics. They remain appropriate for reusable infrastructure, standard-library components, containers, algorithms, adapters, and other cases where one abstraction genuinely applies to multiple concrete types.
+
+The recommendation exists because Bitlang favors explicit, inspectable semantics. Generic abstraction should not hide concrete type relationships without a clear benefit.
+
 ## No runtime generic machinery
 
 Bitlang generics are fully resolved during preprocessing.
