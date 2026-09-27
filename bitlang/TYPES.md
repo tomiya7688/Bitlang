@@ -102,7 +102,7 @@ Rules:
 - `bit_shift_left` shifts zero bits in from the right;
 - `bit_shift_right_zero` shifts zero bits in from the left;
 - `bit_shift_right_sign` preserves the sign bit and is valid only for signed integer types whose canonical signed-bit representation is defined;
-- bits shifted outside the semantic bit width are discarded by definition; this is a representation operation and is not treated as ordinary numeric overflow;
+- information loss is not implicit: a checked form rejects loss of significant bits, while a discard form explicitly permits bits leaving the semantic width to be discarded;
 - `count` is a non-negative integer bit count and is not required to have the same radix as `value`;
 - ordinary bit-shift count must satisfy `0 <= count < bit_width`;
 - an invalid constant count is a compile-time error;
@@ -145,14 +145,31 @@ Rules:
 
 - the result keeps the same type and radix;
 - `count` is a non-negative integer digit count;
-- left radix shift is checked numeric scaling, so an unrepresentable result is an overflow error;
+- overflow behavior is selected explicitly by the standard-library operation; checked and wrapping forms are distinct;
 - right radix shift does not use C implementation-defined signed shift behavior;
-- radix shift does not discard high bits merely to fit the width;
+- radix shift does not silently choose between checked, wrapping, or other overflow behavior;
 - a language adapter may map source-language digit/scale operations to radix shift when their semantics match.
 
 For radix 2, a left radix shift and a left bit shift may produce the same value while no significant bit is discarded, but they remain distinct operations: bit shift explicitly manipulates the fixed-width representation, while radix shift performs checked numeric scaling.
 
-Exact source-level operator sugar for these canonical operations is specified separately.
+Source-facing shift operations are provided through the standard library rather than by attaching additional semantic properties to shift operators.
+
+Representative APIs are:
+
+```text
+bit.shift_left_checked(value, count)
+bit.shift_left_discard(value, count)
+bit.shift_right_zero_checked(value, count)
+bit.shift_right_zero_discard(value, count)
+bit.shift_right_sign_checked(value, count)
+bit.shift_right_sign_discard(value, count)
+
+radix.shift_left_checked(value, count)
+radix.shift_left_wrapping(value, count)
+radix.shift_right(value, count)
+```
+
+The selected loss/overflow behavior must be explicit in the function used. Compiler lowering may convert these calls to canonical shift intrinsics. Language adapters may map foreign shift operators directly to the matching intrinsic semantics.
 
 ## Literals and type inference
 
