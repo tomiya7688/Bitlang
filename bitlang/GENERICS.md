@@ -280,3 +280,26 @@ The same rule applies to function-associated static state in generic functions: 
 If multiple specializations must intentionally share state, that state must be declared outside the generic specialization, such as in an explicit module/static declaration, and referenced deliberately.
 
 This follows the rule that distinct generic specializations are distinct concrete types/declarations after preprocessing.
+
+
+## Demand-driven specialization
+
+Bitlang preprocessing creates concrete generic specializations only for type-argument combinations that are actually referenced by the program or by generated preprocessing output.
+
+Conceptually:
+
+```text
+generic declaration
+    + referenced concrete type arguments
+    -> generate concrete specialization
+```
+
+Unused specializations are not generated.
+
+If the same specialization is referenced multiple times, preprocessing reuses the same concrete specialization identity rather than generating duplicate independent types or functions.
+
+This rule applies to generic classes, structs, interfaces, and functions.
+
+A specialization that becomes newly referenced because of preprocessing-generated code is treated as used and must be resolved before preprocessing reaches a stable final result.
+
+Generic resolution therefore participates in the ordinary multi-pass preprocessing convergence model.
