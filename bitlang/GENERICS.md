@@ -228,3 +228,26 @@ A language adapter or explicit preprocessing rule may implement source-language-
 If inferred generic information is ambiguous, incomplete, or cannot be proven safe, preprocessing reports an error.
 
 This keeps native Bitlang generic usage deliberately explicit and avoids hidden type specialization.
+
+
+## Concrete specialization type identity
+
+Each generic specialization with a different concrete type-argument list is a distinct Bitlang type.
+
+For example:
+
+```text
+Box<Int10x32> != Box<Str>
+```
+
+The same generic declaration instantiated with the same concrete type arguments denotes the same concrete type:
+
+```text
+Box<Int10x32> == Box<Int10x32>
+```
+
+Variance may establish assignment/substitution compatibility between distinct specializations, but it does not make those types identical.
+
+A value does not change from one specialization type to another implicitly. Changing to another type requires an explicit Bitlang type-conversion operation whose legality is defined separately.
+
+Preprocessing must therefore assign a deterministic concrete type identity from the generic declaration identity plus its resolved concrete type arguments.
