@@ -75,6 +75,30 @@ A programmer is allowed to write source that is already highly explicit. If all 
 
 The repositories are separated to keep stage-specific specifications and implementations manageable; repository separation does not imply language-semantic separation.
 
+## Language versioning and backward compatibility
+
+Bitlang language specifications do not guarantee backward compatibility with earlier language versions.
+
+Backward compatibility is provided by the compiler/toolchain through explicit language-version selection and version-specific compatibility frontends.
+
+Conceptually:
+
+```text
+old Bitlang source
+    -> selected historical language compatibility frontend
+    -> current canonical Bitlang semantics
+    -> normal preprocessing
+    -> Bitlang Explicit
+```
+
+This allows the current language specification to remain clean instead of permanently carrying old syntax and historical semantic exceptions.
+
+A compiler may support multiple historical language versions, but the current Bitlang language itself has only its current specification.
+
+Compatibility mode never weakens mandatory safety validation. Historical source that cannot be represented safely and deterministically in the current semantic model is rejected rather than silently reinterpreted.
+
+See [VERSIONING.md](VERSIONING.md) for the complete versioning and compiler compatibility policy.
+
 ## Compile-time cost is intentional
 
 Bitlang's compilation pipeline is allowed to be slow when that cost comes from semantic normalization, transformation, optimization, or safety validation required to produce better native output.
