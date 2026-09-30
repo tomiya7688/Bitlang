@@ -28,11 +28,128 @@ The exact CLI/project-file spelling is defined separately, but the semantic oper
 compile(source, language_version)
 ```
 
-The selected language version controls the compatibility frontend used for parsing and interpreting source-language behavior.
+The selected language version controls the compatibility frontend used for parsing and interpreting source-language behavior. This selection may be inherited from project/file scope or overridden by a smaller class/type/function scope as defined below.
 
 A project should be able to pin this version for reproducible builds. A command-line selection may override or supply the project selection where the build system permits it.
 
 If no version is specified, the compiler may use its current default language version. Reproducible projects should pin the intended version explicitly rather than depend on that default.
+
+## Scoped language-version declarations
+
+Bitlang language versions may be selected at structural scope boundaries rather than only once for an entire project.
+
+A source file, class/type, or function may declare the language version used to interpret that scope.
+
+Conceptually:
+
+```text
+file version V3
+
+class Legacy_parser version V2
+{
+    function parse_old_format version V1
+    {
+        ...
+    }
+
+    function parse_current
+    {
+        ...
+    }
+}
+```
+
+The exact surface spelling is defined separately. The semantic rule is that a version declaration appears in the leading metadata/header area of the scope, before the body whose syntax and semantics depend on that version.
+
+The effective language version uses innermost-scope precedence:
+
+```text
+function version
+    > class/type version
+    > file version
+    > file-targeted header version
+    > project version
+    > compiler/toolchain default
+```
+
+A nested scope without its own version inherits the effective version of its nearest enclosing scope.
+
+This allows a project to migrate incrementally. A file may use the newest language version while one old class or function remains pinned to an older supported version.
+
+A language-version declaration is semantic configuration, not ordinary runtime data, and disappears before Bitlang Explicit after the selected compatibility frontend has normalized the scope.
+
+### Same-scope conflicts
+
+At the same structural scope, a version written directly in the source scope takes precedence over an inherited/header/project default.
+
+Two incompatible direct version requirements for the same scope are an error unless an explicit preprocessing rule selects one deterministically.
+
+A header may provide the version for a target file or declaration when that target does not provide a more local/direct version itself.
+
+## Version envelope parsing
+
+Because the selected language version may change the grammar used to parse a scope, version metadata must be discoverable before the body of that scope is parsed under a version-specific grammar.
+
+Bitlang therefore treats scope-leading version information as part of a small version-neutral source envelope.
+
+Conceptually:
+
+```text
+version-neutral envelope reader
+    -> discovers file/class/function version metadata
+    -> selects supported compatibility frontend for that scope
+    -> parses and normalizes the scope body
+```
+
+The envelope syntax itself must remain stable enough for supported compilers to discover the version declaration without first knowing the version of the body.
+
+Nested versioned scopes may therefore be dispatched to different supported compatibility frontends and then normalized into the same current canonical Bitlang semantics.
+
+This mechanism is intentionally similar in spirit to a document header declaring how the following content should be interpreted.
+
+## Automatic compatible-version selection
+
+The standard preprocessing/tooling environment may provide a helper that selects the newest supported Bitlang language version under which a target scope compiles successfully.
+
+Conceptually:
+
+```text
+select_latest_compatible_version(scope)
+```
+
+or, when an explicit search range is desired:
+
+```text
+select_latest_compatible_version(scope, newest, oldest)
+```
+
+The exact function name and surface syntax are defined separately.
+
+The selection algorithm is conceptually:
+
+```text
+try newest supported candidate
+    -> if the complete target scope parses, normalizes, and validates:
+           select that version
+    -> otherwise try the next older supported candidate
+    -> continue until success or the allowed range is exhausted
+```
+
+A failed candidate does not weaken diagnostics or safety. A candidate is acceptable only if the scope is valid under that language version and can still normalize into current safe Bitlang semantics.
+
+The chosen version becomes the effective explicit version binding for that preprocessing result. Tooling should expose the selected version in diagnostics/build metadata and may offer to write the resulting version declaration into the source or an associated header so future builds are pinned reproducibly.
+
+Automatic probing is a migration convenience, not permission to reinterpret one compilation unit nondeterministically. Reproducible builds should materialize or otherwise pin the selected result rather than depending indefinitely on whatever versions a future compiler happens to support.
+
+This mechanism makes large-scale upgrades practical:
+
+```text
+try current version
+    -> compatible: keep current
+    -> incompatible: pin only the smallest affected scope to the newest older version that works
+```
+
+The goal is to avoid rewriting an entire project merely because a small class or function still depends on historical syntax or semantics.
 
 ## Compatibility frontend
 
