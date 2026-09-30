@@ -59,7 +59,11 @@ class Legacy_parser version V2
 }
 ```
 
-The exact surface spelling is defined separately. The semantic rule is that a version declaration appears in the leading metadata/header area of the scope, before the body whose syntax and semantics depend on that version.
+The version declaration uses ordinary Bitlang notation and belongs to the `@preprocesser` domain. Bitlang does not introduce a separate DOCTYPE-like or foreign metadata syntax solely for language versions.
+
+The exact built-in/function/declaration spelling is defined separately, but semantically it is a preprocessing declaration/directive placed at the beginning of the target scope, before the body whose syntax and semantics depend on that version.
+
+It is not an ordinary compiler/runtime declaration and never becomes runtime state.
 
 The effective language version uses innermost-scope precedence:
 
@@ -78,6 +82,27 @@ This allows a project to migrate incrementally. A file may use the newest langua
 
 A language-version declaration is semantic configuration, not ordinary runtime data, and disappears before Bitlang Explicit after the selected compatibility frontend has normalized the scope.
 
+### Preprocessor ownership of version declarations
+
+Language-version selection belongs to preprocessing.
+
+Conceptually:
+
+```text
+Bitlang source notation
+    -> @preprocesser version declaration/directive
+    -> select compatibility frontend for target scope
+    -> parse/normalize target scope
+    -> consume version declaration
+    -> Bitlang Explicit
+```
+
+The declaration may appear at file, class/type, or function scope according to the normal scoped-version rules.
+
+A version declaration must not survive into Bitlang Explicit as runtime/compiler state. Its only semantic effect is deciding how the corresponding source scope is interpreted and normalized.
+
+Because version selection happens before ordinary version-specific parsing, the minimal Bitlang syntax used to express this preprocessing declaration is part of the stable version-neutral envelope grammar.
+
 ### Same-scope conflicts
 
 At the same structural scope, a version written directly in the source scope takes precedence over an inherited/header/project default.
@@ -90,7 +115,9 @@ A header may provide the version for a target file or declaration when that targ
 
 Because the selected language version may change the grammar used to parse a scope, version metadata must be discoverable before the body of that scope is parsed under a version-specific grammar.
 
-Bitlang therefore treats scope-leading version information as part of a small version-neutral source envelope.
+Bitlang therefore treats scope-leading `@preprocesser` version information as part of a small version-neutral source envelope.
+
+This envelope is still Bitlang syntax. It is not a separate header language. The compiler only gives the minimal Bitlang preprocessing syntax required for version selection a cross-version-stable interpretation before dispatching the rest of the scope to its selected compatibility frontend.
 
 Conceptually:
 
