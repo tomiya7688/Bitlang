@@ -62,6 +62,35 @@ Only concrete specializations that are actually referenced are generated.
 
 Unused generic declarations and unused specializations do not descend into Bitlang Explicit.
 
+## Optional garbage collector
+
+Bitlang does not require a garbage collector as part of the core runtime.
+
+The standard library may provide one or more explicitly selected garbage-collection facilities for programs that want runtime-managed memory.
+
+Conceptually:
+
+```text
+ordinary Bitlang program
+    -> no garbage collector runtime
+
+program that uses standard-library GC
+    -> selected GC API/runtime support becomes reachable
+    -> only required collector code and metadata descend
+```
+
+Using the garbage collector must be explicit through the standard-library API or an explicit language-adapter/preprocessing rule that lowers to that API.
+
+Ordinary Bitlang allocations do not silently become GC-managed merely because the GC library is available or imported.
+
+The exact public API, handle/reference type, and collection algorithm are defined separately. The standard library may provide multiple collector implementations as long as their observable contracts are explicit.
+
+GC support follows the normal standard-library reachability rule. If no GC-managed allocation or collector operation is semantically used, collector code, tracing metadata, runtime tables, and initialization must not be emitted to lower stages.
+
+Garbage collection is primarily a memory-management facility. Code must not rely on an unspecified collection moment for deterministic resource finalization. Resources that require deterministic release, such as external handles, should continue to use the ordinary Bitlang ownership/release/finalization model unless a GC API explicitly defines a stronger contract.
+
+The presence of a collector does not bypass Bitlang safety validation. GC-managed references, borrows, finalization hooks, and generated runtime support must remain consistent with the applicable ownership, lifetime, and access rules.
+
 ## Required runtime/compiler support
 
 A language or standard-library operation may require helper code even when the helper is not named directly by user source.
