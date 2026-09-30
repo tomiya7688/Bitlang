@@ -51,6 +51,32 @@ Bitlang family language
 
 This allows family languages to focus on their own syntax and usability while Bitlang remains the shared language for expressing the meaning of the program.
 
+## Foreign-language memory normalization
+
+Cross-language conversion should preserve source-language semantics where they can be represented safely and deterministically in Bitlang.
+
+Memory ownership, lifetime, release, destruction, and related safety behavior are a deliberate exception: converted programs are normalized to Bitlang's memory-safety model.
+
+A language adapter must map foreign allocation and lifetime behavior into explicit Bitlang ownership, borrow, lifetime, release, initialization, and finalization semantics before Bitlang Explicit is produced.
+
+Conceptually:
+
+```text
+foreign-language allocation/lifetime behavior
+    -> adapter + preprocessing
+    -> Bitlang ownership/lifetime/release model
+    -> mandatory safety validation
+    -> explicit cleanup
+```
+
+The adapter should preserve observable source behavior where doing so remains compatible with Bitlang safety. It must not preserve a foreign memory-management rule merely because the original language allowed it when that rule would violate Bitlang's mandatory memory-safety invariants.
+
+If safe ownership or release behavior cannot be established deterministically, conversion fails with an error or requires additional explicit source/adapter information. It must not guess.
+
+A source language that normally relies on a tracing GC may still be translated into explicit Bitlang lifetimes and releases where those can be proven. The optional residual runtime collector remains a secondary safety layer and does not replace this normalization.
+
+This policy makes memory management one of the few areas where converted source is expected to conform to Bitlang rather than Bitlang weakening its own safety model to imitate the source language.
+
 ## Source and Explicit are the same language
 
 Bitlang source and Bitlang Explicit use the same underlying semantic property system.
