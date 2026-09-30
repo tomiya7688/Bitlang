@@ -71,14 +71,15 @@ The byte-width form is source sugar only. Bitlang Explicit always uses the canon
 
 The ordinary `x` form remains available for widths that are not whole-byte multiples.
 
-The `x` / `xx` unit rule is global wherever those suffixes represent width:
+The suffix-unit rule is global:
 
 ```text
-x  -> bits
-xx -> bytes
+x    -> bits
+xx   -> bytes
+xxx  -> characters
 ```
 
-A type family must not reinterpret `x` as characters, elements, code points, or another unit. Such dimensions require separate notation.
+A type family must not reinterpret one suffix as another unit. `xxx` is meaningful only for character-bearing values/types where character count is a defined semantic dimension.
 
 The `xx` shorthand is especially useful when source code is naturally specified in byte capacities, such as binary buffers, packet fields, fixed storage blocks, and backing storage for byte-limited string implementations.
 
@@ -247,18 +248,38 @@ If radix/base is not meaningful for a type, the type omits the radix component a
 
 ## Strings
 
-The width-unit notation is uniform across Bitlang:
+String constraints use the same suffix-unit system without redefining units:
 
 ```text
-x<N>  -> N bits
-xx<N> -> N bytes
+x<N>    -> N bits
+xx<N>   -> N bytes
+xxx<N>  -> N characters
 ```
 
-String types do not redefine `x` or `xx` to mean character count.
+For strings, `xxx<N>` sets the maximum character count.
 
-Therefore, when a string representation exposes a width using these suffixes, `x` always means a bit limit/capacity and `xx` always means a byte limit/capacity.
+Examples:
 
-Character-count limitation is a separate semantic dimension and will use a different source notation.
+```text
+Strxxx3
+    -> string with a maximum of 3 characters
+
+Strxx16
+    -> string representation/capacity limited to 16 bytes
+
+Strx128
+    -> string representation/capacity limited to 128 bits
+```
+
+Different dimensions may be combined when both limits are required:
+
+```text
+Strxxx10xx32
+    -> maximum 10 characters
+    -> maximum 32 bytes
+```
+
+The character-count limit and storage-width limit are independent. A character may occupy more than one byte depending on the string encoding/representation, so `xxx<N>` is not converted into `x<N>` or `xx<N>`.
 
 A plain:
 
@@ -266,13 +287,17 @@ A plain:
 Str
 ```
 
-has no character-count limit by default unless another explicit string constraint is supplied.
+has no maximum character-count limit by default unless another explicit constraint supplies one.
 
-The exact source syntax for a maximum-character-count string remains to be specified.
+`Char` is source-level shorthand for:
 
-`Char` remains source-level shorthand for a string constrained to exactly one character. Its final canonical spelling depends on the future character-count notation and is therefore not defined as `Str1x1`.
+```text
+Strxxx1
+```
 
-This separation avoids giving the same `x` token different units for different type families.
+meaning a string constrained to exactly one character.
+
+The use of `xxx` keeps the unit system consistent across Bitlang: `x` never means characters and `xx` never means characters.
 
 ## Generics
 
