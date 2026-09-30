@@ -54,6 +54,7 @@ The Bitlang repository should therefore explain **what authors may write or omit
 - [NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md](NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md) — file/directory namespace mounts and deterministic parent-project preprocessing inheritance
 - [VERSIONING.md](VERSIONING.md) — language-version selection and compiler-managed backward compatibility
 - [IMPORT_CAPABILITIES.md](IMPORT_CAPABILITIES.md) — write/call capability restrictions on imported bindings
+- [STANDARD_LIBRARY.md](STANDARD_LIBRARY.md) — reachability-based standard-library inclusion and lowering
 
 ## Canonical Bitlang Explicit specifications
 
