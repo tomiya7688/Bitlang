@@ -19,6 +19,32 @@ original declaration capability
 
 The most restrictive applicable rule wins.
 
+## Capability views instead of defensive copies
+
+Bitlang access control is designed so code does not need to create a copied structure or a separate reduced-value object merely to express restricted access.
+
+The same underlying declaration/value may be exposed through different capability-restricted access paths.
+
+For example, one module may receive a structure through a path that is:
+
+```text
+Readable + Unwriteable
+```
+
+while another path may be:
+
+```text
+Type_only
+```
+
+and the owning module may retain broader capabilities.
+
+These access paths do not imply separate runtime copies. They are semantic capability views enforced by preprocessing/static analysis/compiler validation.
+
+A compiler may erase capability metadata after all relevant accesses are validated and lowered, provided doing so cannot reintroduce an operation that the restricted view forbids.
+
+This mechanism allows fine-grained access control over structure knowledge, value observation, mutation, reassignment, calls, ownership transfer, and other independent capabilities without requiring wrapper objects or defensive copies solely for permission management.
+
 ## Type-only imports
 
 Bitlang supports imports that expose a type declaration without importing a runtime value binding.
