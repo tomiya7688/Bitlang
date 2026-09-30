@@ -324,6 +324,28 @@ meaning a string constrained to exactly one character.
 
 The use of `xxx` keeps the unit system consistent across Bitlang: `x` never means characters and `xx` never means characters.
 
+### Canonical string character model and encoding
+
+A Bitlang string is semantically a sequence of **Unicode scalar values**.
+
+The canonical storage encoding used when Bitlang string data is materialized in Bitlang Low/runtime memory is **UTF-8**.
+
+Therefore:
+
+- `xxx<N>` counts Unicode scalar values, not bytes and not grapheme clusters;
+- `xx<N>` limits the UTF-8 encoded byte count;
+- `x<N>` limits the encoded storage bit count; because canonical UTF-8 storage is byte-based, the encoded bit count is `byte_length * 8`;
+- every materialized `Str` value contains valid canonical UTF-8;
+- invalid UTF-8 byte sequences are raw byte data, not valid `Str` values.
+
+Bitlang performs no automatic Unicode normalization. Canonically equivalent but differently normalized scalar sequences remain distinct values unless an explicit library operation normalizes them.
+
+`Char` / `Strxxx1` therefore means exactly one Unicode scalar value. Its UTF-8 representation may occupy one to four bytes.
+
+The Unicode scalar value U+0000 is a valid Bitlang string character. Bitlang strings are not semantically NUL-terminated.
+
+Conversion to a foreign NUL-terminated C string is explicit. Such a conversion must account for the terminator separately and must reject or otherwise explicitly handle an embedded U+0000 when the target C API cannot represent it unambiguously.
+
 ## Generics
 
 Bitlang generics are compile-time type parameterization.
