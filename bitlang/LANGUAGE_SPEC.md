@@ -77,6 +77,25 @@ A source language that normally relies on a tracing GC may still be translated i
 
 This policy makes memory management one of the few areas where converted source is expected to conform to Bitlang rather than Bitlang weakening its own safety model to imitate the source language.
 
+## Memory safety as a language trust boundary
+
+Because foreign-language memory behavior is normalized into Bitlang, Bitlang's own memory model is treated as a language-level trust boundary.
+
+The language must therefore make accidental lifetime escape, dangling access, double destruction, and ownership ambiguity difficult or impossible to express through ordinary safe constructs.
+
+In particular:
+
+- a reference or borrow must not outlive the value on which it depends;
+- a local/scope-bound value must not escape its valid lifetime implicitly;
+- ownership transfer must be explicit and statically traceable;
+- extending a lifetime requires an explicit operation or representation whose safety can be proven;
+- converting through aliases, imports, generics, preprocessing, or generated code must not bypass lifetime restrictions;
+- if the compiler/preprocessor cannot prove a required memory-safety condition, the operation is rejected rather than accepted optimistically.
+
+Ordinary safe Bitlang should therefore make scope escape possible only when the programmer deliberately selects a valid mechanism that establishes a longer lifetime, transfers ownership, or otherwise proves the required safety relation.
+
+Low-level raw-pointer facilities may express operations that the ordinary safe model cannot prove, but they remain explicit exceptions and do not weaken the default memory-safety rules.
+
 ## Source and Explicit are the same language
 
 Bitlang source and Bitlang Explicit use the same underlying semantic property system.
