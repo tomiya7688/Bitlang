@@ -162,6 +162,34 @@ may identify `attack` as a member reached through the `Game` and `Combat` module
 
 Bitlang Explicit should use fully qualified references wherever practical so that the referenced declaration is explicit and unambiguous. Source-level aliases or shortened forms may be provided through preprocessing rules, but they must normalize to the canonical fully qualified representation.
 
+## Import capabilities
+
+Bitlang imports may restrict what operations are allowed through the imported binding.
+
+Variable imports use the ordinary write-capability states:
+
+```text
+Writeable
+Unwriteable
+```
+
+Function imports use the call-capability states:
+
+```text
+Callable
+Uncallable
+```
+
+These restrictions apply to the imported access path and do not rewrite the original declaration.
+
+Import permissions are capability-reducing only: an import may remove a capability, but it cannot grant a capability that the source/export declaration itself does not permit.
+
+An `Uncallable` function import remains uncallable even if the function value is copied or passed through another value derived from that import; the restriction must not be bypassed indirectly.
+
+Write capability, reassignment capability, read capability, ownership transfer, and call capability remain independent semantic axes.
+
+The detailed rules are defined in [IMPORT_CAPABILITIES.md](IMPORT_CAPABILITIES.md).
+
 ## Namespace mounts and project inheritance
 
 Bitlang source supports preprocessing-time namespace assignment by file and directory path.
