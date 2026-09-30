@@ -150,9 +150,15 @@ A Bitlang file, class/type, or function may declare the language version used to
 
 The declaration is written using Bitlang syntax and is directed to the `@preprocesser` domain. It is not a separate markup/header language and it is not runtime/compiler state.
 
-Language semantics change only at the major/minor level. Source declarations therefore use forms such as `ver1.0` or `ver1.1`; patch releases such as 1.0.1 must preserve the same language specification as 1.0.0.
+Language semantics change only at the major/minor level. Patch releases such as 1.0.1 must preserve the same language specification as 1.0.0.
 
-A major-only form such as `ver1` selects the newest supported `ver1.x` language specification available in the active compiler/toolchain. It never crosses into another major version.
+Version values are hierarchical selectors:
+
+- `ver1` selects the newest available installed/supported 1.x version;
+- `ver1.0` selects the newest available installed/supported 1.0.x version;
+- `ver1.0.1` may pin one exact patch implementation when required.
+
+Exact historical patch implementations are not required to be bundled with every compiler. If a project requests one that is missing, the corresponding version/compatibility package must be installed explicitly.
 
 Version declarations are scope-local and use innermost-scope precedence:
 
