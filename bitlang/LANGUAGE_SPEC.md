@@ -124,6 +124,24 @@ The design target is a program that may take longer to build, but whose resultin
 
 This principle applies to native output. Bitlang VM has separate goals because portability, inspection, testing, and debugging are also primary concerns for the VM.
 
+## Standard library reachability
+
+The Bitlang standard library is available to source code, but it is not automatically lowered as one monolithic runtime library.
+
+Only standard-library declarations and support code that are semantically reachable from the program are carried into lower compilation stages. Reachability includes transitive dependencies required by a used feature.
+
+Merely installing, importing, or making a standard-library module visible does not make all of its contents part of Bitlang Explicit, Bitlang Low, or the final application.
+
+Type-only and preprocessing-only standard-library facilities may disappear entirely before runtime when their work is complete.
+
+Standard-library generics follow the ordinary demand-driven generic rule: only referenced concrete specializations are generated.
+
+Compiler/runtime helper code that is required to implement a used operation counts as reachable even when it is not named directly by source.
+
+This is a pipeline rule rather than only a final linker optimization. Unused standard-library code should not be sent to lower stages once it is known to be unreachable.
+
+See [STANDARD_LIBRARY.md](STANDARD_LIBRARY.md) for the detailed policy.
+
 ## Discouraged language features
 
 Bitlang may support a feature without recommending that ordinary source code use it heavily.
