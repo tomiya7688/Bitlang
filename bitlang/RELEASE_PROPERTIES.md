@@ -61,27 +61,26 @@ This is GC-like convenience implemented as source preprocessing and explicit gen
 
 Automatic insertion must obey ownership, borrow state, release capability, move state, lifetime, and other applicable semantic rules. The preprocessor must not insert a release at a point where doing so would be invalid.
 
-## Optional standard-library garbage collection
+## Residual standard-library garbage collection
 
-Bitlang's ordinary memory-management model does not require a runtime garbage collector.
+Bitlang's primary memory-management mechanism remains compile-time ownership/lifetime analysis plus explicit generated release.
 
-A standard-library garbage collector may be used explicitly by programs that want runtime-managed memory. This is separate from preprocessing-time automatic release generation.
+The optional standard-library collector is only a residual cleanup layer.
 
 ```text
-preprocessor auto release
-    -> compile-time analysis
-    -> explicit cleanup generated before runtime
-
-standard-library GC
-    -> optional runtime facility
-    -> included only when actually used
+preprocessor / compiler release analysis
+    -> deterministic explicit free/release
+    -> residual heap allocation, if any
+    -> optional residual collector
 ```
 
-Importing or installing the GC library alone does not change the release policy of ordinary Bitlang values and does not add a collector to the final program.
+The collector must not be used as an excuse to omit a release that Bitlang can prove and generate correctly.
 
-Objects managed by a GC facility must enter that management model explicitly through the GC library/API or an explicit transformation that selects it.
+Bitlang Low and VM-oriented execution are expected to carry sufficient explicit release behavior without depending on the collector. The residual collector is mainly useful for C-backend/native integration cases where allocations can remain after lowering or external/native interaction.
 
-The exact interaction between GC-managed memory and ordinary ownership/release properties is defined with the GC standard-library API. Any such interaction remains subject to mandatory Bitlang safety validation.
+This residual collector does not make a missing required manual release valid. If Bitlang can prove that ownership/release rules are violated, compilation still fails.
+
+Deterministic non-memory resources remain governed by ordinary release/finalization rules and must not depend on eventual garbage collection.
 
 ## Suppressing generated release
 
