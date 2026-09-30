@@ -386,6 +386,50 @@ These source-level dimension and length attributes are convenience information. 
 
 Therefore programmers may write dimensionality compactly, while Bitlang Explicit uses ordinary nested arrays internally.
 
+### Fixed-length and runtime-length arrays
+
+A canonical array level with an explicit fixed length has that length as part of its fixed storage contract.
+
+A canonical `Array<T>` level without a fixed length is a **runtime-length contiguous array**.
+
+Runtime-length does not mean automatically resizable. The core array abstraction has:
+
+- contiguous element storage;
+- a current element count;
+- checked indexing;
+- no implicit capacity/growth policy.
+
+Resizable vectors/lists and growth policies belong to ordinary library/container abstractions rather than to the core `Array<T>` type.
+
+The backing storage and the array descriptor do not implicitly define ownership. Ownership, borrowing, lifetime, release, and finalization remain governed by the ordinary Bitlang properties.
+
+A runtime-length array may therefore describe owned backing storage, a borrowed region, a parameter view, or another valid contiguous region according to its resolved properties.
+
+### Array conversion and decay
+
+Bitlang does not inherit C's implicit array-to-pointer decay.
+
+Obtaining a pointer/view to array storage is an explicit operation whose result has the appropriate `Ptr<T>` or `Ref<T>`/borrow semantics.
+
+Likewise, a fixed-length array does not silently become a runtime-length array view. Such a view conversion is explicit, even though a backend may implement it without copying.
+
+### Lowering contract
+
+Bitlang Low represents a runtime-length array with an explicit low-level descriptor equivalent in meaning to:
+
+```text
+data   : Ptr<T>
+length : target-sized non-negative element count
+```
+
+The Low target-sized count is represented by Low's `Size` type.
+
+This is a semantic descriptor shape, not a requirement that every backend use a C struct literally.
+
+Fixed-length arrays may use inline contiguous storage.
+
+No backend may substitute a C variable-length array, bare pointer, or null-terminated convention in a way that loses the explicit runtime length.
+
 ## Pointer and reference types
 
 `Ptr<T>` and `Ref<T>` are distinct types with different safety guarantees.
