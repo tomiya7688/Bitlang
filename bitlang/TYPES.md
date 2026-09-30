@@ -246,6 +246,31 @@ The same general naming principle applies:
 
 If radix/base is not meaningful for a type, the type omits the radix component and uses only the relevant size/count information.
 
+## Boolean type
+
+`Bool` is Bitlang's canonical boolean type.
+
+It has exactly two semantic values:
+
+```text
+false
+true
+```
+
+`Bool` is not an integer type and does not carry a radix or semantic bit-width suffix.
+
+Bitlang does not use C-style implicit numeric truthiness. An integer, pointer, string, or other value is not automatically converted to `Bool` merely because it is zero/nonzero, null/non-null, empty/non-empty, or otherwise truthy in another language.
+
+Conditions for control-flow constructs require a `Bool` value.
+
+Comparison operations produce `Bool`. Logical operations operate on `Bool` values.
+
+Conversion between `Bool` and another type must be explicit when such a conversion is defined.
+
+A language adapter for a source language with truthiness rules must materialize those rules explicitly, for example by generating a comparison against zero/null/empty state before Bitlang Explicit is produced.
+
+Backend storage for `Bool` is not part of the semantic type identity. A backend may use a native boolean representation or another carrier, but semantic false/true must be preserved and backend-only noncanonical bit patterns must not become additional Bitlang boolean values.
+
 ## Strings
 
 String constraints use the same suffix-unit system without redefining units:
