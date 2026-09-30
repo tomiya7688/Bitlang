@@ -61,6 +61,28 @@ This is GC-like convenience implemented as source preprocessing and explicit gen
 
 Automatic insertion must obey ownership, borrow state, release capability, move state, lifetime, and other applicable semantic rules. The preprocessor must not insert a release at a point where doing so would be invalid.
 
+## Optional standard-library garbage collection
+
+Bitlang's ordinary memory-management model does not require a runtime garbage collector.
+
+A standard-library garbage collector may be used explicitly by programs that want runtime-managed memory. This is separate from preprocessing-time automatic release generation.
+
+```text
+preprocessor auto release
+    -> compile-time analysis
+    -> explicit cleanup generated before runtime
+
+standard-library GC
+    -> optional runtime facility
+    -> included only when actually used
+```
+
+Importing or installing the GC library alone does not change the release policy of ordinary Bitlang values and does not add a collector to the final program.
+
+Objects managed by a GC facility must enter that management model explicitly through the GC library/API or an explicit transformation that selects it.
+
+The exact interaction between GC-managed memory and ordinary ownership/release properties is defined with the GC standard-library API. Any such interaction remains subject to mandatory Bitlang safety validation.
+
 ## Suppressing generated release
 
 Source preprocessing may explicitly disable automatic release generation for a declaration or preprocessing range.
