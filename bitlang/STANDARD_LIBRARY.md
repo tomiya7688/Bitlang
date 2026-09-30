@@ -62,6 +62,25 @@ Only concrete specializations that are actually referenced are generated.
 
 Unused generic declarations and unused specializations do not descend into Bitlang Explicit.
 
+## Two-layer memory safety model
+
+Bitlang treats compile-time release generation and runtime residual garbage collection as two separate safety layers.
+
+```text
+compile-time safety layer
+    -> ownership/lifetime analysis
+    -> automatic explicit free/release insertion
+    -> deterministic cleanup in generated code
+
+runtime safety layer
+    -> residual garbage collector
+    -> recovers heap allocations that still remain at runtime
+```
+
+The runtime collector is a secondary safety device. It must not replace or weaken the compile-time release layer.
+
+A correctly resolved release remains part of the generated program even when the residual collector is enabled. The collector exists to catch what remains after the language/compiler safety layer has already done its work.
+
 ## Residual garbage collector
 
 Bitlang does not use garbage collection as its primary memory-management model.
