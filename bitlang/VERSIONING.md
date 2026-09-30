@@ -18,6 +18,65 @@ Bitlang compiler
     -> may accept source written for supported historical Bitlang versions
 ```
 
+## Language-version number format
+
+Bitlang language semantics are versioned at the **major.minor** level.
+
+The source-facing language-version forms are:
+
+```text
+ver1.0
+ver1.1
+ver2.0
+```
+
+A patch release does not change the Bitlang language specification or the meaning of valid source code.
+
+Therefore, for example:
+
+```text
+1.0.0 -> 1.0.1
+```
+
+must not introduce a language syntax or semantic change. Patch versions may contain compiler/tooling bug fixes, implementation fixes, diagnostics, documentation corrections, or other changes that preserve the same language contract.
+
+For this reason, source language-version declarations do not normally include the patch component. `ver1.0` identifies the language specification shared by compatible 1.0.x toolchain releases.
+
+Compiler/toolchain version identity remains separate and may still use a full version such as `1.0.1`.
+
+## Major-only floating selection
+
+A source scope may specify only the major language version:
+
+```text
+ver1
+```
+
+This means:
+
+> use the newest supported Bitlang language specification in the 1.x series that this compiler/toolchain provides.
+
+For example, if a compiler supports:
+
+```text
+ver1.0
+ver1.1
+ver1.3
+ver2.0
+```
+
+then:
+
+```text
+ver1 -> ver1.3
+```
+
+The resolution is constrained to the requested major version. `ver1` never silently selects `ver2.x`.
+
+The resolved major.minor version must be exposed in diagnostics/build metadata so the actual interpretation is inspectable.
+
+A major-only declaration is intentionally floating. A project that requires reproducible language-version selection should pin the major.minor form such as `ver1.1`.
+
 ## Selecting a language version
 
 Compilation may select the Bitlang language version under which source code is interpreted.
@@ -32,7 +91,7 @@ The selected language version controls the compatibility frontend used for parsi
 
 A project should be able to pin this version for reproducible builds. A command-line selection may override or supply the project selection where the build system permits it.
 
-If no version is specified, the compiler may use its current default language version. Reproducible projects should pin the intended version explicitly rather than depend on that default.
+If no version is specified, the compiler may use its current default language version. Reproducible projects should pin the intended major.minor version explicitly rather than depend on that default or on a floating major-only form.
 
 ## Scoped language-version declarations
 
