@@ -142,6 +142,14 @@ This is a pipeline rule rather than only a final linker optimization. Unused sta
 
 See [STANDARD_LIBRARY.md](STANDARD_LIBRARY.md) for the detailed policy.
 
+### Optional garbage collection
+
+Bitlang does not require a garbage collector in the core runtime.
+
+The standard library may provide explicitly selected garbage-collection facilities. Collector code and metadata are included only when a program actually uses GC-managed memory or collector operations; merely importing or having the library available does not add GC overhead.
+
+Preprocessor-generated automatic release and runtime garbage collection are separate mechanisms.
+
 ## Discouraged language features
 
 Bitlang may support a feature without recommending that ordinary source code use it heavily.
