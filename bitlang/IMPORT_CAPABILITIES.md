@@ -44,6 +44,40 @@ Physical ABI/layout information such as exact offsets, packing, padding, or back
 
 This is useful for structures and interfaces whose shape must be known while their values must remain inaccessible.
 
+## Type knowledge does not grant value inspection
+
+Knowledge of a type or structure never grants permission to inspect a value of that type.
+
+Type metadata capability and value-read capability are independent.
+
+For example, importing the structure of a type may allow code to know:
+
+- which visible fields exist;
+- the declared type of each visible field;
+- visible nested type relationships;
+- signatures and other permitted type metadata.
+
+However, if a structure/class variable, instance, member, or field is `Unreadable` through the effective access path, code must not read its current value merely because the corresponding type structure is known.
+
+This distinction also applies to validation.
+
+A check that only asks whether a declaration's **declared type** matches a known structural/type contract may be performed from type metadata alone.
+
+A check that asks whether the **current stored value** satisfies some structural, content, range, invariant, serialization, or runtime-value condition requires the corresponding value-read capability.
+
+Therefore:
+
+```text
+Type_only + Unreadable value
+    -> type/structure inspection allowed
+    -> current value inspection forbidden
+    -> direct value-based validation forbidden
+```
+
+The restriction cannot be bypassed by reflection, serialization helpers, generated code, preprocessor-generated access paths, aliases, references, or another indirect mechanism. Any operation that semantically observes the protected value requires effective `Readable` capability.
+
+A trusted function or module that independently has the necessary read capability may perform such validation and expose only its permitted result. That does not grant the caller direct access to the protected value.
+
 ## Struct-oriented examples
 
 A structure may be imported with different capability levels depending on the intended use.
