@@ -179,13 +179,17 @@ function > class/type > file > header > project/default
 
 Automatic version selection never suppresses safety failures. Every successful historical candidate must still normalize into current canonical safe Bitlang semantics.
 
-Version values follow the Bitlang language-version rules:
+Version values follow the Bitlang hierarchical selector rules:
 
-- `ver1.0` pins a specific major.minor language specification;
-- `ver1` requests the newest supported `ver1.x` specification;
-- patch releases do not define distinct language semantics and are not required in source version declarations.
+- `ver1` selects the newest available installed/supported `1.x` implementation;
+- `ver1.0` selects the newest available installed/supported `1.0.x` implementation;
+- `ver1.0.1` pins one exact patch implementation.
 
-When a major-only value is resolved, preprocessing/tooling must expose the selected concrete major.minor version.
+Patch versions inside one major.minor line do not define different language semantics, but they may identify different compiler/compatibility package implementations.
+
+If an exact requested patch implementation is not installed, preprocessing/tooling reports the missing version package rather than silently substituting another patch.
+
+Whenever a floating selector is resolved, preprocessing/tooling must expose the selected concrete version.
 
 ### Release-generation control
 
