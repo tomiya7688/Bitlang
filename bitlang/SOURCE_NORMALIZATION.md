@@ -51,9 +51,34 @@ The `xx` spelling is source sugar only and does not survive into Bitlang Explici
 
 No separate byte-width type identity is created. After normalization, a byte-width spelling and the equivalent bit-width spelling denote the same canonical type.
 
-The unit rule is uniform: `x` always denotes bits and `xx` always denotes bytes. Type families must not overload either token with another counting unit.
+The unit rule is uniform:
 
-Character counts are not normalized through `x` or `xx`; they use a separate source-level dimension whose exact syntax is defined separately.
+```text
+x    -> bits
+xx   -> bytes
+xxx  -> characters
+```
+
+Type families must not overload one suffix with another unit.
+
+Character-count constraints use `xxx<N>`. Unlike `xx<N>`, a character count cannot in general be converted to a fixed number of bits because the encoded byte width of a character may vary. Therefore `xxx` remains a distinct semantic constraint through normalization rather than being rewritten as `x`.
+
+For strings:
+
+```text
+Char
+    -> Strxxx1
+```
+
+and independent limits may coexist, for example:
+
+```text
+Strxxx10xx32
+    -> maximum 10 characters
+    -> maximum 32 bytes
+```
+
+The byte component is normalized to the equivalent bit-width representation where the canonical target representation requires it; the character-count constraint remains separate.
 
 This conversion is semantic-width normalization, not backend storage selection. Backend physical storage remains a later lowering concern.
 
