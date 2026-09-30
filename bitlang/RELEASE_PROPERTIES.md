@@ -42,6 +42,20 @@ Invalid property combinations must be rejected rather than silently changing own
 The current release state itself (`Unreleased / Released`) is also resolved before canonical output, but the exact required Preprocessed representation and its cross-property consistency rules are defined in the separate Bitlang Preprocessed specification.
 
 
+## Foreign-language conversion rule
+
+Foreign-language adapters must normalize memory-management behavior into Bitlang's ownership/lifetime/release model.
+
+The source language's ordinary allocator, GC, reference-counting model, destructor convention, or manual-free convention does not automatically become Bitlang memory semantics.
+
+The adapter/preprocessor must determine explicit Bitlang ownership, borrow, lifetime, release, and finalization behavior for the converted program.
+
+Where the original behavior can be preserved safely, the conversion should preserve its observable result. Where preserving the original memory-management rule would conflict with Bitlang's mandatory safety invariants, Bitlang's safety model takes precedence.
+
+If correct release placement, ownership, or lifetime cannot be proven and the relevant operation requires proof, conversion fails rather than silently retaining uncertain source-language behavior.
+
+This rule is intentionally stricter than ordinary syntax/semantic compatibility because memory-management mistakes can otherwise survive translation as leaks, use-after-release, double release, or dangling references.
+
 ## Preprocessing-time automatic release generation
 
 Bitlang does not require a tracing runtime garbage collector as the normal memory-management model.
