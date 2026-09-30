@@ -150,7 +150,11 @@ Nested scopes remain distinct unless the preprocessor function explicitly traver
 
 The preprocessing/tooling environment may inspect and select the effective Bitlang language version for a file, class/type, or function scope.
 
-Version selection is special because it may affect how the scope body is parsed. Therefore the minimal version-selection operation is available from the version-neutral source-envelope phase before ordinary version-specific parsing of that body.
+Version selection is special because it may affect how the scope body is parsed. The declaration itself is written in ordinary Bitlang notation and targets the `@preprocesser` domain.
+
+Bitlang does not define a separate markup/DOCTYPE-style version syntax. Instead, the minimal Bitlang preprocessing grammar required to recognize the version declaration is available from the version-neutral source-envelope phase before ordinary version-specific parsing of that body.
+
+A language-version declaration is consumed by preprocessing and does not become a compiler/runtime declaration in Bitlang Explicit.
 
 Conceptual operations include:
 
