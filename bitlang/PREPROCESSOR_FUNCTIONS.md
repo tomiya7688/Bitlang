@@ -179,6 +179,14 @@ function > class/type > file > header > project/default
 
 Automatic version selection never suppresses safety failures. Every successful historical candidate must still normalize into current canonical safe Bitlang semantics.
 
+Version values follow the Bitlang language-version rules:
+
+- `ver1.0` pins a specific major.minor language specification;
+- `ver1` requests the newest supported `ver1.x` specification;
+- patch releases do not define distinct language semantics and are not required in source version declarations.
+
+When a major-only value is resolved, preprocessing/tooling must expose the selected concrete major.minor version.
+
 ### Release-generation control
 
 The preprocessing environment may control automatic cleanup generation.
