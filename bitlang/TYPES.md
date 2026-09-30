@@ -71,6 +71,15 @@ The byte-width form is source sugar only. Bitlang Explicit always uses the canon
 
 The ordinary `x` form remains available for widths that are not whole-byte multiples.
 
+The `x` / `xx` unit rule is global wherever those suffixes represent width:
+
+```text
+x  -> bits
+xx -> bytes
+```
+
+A type family must not reinterpret `x` as characters, elements, code points, or another unit. Such dimensions require separate notation.
+
 The `xx` shorthand is especially useful when source code is naturally specified in byte capacities, such as binary buffers, packet fields, fixed storage blocks, and backing storage for byte-limited string implementations.
 
 ## Signed and unsigned integers
@@ -238,7 +247,18 @@ If radix/base is not meaningful for a type, the type omits the radix component a
 
 ## Strings
 
-`Str` uses its numeric suffix as a maximum character count rather than as a bit width.
+The width-unit notation is uniform across Bitlang:
+
+```text
+x<N>  -> N bits
+xx<N> -> N bytes
+```
+
+String types do not redefine `x` or `xx` to mean character count.
+
+Therefore, when a string representation exposes a width using these suffixes, `x` always means a bit limit/capacity and `xx` always means a byte limit/capacity.
+
+Character-count limitation is a separate semantic dimension and will use a different source notation.
 
 A plain:
 
@@ -246,15 +266,13 @@ A plain:
 Str
 ```
 
-has no maximum character limit by default.
+has no character-count limit by default unless another explicit string constraint is supplied.
 
-A bounded string form specifies a maximum number of characters explicitly.
+The exact source syntax for a maximum-character-count string remains to be specified.
 
-`Char` is source-level shorthand for a one-character string representation and normalizes to `Str1x1`.
+`Char` remains source-level shorthand for a string constrained to exactly one character. Its final canonical spelling depends on the future character-count notation and is therefore not defined as `Str1x1`.
 
-The first `1` in `Str1x1` is currently reserved and does not yet have a finalized semantic meaning. It may be assigned a useful string-representation property later.
-
-The current `Str` maximum-character-count suffix is a separate semantic convention from numeric bit-width notation. The new `xx` byte-width shorthand therefore does not automatically redefine `Str` suffix meaning. Byte-limited strings may use fixed-byte backing storage built from width-bearing types; a direct `Str...xxN` surface form requires a separate explicit string-type decision.
+This separation avoids giving the same `x` token different units for different type families.
 
 ## Generics
 
