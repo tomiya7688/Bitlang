@@ -146,6 +146,35 @@ Nested scopes remain distinct unless the preprocessor function explicitly traver
 
 
 
+### Language-version selection
+
+The preprocessing/tooling environment may inspect and select the effective Bitlang language version for a file, class/type, or function scope.
+
+Version selection is special because it may affect how the scope body is parsed. Therefore the minimal version-selection operation is available from the version-neutral source-envelope phase before ordinary version-specific parsing of that body.
+
+Conceptual operations include:
+
+```text
+set_language_version(scope, version)
+get_language_version(scope)
+select_latest_compatible_version(scope)
+select_latest_compatible_version(scope, newest, oldest)
+```
+
+These names are semantic examples; exact surface names are defined separately.
+
+`select_latest_compatible_version` tests supported candidate versions from newest to older. A version is selected only when the complete target scope successfully parses, normalizes, and passes the required semantic/safety validation under that version.
+
+If the newest version fails but an older supported version succeeds, the older version becomes the effective version for that scope. The selected value is exposed through diagnostics/build metadata and tooling may materialize it as a version declaration in the source or an associated header.
+
+The normal precedence remains innermost scope first:
+
+```text
+function > class/type > file > header > project/default
+```
+
+Automatic version selection never suppresses safety failures. Every successful historical candidate must still normalize into current canonical safe Bitlang semantics.
+
 ### Release-generation control
 
 The preprocessing environment may control automatic cleanup generation.
