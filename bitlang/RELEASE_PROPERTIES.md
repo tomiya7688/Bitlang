@@ -67,6 +67,18 @@ Bitlang's primary memory-management mechanism remains compile-time ownership/lif
 
 The optional standard-library collector is only a residual cleanup layer.
 
+Compile-time and runtime safety are deliberately separated:
+
+```text
+language/compiler safety device
+    -> automatic free/release insertion during compilation
+
+runtime safety device
+    -> residual garbage collection after execution has begun
+```
+
+The runtime safety device is strictly secondary to the compile-time one.
+
 ```text
 preprocessor / compiler release analysis
     -> deterministic explicit free/release
