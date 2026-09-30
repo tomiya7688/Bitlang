@@ -56,6 +56,18 @@ If correct release placement, ownership, or lifetime cannot be proven and the re
 
 This rule is intentionally stricter than ordinary syntax/semantic compatibility because memory-management mistakes can otherwise survive translation as leaks, use-after-release, double release, or dangling references.
 
+## Scope escape and lifetime extension
+
+Bitlang does not permit ordinary values, borrows, or references to escape beyond their resolved lifetime implicitly.
+
+A local or scope-bound value may leave its original scope only through a mechanism that establishes a valid longer lifetime, such as an explicit ownership transfer, valid move into a longer-lived owner, safe returned ownership, or another operation whose lifetime relation is statically proven.
+
+A borrowed reference cannot be returned, stored, captured, imported, or otherwise retained beyond the lifetime of its owner merely because the syntax permits such a path.
+
+If the required lifetime relationship cannot be proven, preprocessing/static analysis rejects the escape with an error.
+
+This rule is intentionally strict because Bitlang's memory model is the safety target used when normalizing foreign-language memory behavior.
+
 ## Preprocessing-time automatic release generation
 
 Bitlang does not require a tracing runtime garbage collector as the normal memory-management model.
