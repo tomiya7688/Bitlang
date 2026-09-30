@@ -144,6 +144,27 @@ Compatibility mode never weakens mandatory safety validation. Historical source 
 
 See [VERSIONING.md](VERSIONING.md) for the complete versioning and compiler compatibility policy.
 
+### Scoped language versions
+
+A Bitlang file, class/type, or function may declare the language version used to interpret that scope.
+
+Version declarations are scope-local and use innermost-scope precedence:
+
+```text
+function
+> class/type
+> file
+> file-targeted header
+> project
+> compiler default
+```
+
+A scope without its own declaration inherits the nearest enclosing effective version.
+
+Version metadata is read before the version-specific body grammar is parsed. This allows different supported language versions to coexist inside one source tree, or even inside one file, while each scope is normalized through its compatibility frontend into current canonical Bitlang semantics.
+
+Standard preprocessing/tooling may probe supported versions from newest to oldest and select the newest version under which a target scope parses, normalizes, and validates successfully. The selected version must be visible in diagnostics/build metadata and can be pinned into source or an associated header for reproducible future builds.
+
 ## Compile-time cost is intentional
 
 Bitlang's compilation pipeline is allowed to be slow when that cost comes from semantic normalization, transformation, optimization, or safety validation required to produce better native output.
