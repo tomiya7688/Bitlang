@@ -51,6 +51,10 @@ The `xx` spelling is source sugar only and does not survive into Bitlang Explici
 
 No separate byte-width type identity is created. After normalization, a byte-width spelling and the equivalent bit-width spelling denote the same canonical type.
 
+The unit rule is uniform: `x` always denotes bits and `xx` always denotes bytes. Type families must not overload either token with another counting unit.
+
+Character counts are not normalized through `x` or `xx`; they use a separate source-level dimension whose exact syntax is defined separately.
+
 This conversion is semantic-width normalization, not backend storage selection. Backend physical storage remains a later lowering concern.
 
 ## Property normalization
