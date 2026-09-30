@@ -19,6 +19,51 @@ original declaration capability
 
 The most restrictive applicable rule wins.
 
+## Type-only imports
+
+Bitlang supports imports that expose a type declaration without importing a runtime value binding.
+
+Conceptually:
+
+```text
+Type_only import
+```
+
+A type-only import may expose the source-visible type structure needed for compilation, such as:
+
+- the type name;
+- generic parameters after applicable preprocessing;
+- visible field/member names;
+- visible field/member types;
+- visible nested type relationships;
+- visible function/method signatures needed as type information.
+
+It does not grant access to a runtime instance, variable storage, mutable state, or function invocation merely because those declarations are described by the imported type.
+
+Physical ABI/layout information such as exact offsets, packing, padding, or backend storage representation is not implied by ordinary type-only import. Such information requires an explicit layout/ABI contract where applicable.
+
+This is useful for structures and interfaces whose shape must be known while their values must remain inaccessible.
+
+## Struct-oriented examples
+
+A structure may be imported with different capability levels depending on the intended use.
+
+```text
+Type_only
+    -> know the structure/type contract only
+
+Readable + Unwriteable
+    -> read permitted values through the imported binding
+    -> writing through that binding is forbidden
+
+Readable + Writeable
+    -> read and write where the underlying declaration/export also permits it
+```
+
+Field-level visibility and field-level capabilities still apply. Importing a structure as `Readable` does not bypass a field that is itself unreadable or inaccessible.
+
+Likewise, `Writeable` on the import path cannot grant writing to a field that is `Unwriteable` at its declaration or export boundary.
+
 ## Variable write capability
 
 Variable imports use the existing Bitlang write-capability axis:
