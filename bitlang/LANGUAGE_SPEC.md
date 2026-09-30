@@ -142,13 +142,13 @@ This is a pipeline rule rather than only a final linker optimization. Unused sta
 
 See [STANDARD_LIBRARY.md](STANDARD_LIBRARY.md) for the detailed policy.
 
-### Optional garbage collection
+### Residual garbage collection
 
-Bitlang does not require a garbage collector in the core runtime.
+Bitlang does not use garbage collection as its primary memory-management model.
 
-The standard library may provide explicitly selected garbage-collection facilities. Collector code and metadata are included only when a program actually uses GC-managed memory or collector operations; merely importing or having the library available does not add GC overhead.
+Ordinary ownership/lifetime analysis and generated explicit release remain responsible for deterministic cleanup. An optional standard-library residual collector may be used as a final safety net for heap allocations that remain after normal lowering, especially for C-backend/native integration cases.
 
-Preprocessor-generated automatic release and runtime garbage collection are separate mechanisms.
+The collector does not make missing required releases valid and does not replace deterministic finalization. If it is unused or unnecessary, its code and metadata do not descend into lower stages.
 
 ## Discouraged language features
 
