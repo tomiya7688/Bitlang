@@ -22,60 +22,104 @@ Bitlang compiler
 
 Bitlang language semantics are versioned at the **major.minor** level.
 
-The source-facing language-version forms are:
+Patch versions do not change the Bitlang language specification or the meaning of valid source code.
+
+Therefore:
 
 ```text
-ver1.0
-ver1.1
-ver2.0
+1.0.0
+1.0.1
+1.0.2
 ```
 
-A patch release does not change the Bitlang language specification or the meaning of valid source code.
+all implement the same `1.0` language specification.
 
-Therefore, for example:
+Patch releases may contain compiler/tooling bug fixes, implementation fixes, diagnostics, documentation corrections, compatibility-frontend fixes, or other changes that preserve the same language contract.
 
-```text
-1.0.0 -> 1.0.1
-```
+Source-facing version values are hierarchical selectors.
 
-must not introduce a language syntax or semantic change. Patch versions may contain compiler/tooling bug fixes, implementation fixes, diagnostics, documentation corrections, or other changes that preserve the same language contract.
-
-For this reason, source language-version declarations do not normally include the patch component. `ver1.0` identifies the language specification shared by compatible 1.0.x toolchain releases.
-
-Compiler/toolchain version identity remains separate and may still use a full version such as `1.0.1`.
-
-## Major-only floating selection
-
-A source scope may specify only the major language version:
+### Major selector
 
 ```text
 ver1
 ```
 
-This means:
+means:
 
-> use the newest supported Bitlang language specification in the 1.x series that this compiler/toolchain provides.
+> use the newest installed/supported Bitlang version in the 1.x series available to this compiler/toolchain.
 
-For example, if a compiler supports:
+For example, if the active installation provides:
 
 ```text
-ver1.0
-ver1.1
-ver1.3
-ver2.0
+1.0.2
+1.1.0
+1.1.4
+1.3.1
+2.0.0
 ```
 
 then:
 
 ```text
-ver1 -> ver1.3
+ver1 -> 1.3.1
 ```
 
-The resolution is constrained to the requested major version. `ver1` never silently selects `ver2.x`.
+The selector never crosses the requested major version.
 
-The resolved major.minor version must be exposed in diagnostics/build metadata so the actual interpretation is inspectable.
+### Major.minor selector
 
-A major-only declaration is intentionally floating. A project that requires reproducible language-version selection should pin the major.minor form such as `ver1.1`.
+```text
+ver1.0
+```
+
+means:
+
+> use the newest installed/supported 1.0.x implementation available to this compiler/toolchain.
+
+Using the same example:
+
+```text
+ver1.0 -> 1.0.2
+ver1.1 -> 1.1.4
+```
+
+Because every patch release inside one major.minor line must implement the same language semantics, this is the normal way to pin a language specification while still receiving compatible patch-level fixes.
+
+### Exact major.minor.patch selector
+
+A fully specific patch version may also be requested:
+
+```text
+ver1.0.1
+```
+
+This pins the exact compatibility/compiler package implementation rather than merely the `1.0` language specification.
+
+Exact patch pinning is supported but is not the ordinary recommendation. A compiler installation is not required to bundle every historical patch implementation.
+
+If an explicitly requested patch implementation is not installed, compilation fails with a missing-version/package diagnostic. The user may install the corresponding version/compatibility package separately and retry.
+
+The toolchain should not silently substitute another patch when an exact `major.minor.patch` selector was requested.
+
+## Installed version packages
+
+Historical version support may be distributed as compiler/toolchain packages rather than all being permanently embedded in one compiler binary.
+
+Conceptually:
+
+```text
+compiler/toolchain
+    + installed Bitlang version packages/frontends
+    -> available version set
+```
+
+Selectors such as `ver1` and `ver1.0` resolve only against versions actually available to the active toolchain installation.
+
+A user who needs an unusually specific or old patch implementation may install the required version package explicitly.
+
+The selected concrete version must be exposed in diagnostics and build metadata even when the source used a floating selector such as `ver1` or `ver1.0`.
+
+For strict reproducibility, projects may pin `major.minor.patch`. For ordinary source compatibility, `major.minor` is normally sufficient because patch releases must preserve the same language semantics.
 
 ## Selecting a language version
 
@@ -91,7 +135,7 @@ The selected language version controls the compatibility frontend used for parsi
 
 A project should be able to pin this version for reproducible builds. A command-line selection may override or supply the project selection where the build system permits it.
 
-If no version is specified, the compiler may use its current default language version. Reproducible projects should pin the intended major.minor version explicitly rather than depend on that default or on a floating major-only form.
+If no version is specified, the compiler may use its current default language version. Projects may use `verN.M` to pin language semantics while accepting compatible patch fixes, or `verN.M.P` when exact toolchain/frontend reproduction is required.
 
 ## Scoped language-version declarations
 
