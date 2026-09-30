@@ -148,6 +148,8 @@ See [VERSIONING.md](VERSIONING.md) for the complete versioning and compiler comp
 
 A Bitlang file, class/type, or function may declare the language version used to interpret that scope.
 
+The declaration is written using Bitlang syntax and is directed to the `@preprocesser` domain. It is not a separate markup/header language and it is not runtime/compiler state.
+
 Version declarations are scope-local and use innermost-scope precedence:
 
 ```text
