@@ -30,6 +30,49 @@ is equivalent, after preprocessing, to:
 Int10x32 value
 ```
 
+## Source byte-width notation
+
+Bitlang source may specify a semantic width in **bytes** by using `xx` instead of `x`.
+
+For types where the canonical `x<N>` suffix denotes a semantic bit width:
+
+```text
+<TypeName><Radix>xx<ByteWidth>
+```
+
+is source-level shorthand for:
+
+```text
+<TypeName><Radix>x<ByteWidth * 8>
+```
+
+A Bitlang byte in this notation is exactly 8 semantic bits. It does not depend on a C target's `CHAR_BIT`, ABI, carrier type, or physical storage unit.
+
+Examples:
+
+```text
+Int2xx4      -> Int2x32
+Int10xx4     -> Int10x32
+Uint16xx8    -> Uint16x64
+Float10xx4   -> Float10x32
+```
+
+`xx` does not create a distinct canonical type identity.
+
+Therefore, after preprocessing:
+
+```text
+Int2xx4 == Int2x32
+```
+
+in the type system.
+
+The byte-width form is source sugar only. Bitlang Explicit always uses the canonical `x<BitWidth>` representation for bit-width-bearing types, so `xx` must not survive the source-to-Explicit normalization boundary.
+
+The ordinary `x` form remains available for widths that are not whole-byte multiples.
+
+The `xx` shorthand is especially useful when source code is naturally specified in byte capacities, such as binary buffers, packet fields, fixed storage blocks, and backing storage for byte-limited string implementations.
+
 ## Signed and unsigned integers
 
 `Int` is signed.
@@ -210,6 +253,8 @@ A bounded string form specifies a maximum number of characters explicitly.
 `Char` is source-level shorthand for a one-character string representation and normalizes to `Str1x1`.
 
 The first `1` in `Str1x1` is currently reserved and does not yet have a finalized semantic meaning. It may be assigned a useful string-representation property later.
+
+The current `Str` maximum-character-count suffix is a separate semantic convention from numeric bit-width notation. The new `xx` byte-width shorthand therefore does not automatically redefine `Str` suffix meaning. Byte-limited strings may use fixed-byte backing storage built from width-bearing types; a direct `Str...xxN` surface form requires a separate explicit string-type decision.
 
 ## Generics
 
