@@ -47,6 +47,36 @@ Header information is deliberately weaker than an interface contract. It may des
 
 Header files are optional. A Bitlang source file, class, or module does not require a corresponding header file unless a separate project/module rule explicitly requires one.
 
+## Language-version metadata
+
+A header may declare the Bitlang language version for an associated source target.
+
+The primary use is to state the version of a file without requiring that declaration to be repeated inside the file itself.
+
+Conceptually:
+
+```text
+header metadata
+    -> target = some_source_file
+    -> language_version = V4
+```
+
+A directly written version declaration in a smaller or equally targeted source scope takes precedence over header-supplied version metadata.
+
+Version resolution follows the normal scope rule:
+
+```text
+function version
+    > class/type version
+    > direct file version
+    > file-targeted header version
+    > project/default version
+```
+
+Header version metadata is preprocessing/frontend configuration only. Once the selected compatibility frontend has normalized the target into current canonical Bitlang semantics, the header version declaration itself does not survive into Bitlang Explicit.
+
+This makes headers useful as centralized migration/configuration files: a project may pin entire files to historical versions in headers while allowing newer nested declarations to override them locally.
+
 ## Import from source
 
 Ordinary Bitlang source may import a header file.
@@ -91,7 +121,7 @@ The exact surface syntax for exporting one definition, several definitions, or a
 
 Header files are preprocessing-only artifacts.
 
-They do **not** become mandatory explicit structures in Bitlang Preprocessed. The opposite rule applies: header-only information, preprocessor functions, preprocessor macros, header association metadata, and header `export` controls are consumed during preprocessing and disappear before Bitlang Preprocessed is emitted.
+They do **not** become mandatory explicit structures in Bitlang Explicit. The opposite rule applies: header-only information, preprocessor functions, preprocessor macros, header association metadata, and header `export` controls are consumed during preprocessing and disappear before Bitlang Explicit is emitted.
 
 Only their resolved effects on the program may remain.
 
@@ -103,12 +133,12 @@ Bitlang source
         -> preprocessing
         -> header metadata/macros/preprocesser functions/export controls are consumed
         -> resulting normalized program
-        -> Bitlang Preprocessed
+        -> Bitlang Explicit
 ```
 
-Bitlang Preprocessed must therefore not depend on the continued existence of a Bitlang header file or on hidden header-only preprocessing state.
+Bitlang Explicit must therefore not depend on the continued existence of a Bitlang header file or on hidden header-only preprocessing state.
 
-If a header causes code generation, declaration modification, property changes, aliases to be resolved, or other semantic transformations, the resulting explicit program state is what proceeds to Bitlang Preprocessed; the header construct itself does not.
+If a header causes code generation, declaration modification, property changes, aliases to be resolved, or other semantic transformations, the resulting explicit program state is what proceeds to Bitlang Explicit; the header construct itself does not.
 
 ## Not yet fixed
 
