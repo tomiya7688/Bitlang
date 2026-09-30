@@ -33,6 +33,26 @@ Bitlang source may use:
 
 All such forms are resolved before Bitlang Explicit is produced.
 
+## Byte-width type normalization
+
+For canonical type families whose `x<N>` suffix denotes semantic bit width, Bitlang source may use `xx<N>` to specify the width in bytes.
+
+Normalization converts the byte count to bits using exactly 8 bits per Bitlang byte.
+
+```text
+Int2xx4
+    -> Int2x32
+
+Float10xx8
+    -> Float10x64
+```
+
+The `xx` spelling is source sugar only and does not survive into Bitlang Explicit.
+
+No separate byte-width type identity is created. After normalization, a byte-width spelling and the equivalent bit-width spelling denote the same canonical type.
+
+This conversion is semantic-width normalization, not backend storage selection. Backend physical storage remains a later lowering concern.
+
 ## Property normalization
 
 The canonical property axes remain independent even when Bitlang source uses a compact description.
