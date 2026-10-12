@@ -17,6 +17,7 @@ go run ./tools/bitlang-ci/cmd/bitlang-ci
 以下をすべて実行し、1つでも失敗すれば全体を失敗とします。
 
 - `gofmt` cleanliness
+- machine-readable language仕様とfamily pipeline contract manifestのstrict validation
 - Bitlang `go-rule-checker` self-check
 - 日英ドキュメントペアの存在・相互リンク確認
 - `go mod tidy -diff`
@@ -38,5 +39,7 @@ GitHub Actions ではさらに次を実行します。
 ## 失敗時の方針
 
 Bitlang CI は fail-closed です。検査対象の欠落、checker 実行失敗、不正な checker 設定、panic、疑わしい非決定性、登録済み翻訳ペアの更新漏れ、その他の未検証状態を成功として扱ってはいけません。
+
+family pipeline manifestはBitlangのartifact identityと遷移graphに照らして検査します。cross-repository acceptance fixtureが実装されるまではstatusを`not_implemented`とし、strict gateは境界を黙ってskipせず失敗します。fixture file追加後も、実行runnerを組み込むまではgateを失敗させます。兄弟repositoryのCI状態確認も未実装です。
 
 将来は semantic invariant、fuzzing、property test、golden conversion test、differential test、意味上可能な round-trip test、cross-stage consistency check もプロジェクト管理の検証として追加していきます。

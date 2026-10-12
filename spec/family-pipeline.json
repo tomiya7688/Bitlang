@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "contract_version": 1,
+  "family": "Bitlang",
+  "gate_status": "not_implemented",
+  "repositories": [
+    {
+      "id": "source",
+      "name": "Bitlang",
+      "github": "tomiya7688/Bitlang",
+      "role": "source"
+    },
+    {
+      "id": "explicit",
+      "name": "Bitlang Explicit",
+      "github": "tomiya7688/Bitlang-Explicit",
+      "role": "explicit"
+    },
+    {
+      "id": "low",
+      "name": "Bitlang Low",
+      "github": "tomiya7688/Bitlang_low",
+      "role": "low"
+    },
+    {
+      "id": "vm",
+      "name": "Bitlang VM",
+      "github": "tomiya7688/Bitlang-VM",
+      "role": "vm_backend"
+    }
+  ],
+  "public_stages": [
+    {
+      "id": "source",
+      "name": "Bitlang source",
+      "repository": "source"
+    },
+    {
+      "id": "explicit",
+      "name": "Bitlang Explicit",
+      "repository": "explicit"
+    },
+    {
+      "id": "low",
+      "name": "Bitlang Low",
+      "repository": "low"
+    },
+    {
+      "id": "vm_assembly",
+      "name": "Bitlang VM Assembly",
+      "repository": "vm"
+    }
+  ],
+  "transitions": [
+    {
+      "from": "source",
+      "to": "explicit",
+      "fixture_path": "fixtures/family/source-explicit.json",
+      "fixture_status": "not_implemented"
+    },
+    {
+      "from": "explicit",
+      "to": "low",
+      "fixture_path": "fixtures/family/explicit-low.json",
+      "fixture_status": "not_implemented"
+    },
+    {
+      "from": "low",
+      "to": "vm_assembly",
+      "fixture_path": "fixtures/family/low-vm-assembly.json",
+      "fixture_status": "not_implemented"
+    }
+  ],
+  "internal_representations": [
+    {
+      "id": "tree_object",
+      "owner_repository": "vm",
+      "optional": true,
+      "public_stage": false
+    }
+  ],
+  "legacy_aliases": [
+    {
+      "literal": "preprocessed",
+      "canonical": "explicit",
+      "go_identifier": "ArtifactPreprocessed",
+      "remove_identifier_at_major": "v1",
+      "accept_literal": false
+    },
+    {
+      "literal": "compiled",
+      "canonical": "low",
+      "go_identifier": "ArtifactCompiled",
+      "remove_identifier_at_major": "v1",
+      "accept_literal": false
+    }
+  ]
+}

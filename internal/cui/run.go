@@ -7,7 +7,24 @@ import (
 	core "github.com/tomiya7688/Bitlang/internal/bitlang"
 )
 
-// Run handles one CUI invocation and returns the process exit status.
+//	{
+//	  責務: [
+//	    Run: CUI の一回の呼び出しを処理し終了状態を返す
+//	  ]
+//	  処理: [
+//	    1: 引数に応じてコンパイラー操作を選択する
+//	    2: 結果または診断を指定された出力先へ渡す
+//	    3: 成否をプロセス終了状態へ対応付ける
+//	  ]
+//	  引数: [
+//	    args: CUI に渡されたコマンドライン引数
+//	    out: 通常出力先
+//	    errOut: エラー出力先
+//	  ]
+//	  戻り値: [
+//	    exitCode: 呼び出し元へ返すプロセス終了状態
+//	  ]
+//	}
 func Run(args []string, out io.Writer, errOut io.Writer) int {
 	if len(args) < 1 {
 		writeUsage(errOut)

@@ -2,8 +2,8 @@ package bitlang
 
 import "testing"
 
-func TestParsePreprocessedSourceStoresDeclarations(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText(
+func TestParseDeclarationsInSourceResultStoresDeclarations(t *testing.T) {
+	source, err := LexicalPreprocess(NewSourceText(
 		"test.bit",
 		"Private unnullable Int First; Public nullable Text Second;",
 	))
@@ -11,15 +11,17 @@ func TestParsePreprocessedSourceStoresDeclarations(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	parsed, err := ParsePreprocessedSource(declarationParserTestSpecifications(), "variable", source)
+	parsed, err := ParseDeclarationsInSourceResult(
+		declarationParserTestSpecifications(), "variable", NewSourceParseResult(source),
+	)
 	if err != nil {
 		t.Fatal(err)
 	}
-	if parsed.Path != "test.bit" {
-		t.Fatalf("path = %q, want test.bit", parsed.Path)
+	if parsed.Source.Path != "test.bit" {
+		t.Fatalf("path = %q, want test.bit", parsed.Source.Path)
 	}
-	if len(parsed.Tokens) != len(source.Tokens) {
-		t.Fatalf("token count changed: %d -> %d", len(source.Tokens), len(parsed.Tokens))
+	if len(parsed.Source.Tokens) != len(source.Tokens) {
+		t.Fatalf("token count changed: %d -> %d", len(source.Tokens), len(parsed.Source.Tokens))
 	}
 	if len(parsed.Declarations) != 2 {
 		t.Fatalf("declaration count = %d, want 2", len(parsed.Declarations))
@@ -32,21 +34,8 @@ func TestParsePreprocessedSourceStoresDeclarations(t *testing.T) {
 	}
 }
 
-func TestPreprocessorLeavesDeclarationsUnparsed(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private unnullable Int First;"))
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(source.Declarations) != 0 {
-		t.Fatalf("preprocessor unexpectedly parsed declarations: %#v", source.Declarations)
-	}
-	if source.Scope != nil {
-		t.Fatalf("preprocessor unexpectedly assigned scope: %#v", source.Scope)
-	}
-}
-
-func TestParseMixedPreprocessedSourceStoresDetectedKinds(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText(
+func TestParseMixedDeclarationsInSourceResultStoresDetectedKinds(t *testing.T) {
+	source, err := LexicalPreprocess(NewSourceText(
 		"test.bit",
 		"Private Int Count; Private Protected Text Name;",
 	))
@@ -54,7 +43,7 @@ func TestParseMixedPreprocessedSourceStoresDetectedKinds(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	parsed, err := ParseMixedPreprocessedSource(mixedDeclarationTestSpecifications(), source)
+	parsed, err := ParseMixedDeclarationsInSourceResult(mixedDeclarationTestSpecifications(), NewSourceParseResult(source))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -66,19 +55,20 @@ func TestParseMixedPreprocessedSourceStoresDetectedKinds(t *testing.T) {
 	}
 }
 
-func TestParseMixedPreprocessedSourceUsesAttachedScope(t *testing.T) {
+func TestParseMixedDeclarationsInSourceResultUsesAttachedScope(t *testing.T) {
 	specs := contextSourceTestSpecifications()
 	scope, err := NewPreprocessedScope("MeMbEr", nil)
 	if err != nil {
 		t.Fatal(err)
 	}
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Private Int Count;"))
 	if err != nil {
 		t.Fatal(err)
 	}
-	source.Scope = &scope
+	parseResult := NewSourceParseResult(source)
+	parseResult.Scope = &scope
 
-	parsed, err := ParseMixedPreprocessedSource(specs, source)
+	parsed, err := ParseMixedDeclarationsInSourceResult(specs, parseResult)
 	if err != nil {
 		t.Fatal(err)
 	}

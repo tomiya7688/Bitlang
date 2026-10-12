@@ -7,7 +7,17 @@ import (
 	gorulechecker "github.com/tomiya7688/Bitlang/tools/go-rule-checker"
 )
 
-// main starts the Go implementation rule checker and maps its result to an exit status.
+//	{
+//	  責務: [
+//	    main: Go 実装ルールチェッカーを起動する
+//	  ]
+//	  処理: [
+//	    1: コマンドラインの検査対象を取得する
+//	    2: チェッカーの結果をプロセス終了状態へ対応付ける
+//	  ]
+//	  引数: []
+//	  戻り値: []
+//	}
 func main() {
 	code, err := gorulechecker.Run(os.Args[1:], os.Stdout)
 	if err != nil {

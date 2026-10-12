@@ -25,3 +25,20 @@ func TestResolvePropertiesRejectsInapplicableState(t *testing.T) {
 		t.Fatal("expected inapplicable property error")
 	}
 }
+
+func TestResolvePropertiesMatchesTargetCase(t *testing.T) {
+	spec := PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{{
+		Name: "release", States: []string{"Disable_Auto_Release"}, AppliesTo: []string{"Variable"},
+	}}}
+	for _, target := range []string{"Variable", "variable", "VARIABLE"} {
+		t.Run(target, func(t *testing.T) {
+			resolved, err := ResolveProperties(spec, target, []PreprocessedProperty{"DISABLE_AUTO_RELEASE"})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(resolved) != 1 || resolved[0] != "Disable_Auto_Release" {
+				t.Fatalf("resolved = %#v", resolved)
+			}
+		})
+	}
+}

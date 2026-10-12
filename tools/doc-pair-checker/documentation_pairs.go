@@ -26,7 +26,25 @@ var requiredDocumentationPairs = []documentationPair{
 	{englishPath: "tools/doc-pair-checker/README.md", japanesePath: "tools/doc-pair-checker/README.ja.md"},
 }
 
-// Run validates registered English/Japanese documentation pairs.
+//	{
+//	  責務: [
+//	    Run: 登録済みの英日ドキュメント対の整合性を検査する
+//	  ]
+//	  処理: [
+//	    1: 指定された変更範囲を取得する
+//	    2: 変更された登録済みドキュメント対を検証する
+//	    3: findings と成否を出力する
+//	  ]
+//	  引数: [
+//	    root: 検査対象リポジトリのルート
+//	    baseRef: 差分比較に使う基準コミット
+//	    out: 通常出力先
+//	    errOut: エラー出力先
+//	  ]
+//	  戻り値: [
+//	    exitCode: 検査結果を表す終了状態
+//	  ]
+//	}
 func Run(root string, baseRef string, out io.Writer, errOut io.Writer) int {
 	changedFiles, err := loadChangedFiles(root, baseRef)
 	if err != nil {

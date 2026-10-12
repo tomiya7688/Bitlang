@@ -17,6 +17,7 @@ go run ./tools/bitlang-ci/cmd/bitlang-ci
 The command runs all checks and fails if any check fails:
 
 - `gofmt` cleanliness
+- strict machine-readable language specifications and family pipeline contract manifest
 - Bitlang `go-rule-checker` self-check
 - bilingual documentation pair existence/link check
 - `go mod tidy -diff`
@@ -38,5 +39,7 @@ GitHub Actions additionally runs:
 ## Failure policy
 
 Bitlang CI is fail-closed. A missing check target, checker execution failure, malformed checker configuration, panic, suspicious nondeterminism, stale registered translation pair, or other unverified state must not be treated as success.
+
+The family pipeline manifest is checked against the Bitlang artifact identities and transition graph. Until cross-repository acceptance fixtures are implemented, their manifest status remains `not_implemented` and the strict gate fails instead of silently skipping those boundaries. Even after fixture files are added, the gate remains failed until an execution runner is wired in; sibling-repository CI inspection is also not implemented yet.
 
 Future project-owned checks should include semantic invariants, fuzzing, property tests, golden conversion tests, differential tests, round-trip tests where meaningful, and cross-stage consistency checks.

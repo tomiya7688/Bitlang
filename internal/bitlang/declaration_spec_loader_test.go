@@ -31,13 +31,34 @@ func TestLoadDeclarationSpecificationRejectsUnknownLayout(t *testing.T) {
 	}
 }
 
+func TestLoadDeclarationSpecificationRejectsNonStrictJSON(t *testing.T) {
+	valid := `{"version":1,"kinds":[{"name":"variable","property_target":"variable","terminator":";","layout":["properties","type","name"]}]}`
+	cases := []struct {
+		name string
+		data string
+	}{
+		{"unknown root field", `{"version":1,"kinds":[],"unexpected":true}`},
+		{"incorrectly cased root field", `{"Version":1,"kinds":[]}`},
+		{"duplicate root field", `{"version":1,"version":1,"kinds":[]}`},
+		{"unknown kind field", `{"version":1,"kinds":[{"name":"variable","unexpected":true}]}`},
+		{"duplicate kind field", `{"version":1,"kinds":[{"name":"variable","name":"field"}]}`},
+		{"trailing JSON value", valid + ` {}`},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			if _, err := LoadDeclarationSpecification([]byte(test.data)); err == nil {
+				t.Fatal("expected strict JSON decoder to reject input")
+			}
+		})
+	}
+}
+
 func TestDeclarationKindRejectsUnknownName(t *testing.T) {
 	spec := DeclarationSpecification{Version: 1, Kinds: []DeclarationKindSpec{{Name: "variable"}}}
 	if _, err := spec.DeclarationKind("field"); err == nil {
 		t.Fatal("expected unknown declaration kind error")
 	}
 }
-
 
 func TestLoadDeclarationSpecificationAcceptsContexts(t *testing.T) {
 	data := []byte(`{"version":1,"kinds":[{"name":"field","property_target":"field","terminator":";","layout":["properties","type","name"],"contexts":["member"]}]}`)

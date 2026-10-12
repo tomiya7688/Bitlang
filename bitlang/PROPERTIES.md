@@ -2,12 +2,12 @@
 
 Bitlang source exposes semantic properties so programmers and preprocessor functions can control program meaning explicitly when needed, while still allowing source code to omit or abbreviate properties that the preprocessor can resolve safely.
 
-The **canonical fully explicit property requirements are owned by `tomiya7688/Bitlang_preprocessed`**. This does not make those properties unavailable to source: Bitlang source may explicitly use the entire canonical property vocabulary. This document defines when source may omit, abbreviate, default, or preprocess those properties.
+The **canonical fully explicit property requirements are owned by `tomiya7688/Bitlang-Explicit`**. This does not make those properties unavailable to source: Bitlang source may explicitly use the entire canonical property vocabulary. This document defines when source may omit, abbreviate, default, or preprocess those properties.
 
 Canonical property specification:
 
-- https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/PROPERTIES.ja.md
-- borrow-state details: https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/BORROW_STATE.ja.md
+- https://github.com/tomiya7688/Bitlang-Explicit/blob/main/PROPERTIES.ja.md
+- borrow-state details: https://github.com/tomiya7688/Bitlang-Explicit/blob/main/BORROW_STATE.ja.md
 
 ## Source-facing principle
 
@@ -235,6 +235,8 @@ Source default:
 retention domain -> Process_retention
 ```
 
+The machine-readable property specification records `Dynamic` for `retention`, `Process_retention` for `retention_domain`, and `Instance_required` for `instance_access`. It also maps a resolved `lifetime` to the `finalization_trigger` default below. Preprocessing expands source shorthand such as `Direct` before applying defaults; each default fills only an unresolved axis and never overrides an explicit or inherited value. If a condition such as `lifetime` is still unresolved, its conditional default remains unresolved too.
+
 ## Source defaults for retention, instance access, initialization, and finalization
 
 When Bitlang source omits these properties and no stronger declaration/type/preprocessor rule determines them, the following source defaults apply.
@@ -371,6 +373,8 @@ Static_lifetime   -> Program_end_finalization
 `Manual_finalization` is never selected merely because information is missing; it requires an explicit source declaration, language-adapter rule, project/module rule, or other explicit preprocessing rule.
 
 A language adapter may choose a different trigger when required to preserve the source language's destruction semantics. The resolved trigger is explicit in Bitlang Explicit.
+
+The machine-readable specification selects this default by matching the resolved `lifetime` state. It does not guess a lifetime to make the finalization rule applicable.
 
 ### Initialization and nullability
 

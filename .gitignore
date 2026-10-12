@@ -1,0 +1,6 @@
+# Local review criteria; shared coding conventions remain versioned.
+/レビュー基準.md
+
+# Workspace-local Go caches are generated and must not enter a source PR.
+/.tmp-go-cache/
+/.tmp-go-mod/

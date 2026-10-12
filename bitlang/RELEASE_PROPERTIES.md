@@ -4,7 +4,7 @@ This document defines how **Bitlang source** expresses and preprocesses release/
 
 The canonical fully explicit release-property model belongs to Bitlang Preprocessed:
 
-- https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/PROPERTIES.ja.md
+- https://github.com/tomiya7688/Bitlang-Explicit/blob/main/PROPERTIES.ja.md
 
 ## Source properties
 

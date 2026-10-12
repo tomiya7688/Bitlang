@@ -3,7 +3,7 @@ package bitlang
 import "testing"
 
 func TestLoadPropertySpecification(t *testing.T) {
-	data := []byte(`{"version":1,"axes":[{"name":"nullability","states":["nullable","unnullable"],"exclusive":true}]}`)
+	data := []byte(`{"version":1,"axes":[{"name":"nullability","states":["nullable","unnullable"],"exclusive":true,"applies_to":["variable"]}]}`)
 	spec, err := LoadPropertySpecification(data)
 	if err != nil {
 		t.Fatal(err)

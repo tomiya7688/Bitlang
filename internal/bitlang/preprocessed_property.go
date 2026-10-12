@@ -1,6 +1,11 @@
 package bitlang
 
-// PreprocessedProperty is one explicit final property state attached to a
-// strict declaration. Valid states and their axes are defined by the external
-// Preprocessed property specification rather than duplicated as Go constants.
+//	{
+//	  責務: [
+//	    PreprocessedProperty: 宣言に明示された一つの最終プロパティ状態を表す
+//	  ]
+//	  補足: [
+//	    有効状態と軸は外部仕様から取得し、Go 定数へ重複定義しない
+//	  ]
+//	}
 type PreprocessedProperty string

@@ -4,7 +4,7 @@ This document defines **source-facing Bitlang** nullable and optional forms.
 
 The canonical final nullability/optionality properties emitted after preprocessing are owned by Bitlang Preprocessed:
 
-- https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/PROPERTIES.ja.md
+- https://github.com/tomiya7688/Bitlang-Explicit/blob/main/PROPERTIES.ja.md
 
 ## Source forms
 

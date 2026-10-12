@@ -6,7 +6,24 @@ import (
 	"sort"
 )
 
-// Run coordinates one rule-checker execution and writes all findings.
+//	{
+//	  責務: [
+//	    Run: 指定された Go ソース範囲にルール検査を実行する
+//	  ]
+//	  処理: [
+//	    1: 対象ファイルを収集し、無視設定を読み込む
+//	    2: 有効な静的ルールを各ファイルへ適用する
+//	    3: findings を出力して検査結果を返す
+//	  ]
+//	  引数: [
+//	    paths: 検査するファイルまたはディレクトリ
+//	    out: 検出結果の出力先
+//	  ]
+//	  戻り値: [
+//	    exitCode: 検出結果を表す終了状態
+//	    error: 検査処理自体を続行できない場合の失敗
+//	  ]
+//	}
 func Run(paths []string, out io.Writer) (int, error) {
 	if len(paths) == 0 {
 		paths = []string{"."}

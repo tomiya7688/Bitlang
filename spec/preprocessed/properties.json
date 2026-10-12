@@ -53,6 +53,7 @@
       ],
       "exclusive": true,
       "required": true,
+      "source_default": "Dynamic",
       "applies_to": [
         "variable",
         "field",
@@ -68,6 +69,7 @@
       ],
       "exclusive": true,
       "required": true,
+      "source_default": "Process_retention",
       "applies_to": [
         "variable",
         "field",
@@ -82,6 +84,7 @@
       ],
       "exclusive": true,
       "required": true,
+      "source_default": "Instance_required",
       "applies_to": [
         "field",
         "function"
@@ -279,6 +282,16 @@
       ],
       "exclusive": true,
       "required": true,
+      "source_default_when": {
+        "axis": "lifetime",
+        "states": {
+          "Local_lifetime": "Scope_end_finalization",
+          "Function_lifetime": "Scope_end_finalization",
+          "Object_lifetime": "Owner_end_finalization",
+          "Module_lifetime": "Module_end_finalization",
+          "Static_lifetime": "Program_end_finalization"
+        }
+      },
       "applies_to": [
         "variable",
         "field",

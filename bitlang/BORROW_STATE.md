@@ -1,6 +1,6 @@
 # Borrow state in Bitlang source
 
-This document defines the **source-facing Bitlang** rules for borrow state. Canonical Bitlang Preprocessed representation is specified in the separate `tomiya7688/Bitlang_preprocessed` repository, and low-level lowering is specified in `tomiya7688/Bitlang_compiled`.
+This document defines the **source-facing Bitlang** rules for borrow state. Canonical Bitlang Explicit representation is specified in the separate `tomiya7688/Bitlang-Explicit` repository, and low-level lowering is specified in `tomiya7688/Bitlang_low`.
 
 ## Source properties
 
@@ -40,4 +40,4 @@ If an override appears dangerous but invalidity cannot be proven, preprocessing 
 
 ## Stage boundary
 
-Bitlang source does not define the final canonical serialized property set. The resolved state passed to the next stage is governed by the Bitlang Preprocessed specification.
+Bitlang source does not define the final canonical serialized property set. The resolved state passed to the next stage is governed by the Bitlang Explicit specification.

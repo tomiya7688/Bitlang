@@ -13,6 +13,15 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/token_kind.go` | Define lexical token categories. |
 | `internal/bitlang/token.go` | Represent one token and source location. |
 | `internal/bitlang/lexer.go` | Convert source text into tokens. |
+| `internal/bitlang/keywords.go` | Classify configured source keywords without changing their lexemes. |
+| `internal/bitlang/source_modifier.go` | Expand adapter-defined source modifiers into validated canonical properties. |
+| `internal/bitlang/source_class.go` | Represent source classes, generic parameter token sequences, and members without discarding source details. |
+| `internal/bitlang/source_class_parser.go` | Parse source files and class declaration boundaries. |
+| `internal/bitlang/source_class_parser_test.go` | Verify class/member parsing preserves generic and opaque source tokens. |
+| `internal/bitlang/source_modifier_parser_test.go` | Verify modifier tokens retain spelling, order, and source positions throughout source declarations. |
+| `internal/bitlang/source_member_parser.go` | Parse class members, parameters, and property accessors. |
+| `internal/bitlang/source_generic_parser.go` | Validate generic list grammar while retaining the original token sequence. |
+| `internal/bitlang/source_class_parser_tokens.go` | Provide cursor, diagnostics, and balanced-token scans for source parsing. |
 | `internal/bitlang/lexer_comment.go` | Recognize and skip bootstrap source comments. |
 | `internal/bitlang/lexer_test.go` | Verify lexer behavior. |
 | `internal/bitlang/lexer_fuzz_test.go` | Fuzz lexer inputs to verify panic-free tokenization. |
@@ -20,9 +29,14 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/preprocessed_property.go` | Represent one property state without hardcoded state names. |
 | `internal/bitlang/property_spec.go` | Represent machine-readable property axes. |
 | `internal/bitlang/property_spec_loader.go` | Decode and validate property specification data. |
+| `internal/bitlang/property_spec_json.go` | Enforce the exact JSON field names in property specification files. |
+| `internal/bitlang/property_spec_validation.go` | Validate property specification shape before loading, matching, or validation. |
+| `internal/bitlang/property_source_default.go` | Apply configured source defaults only to unresolved property axes. |
+| `internal/bitlang/strict_json.go` | Provide strict JSON decoding and exact-schema field-name validation. |
 | `internal/bitlang/property_spec_loader_test.go` | Verify property specification loading. |
 | `internal/bitlang/property_validator.go` | Validate explicit properties against specification axes. |
 | `internal/bitlang/property_validator_test.go` | Verify specification-driven property validation. |
+| `internal/bitlang/property_match.go` | Compare property state and target names using Bitlang identifier canonicalization. |
 | `internal/bitlang/property_resolver.go` | Resolve case-insensitive property spelling to specification-defined states. |
 | `internal/bitlang/property_resolver_test.go` | Verify specification-driven property spelling resolution. |
 | `internal/bitlang/spec_consistency.go` | Validate invariants across machine-readable specifications. |
@@ -32,6 +46,7 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/specification_set_loader_test.go` | Verify shared specification set loading. |
 | `internal/bitlang/declaration_spec.go` | Represent machine-readable declaration kinds and grammar. |
 | `internal/bitlang/declaration_spec_loader.go` | Decode and validate declaration grammar data. |
+| `internal/bitlang/declaration_spec_json.go` | Enforce exact JSON field names in declaration specification files. |
 | `internal/bitlang/declaration_spec_loader_test.go` | Verify declaration grammar loading and lookup. |
 | `internal/bitlang/declaration_context.go` | Match declaration contexts against typed Preprocessed scopes and validate context data. |
 | `internal/bitlang/declaration_context_test.go` | Verify context matching and unrestricted declaration kinds. |
@@ -46,11 +61,14 @@ Canonical map for implementation files. Keep each record to one short responsibi
 | `internal/bitlang/preprocessed_declaration.go` | Represent one strict declaration and its explicit properties. |
 | `internal/bitlang/preprocessed_scope.go` | Represent a data-defined declaration context and its parent semantic scope. |
 | `internal/bitlang/preprocessed_scope_test.go` | Verify scope context canonicalization and parent linkage. |
-| `internal/bitlang/preprocessed_source.go` | Represent strict tokens, parsed declarations, and the current semantic scope. |
-| `internal/bitlang/preprocessed_source_parser.go` | Attach explicit-kind or context-filtered declarations to a Preprocessed source. |
-| `internal/bitlang/preprocessed_source_parser_test.go` | Verify parsed declarations are retained with source metadata and tokens. |
-| `internal/bitlang/preprocessor.go` | Convert source into the initial preprocessed representation. |
-| `internal/bitlang/preprocessor_test.go` | Verify the Source to Preprocessed boundary. |
+| `internal/bitlang/explicit_artifact.go` | Build immutable snapshots of fully explicit declarations while preserving original source text. |
+| `internal/bitlang/explicit_artifact_test.go` | Verify Explicit artifact validation, source retention, and defensive copies. |
+| `internal/bitlang/lexical_source.go` | Preserve original source text and tokens from one non-final lexical bootstrap pass. |
+| `internal/bitlang/lexical_preprocessor.go` | Run one lexical bootstrap pass and return `LexicalSource`, not canonical Preprocessed. |
+| `internal/bitlang/lexical_preprocessor_test.go` | Verify lexical token preservation and identifier canonical forms. |
+| `internal/bitlang/source_parse_result.go` | Represent parser outputs associated with lexical source without claiming canonical normalization. |
+| `internal/bitlang/source_parse_result_parser.go` | Attach declaration parser outputs and scope to a source parse result. |
+| `internal/bitlang/source_parse_result_parser_test.go` | Verify parser outputs retain lexical source and existing metadata. |
 | `internal/bitlang/canonical_name.go` | Represent and canonicalize Bitlang identifiers. |
 | `internal/bitlang/canonical_name_test.go` | Verify identifier canonicalization. |
 | `internal/bitlang/symbol.go` | Represent one named semantic value. |
@@ -68,8 +86,10 @@ Canonical map for implementation files. Keep each record to one short responsibi
 
 | File | Responsibility |
 | --- | --- |
+| `bitlang/BASIC_SYNTAX.md` | Define the initial C#-style class/member declaration grammar and source-preservation rules. |
 | `spec/preprocessed/properties.json` | Define property axes, states, applicability, and completeness requirements. |
 | `spec/preprocessed/declarations.json` | Define strict declaration kinds, targets, terminators, and layout. |
+| `spec/family-pipeline.json` | Declare Bitlang-family repositories, canonical stage identities, transitions, and explicit unimplemented fixture status. |
 
 ## Go rule checker
 
@@ -121,6 +141,9 @@ Other tests under `tools/go-rule-checker/*_test.go` verify the matching checker 
 | `tools/bitlang-ci/run.go` | Coordinate strict project-owned validation checks. |
 | `tools/bitlang-ci/spec_check.go` | Validate machine-readable specifications during strict CI. |
 | `tools/bitlang-ci/spec_file_loader.go` | Load repository specification files into one validated set. |
+| `tools/bitlang-ci/family_pipeline_manifest.go` | Strictly load and validate the family pipeline manifest against canonical stages, transitions, and migration rules. |
+| `tools/bitlang-ci/family_pipeline_manifest_json.go` | Enforce exact JSON field names in the family pipeline manifest. |
+| `tools/bitlang-ci/family_pipeline_manifest_json_test.go` | Verify family manifest field names use the exact schema spelling. |
 | `tools/bitlang-ci/spec_check_test.go` | Verify strict CI specification validation. |
 | `tools/bitlang-ci/README.md` | Document strict CI behavior and failure policy. |
 | `.github/workflows/strict-ci.yml` | Run Bitlang CI and additional hosted checks on supported runner OSes. |

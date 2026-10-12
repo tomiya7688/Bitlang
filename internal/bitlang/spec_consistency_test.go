@@ -15,6 +15,22 @@ func TestValidateSpecificationConsistency(t *testing.T) {
 	}
 }
 
+func TestValidateSpecificationConsistencyMatchesTargetCase(t *testing.T) {
+	properties := PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{{
+		Name: "visibility", States: []string{"Private"}, AppliesTo: []string{"Variable"},
+	}}}
+	for _, target := range []string{"Variable", "variable", "VARIABLE"} {
+		t.Run(target, func(t *testing.T) {
+			declarations := DeclarationSpecification{Version: 1, Kinds: []DeclarationKindSpec{{
+				Name: "variable", PropertyTarget: target,
+			}}}
+			if err := ValidateSpecificationConsistency(properties, declarations); err != nil {
+				t.Fatal(err)
+			}
+		})
+	}
+}
+
 func TestValidateSpecificationConsistencyRejectsUnknownTarget(t *testing.T) {
 	properties := PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{{
 		Name: "nullability", States: []string{"nullable", "unnullable"},

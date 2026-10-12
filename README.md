@@ -23,12 +23,12 @@ Bitlang source
   -> Bitlang Explicit
   -> static analysis / advisor
   -> Bitlang Low
-  -> tree object
+  -> Bitlang VM backend (may use TreeObject internally)
   -> Bitlang VM assembly
   -> VM or architecture translator
 ```
 
-Each stage is represented explicitly. A stage consumes one artifact kind and produces another; implicit skipping or reordering is rejected by the current core.
+The public stage contract is Source -> Explicit -> Low -> VM Assembly, identified by the canonical artifact values `source`, `explicit`, `low`, and `vm_assembly`. The Go identifiers `ArtifactPreprocessed` and `ArtifactCompiled` remain source-compatibility aliases for `ArtifactExplicit` and `ArtifactLow` until the first major API version (`v1`), when they will be removed. The old literal values `preprocessed` and `compiled` are rejected, not silently migrated. This repository has no serialized-artifact schema version yet, so persisted values using those old literals must be migrated before entering the pipeline. `ArtifactTreeObject` is retained for VM-backend internal use and is not a public pipeline stage. Skipped or reordered transitions are rejected.
 
 Intermediate stage boundaries are intended to become cross-implementation contracts. A future compiler written in Bitlang should be able to consume and produce equivalent artifacts without inheriting Go-specific implementation details.
 
@@ -76,14 +76,15 @@ Self-hosting is a long-term architectural target, not a requirement to premature
 - Go module and CLI entrypoint
 - explicit artifact/stage model
 - checked pipeline transitions
+- initial C#-style class/member parser preserving modifiers, generic syntax, and opaque body tokens
 - case-insensitive identifier canonicalization
 - collision-aware symbol table preserving original spelling for diagnostics
 - dependency-free unit tests
 - portability-first coding rules for future implementations
 
-String and character literal contents are not canonicalized. Identifier canonicalization is a symbol-level operation; source lexing will be implemented separately once the concrete grammar is fixed.
+The initial C#-style class/member declaration shape is specified in [bitlang/BASIC_SYNTAX.md](bitlang/BASIC_SYNTAX.md). The bootstrap lexer classifies its configured keywords while retaining their source spelling; the class parser preserves modifiers and opaque bodies; expression and statement grammar remain future work. String and character literal contents are not canonicalized.
 
-Unicode identifier normalization/case-folding is intentionally not part of the language contract yet. The current implementation uses Go's standard-library lowercase mapping as a temporary deterministic baseline.
+The bootstrap syntax currently accepts ASCII identifiers only; Unicode identifiers are rejected until the language contract defines them. Unicode identifier normalization/case-folding is therefore not part of this syntax version. The identifier canonicalization helper uses Go's standard-library lowercase mapping as a temporary deterministic baseline for names it receives.
 
 ## Contributing
 

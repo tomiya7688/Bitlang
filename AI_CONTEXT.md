@@ -6,10 +6,13 @@ AI-assisted development entrypoint. Keep this file small.
 - README: `README.md`
 - Responsibilities: `FILE_RESPONSIBILITIES.md`
 - Shared implementation rules: `CODING_RULES.md`
+- Local review criteria, when present (Git-ignored): `レビュー基準.md`
+- Project coding conventions: `コーディング規約.md`
 - Go bootstrap rules: `GO_CODING_RULES.md`
 - Current state: `CURRENT_STATE.md`
 - Change routing: `CHANGE_ROUTING.md`
 - Validation routing: `VALIDATION_ROUTING.md`
+- One-work-unit workflow: `doc/ワークフロー/ワークフロー.md`
 - Tasks: GitHub Issues
 
 ## Read First
