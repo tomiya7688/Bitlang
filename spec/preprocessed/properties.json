@@ -1,11 +1,16 @@
 {
-  "version": 7,
+  "version": 8,
   "axes": [
     {
       "name": "scope_visibility",
       "states": [
-        "Public",
-        "Private"
+        "Owner_visible",
+        "File_visible",
+        "Module_visible",
+        "Module_tree_visible",
+        "Project_visible",
+        "Global_visible",
+        "Custom_scope_visibility"
       ],
       "exclusive": true,
       "required": true,
