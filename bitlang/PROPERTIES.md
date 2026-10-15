@@ -163,19 +163,38 @@ Bitlang source may use the same semantic vocabulary that is normalized into Bitl
 
 ### Visibility
 
+Canonical `scope_visibility` is not limited to public/private.
+
 ```text
-Public / Private
-Protected / Unprotected
-Exported / Unexported
+Owner_visible
+File_visible
+Module_visible
+Module_tree_visible
+Project_visible
+Global_visible
+Custom_scope_visibility
 ```
 
-Scope visibility, inheritance visibility, and module export visibility are separate concerns.
+Bitlang source may still write familiar `Public` / `Private` shorthands. They are resolved before Bitlang Explicit; later stages must not guess their meaning.
 
-`Public / Private` also applies to module declarations.
+At minimum:
 
-For modules, `Private` means file-private module visibility: the module may be resolved only from the same physical source file. Cross-file imports and qualified-name lookup exclude it as though no matching external module were present. `Public` permits the module itself to participate in cross-file lookup, but member declarations still require their own applicable visibility/export permissions.
+```text
+Public
+    -> Global_visible
 
-Module visibility is independent from `Exported / Unexported` on declarations contained by the module.
+Private module
+    -> File_visible
+
+Private class/type member
+    -> Owner_visible
+```
+
+`Protected / Unprotected` inheritance visibility and `Exported / Unexported` module export remain independent axes.
+
+For package/assembly/friend/pub(super)/protected-internal and other nonstandard rules, preprocessing may emit `Custom_scope_visibility` with a pure, versioned scope-relation expression.
+
+Complete rules: [VISIBILITY.md](VISIBILITY.md).
 
 ### Retention and instance access
 
