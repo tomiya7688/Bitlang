@@ -83,6 +83,31 @@ A type family must not reinterpret one suffix as another unit. `xxx` is meaningf
 
 The `xx` shorthand is especially useful when source code is naturally specified in byte capacities, such as binary buffers, packet fields, fixed storage blocks, and backing storage for byte-limited string implementations.
 
+## Unbounded width, zero width, and suffix wildcard
+
+For a type family that already supports a bit-width suffix, `x*` means **no fixed semantic bit-width upper bound**, while `x0` means **zero semantic bits**, not unlimited width.
+
+```text
+Int10x*     -> signed arbitrary-precision radix-10 integer
+Uint10x*    -> unsigned arbitrary-precision radix-10 integer
+Strx*       -> string without an encoded-bit-length upper bound
+Strx0       -> string with at most zero encoded bits (empty string only)
+Strxx*      -> source spelling for Strx*
+Strxx0      -> source spelling for Strx0
+Strxxx*     -> no character-count upper bound
+Strxxx0     -> at most zero Unicode scalar values
+```
+
+Here, `*` is a **syntactic marker for an unbounded constraint**, not multiplication, a number, a pointer, or an infinity-sized physical object. The same wildcard rule applies to supported suffix dimensions: `xx*` means no byte limit and normalizes to `x*` when `xx` is shorthand for a bit width; `xxx*` means no character-count limit and is not converted into bits. Neither `xx0` nor `xxx0` denotes an unlimited value. A computed width/count that equals zero must **never** silently turn into `*`. The lexer/parser must distinguish suffix wildcard from an arithmetic `*`.
+
+`Str` has no radix field: **`Strx*`**, not `Str1x*`, is the explicit unbounded-bit spelling. The plain unconstrained `Str`, `Strx*`, `Strxx*`, and `Strxxx*` all denote the same unconstrained string type when no other finite bounds are present; canonicalization must not produce distinct type identities for those equivalent no-limit spellings. Explicit finite bounds remain part of type identity. A wildcard on one dimension does not erase a finite constraint on another dimension.
+
+`Int10x*` and `Uint10x*` denote arbitrary-precision mathematical integers, with no finite-width numeric overflow. They are distinct from every fixed-width `Int/Uint` type and require explicit conversions under Bitlang's normal no-implicit-conversion rule. `Int` without a suffix **continues to default to `Int10x32`**. Arbitrary precision does not mean infinite memory: failed allocation/resource limits must produce a defined failure instead of silent truncation, wraparound, or a host-language accident. Precise unbounded bitwise/shift operation semantics and their backend lowering are tracked in the corresponding design/implementation Issues; a backend must not invent a fixed width.
+
+The `x*` marker is common to **type families where a width suffix is meaningful**, not an instruction to give every type a meaningless width. For example, `Boolx*` is invalid: `Bool` has no width suffix. For `Float<Radix>x*`, the suffix marks the unbounded-width form, but its precision, rounding, exponent, and exceptional-value contract must be defined with the floating-point model before such a type can be accepted or lowered; implementations must fail closed until then.
+
+A width of zero remains a legitimate semantic constraint **only where that type family defines a zero-bit value**. Fixed-width numeric families `Int<Radix>x0`, `Uint<Radix>x0`, and `Float<Radix>x0` are invalid types, not arbitrary-precision aliases. Empty-only strings and zero-element aggregates are valid as specified below. Zero-bit semantic payload must not be confused with the byte size of runtime descriptors or the target ABI's storage choices.
+
 ## Signed and unsigned integers
 
 `Int` is signed.
