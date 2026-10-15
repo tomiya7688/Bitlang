@@ -128,7 +128,7 @@ Nested class/type and namespace/module scopes use the innermost applicable setti
 
 Contradictory settings at the same precedence level are errors unless preprocessing has an explicit order or override relation that makes the result deterministic.
 
-Bitlang itself uses `module` rather than a separate namespace construct. For language conversion, a source-language namespace may exist as preprocessing metadata/scope and is mapped into the appropriate Bitlang module/name hierarchy.
+Bitlang itself uses `module` rather than a separate namespace construct. A physical file scope remains distinct from module scope. Each file resolves to an outer module (explicit top-of-file module declaration, otherwise filename-derived), and preprocessing normalizes that ownership into a module scope around the file body. Nested `module { ... }` scopes may then provide more specific module defaults. For language conversion, a source-language namespace may exist as preprocessing metadata/scope and is mapped into the appropriate Bitlang module/name hierarchy.
 
 Scoped-default declarations are consumed by preprocessing and do not appear in Bitlang Explicit. Only the resolved canonical properties remain.
 
