@@ -132,7 +132,11 @@ set_parent_project(parent_project)
 
 An exact file mount applies only to that file. A tree mount applies recursively to a directory and automatically extends the namespace using relative child-directory segments.
 
-Filename text is not automatically added as a namespace segment. Explicit module declarations inside a mounted file are nested under the mounted outer namespace.
+Every file also resolves to one outer file module. A top-of-file `module X;` declaration selects that module explicitly. If it is absent, the source filename base (extension removed) becomes the implicit file module.
+
+Namespace mounts are outside the file module. For example, `src/combat/damage.bit` mounted under `Game.Combat` resolves to `Game.Combat.damage` when no explicit file module is present. If the file begins with `module DamageEngine;`, the result is `Game.Combat.DamageEngine`.
+
+A scoped `module X { ... }` introduces a nested module only for the enclosed range.
 
 Resolution order is exact file mount, then most-specific tree mount, then inherited ancestor tree mount. Ambiguous equally specific mounts are errors.
 
@@ -140,7 +144,29 @@ Project inheritance is single-parent and deterministic. Child projects inherit a
 
 Parent-project cycles and multiple direct parents are errors. Parent project source files are not automatically included merely because configuration is inherited.
 
-Namespace/project preprocessing state is fully consumed before Bitlang Explicit.
+Before Bitlang Explicit, preprocessing consumes namespace/project configuration and normalizes the effective file module into an explicit module scope around the file body.
+
+Conceptually:
+
+```bitlang
+module Game;
+
+class Player {
+}
+```
+
+normalizes to module ownership equivalent to:
+
+```bitlang
+module Game {
+    class Player {
+    }
+}
+```
+
+and a file `player.bit` without a module header is treated as though its body were enclosed by `module player { ... }`.
+
+Later stages do not infer modules from filenames or re-read namespace-mount configuration.
 
 ## Scoped property defaults
 
