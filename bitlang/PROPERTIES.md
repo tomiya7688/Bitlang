@@ -429,6 +429,33 @@ Const / Unconst
 
 A source shorthand named or described as immutable must not be assumed to mean `Const` unless its expansion rule explicitly says so.
 
+
+### Caller-class restriction
+
+Classes/types may explicitly restrict how many distinct external classes are allowed to contain calls targeting them.
+
+```text
+Single_caller_class
+Caller_class_unrestricted
+```
+
+- `Single_caller_class`: at most one distinct external caller class may contain calls to the target class.
+- `Caller_class_unrestricted`: this property places no limit on the number of caller classes.
+
+The restriction counts distinct caller class declarations, not call count or instance count. Repeated calls from the same class still count as one caller class. Self-calls from inside the target class do not consume the external caller slot.
+
+Constructor calls and calls to static/instance functions or methods owned by the target class participate in this restriction. A type annotation or non-call type reference alone does not.
+
+This axis is independent from visibility/export/inheritance access. A call can be visible yet still be rejected because it would introduce a second distinct caller class.
+
+Source default:
+
+```text
+caller class restriction -> Caller_class_unrestricted
+```
+
+Before Bitlang Explicit is emitted, the final state is explicit on applicable type/class declarations.
+
 ## Preprocessor behavior
 
 Preprocessor functions may inspect, add, remove, expand, or rewrite source properties before canonical output is finalized.
