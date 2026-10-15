@@ -252,7 +252,141 @@ A generic should normally be introduced because the abstraction is genuinely use
 
 Bitlang does not provide a separate `namespace` construct.
 
-`module` is the single top-level organizational concept used for namespacing and may also carry broader responsibilities such as import/export boundaries, dependency management, visibility, compilation grouping, initialization boundaries, or future versioning rules.
+`module` is the canonical logical naming/ownership scope. A source file is a physical source boundary; it is not itself the module identity.
+
+### File module
+
+Every Bitlang source file resolves to an outer module.
+
+A file may explicitly select its outer module by placing a module declaration at the top of the file:
+
+```bitlang
+module Game;
+
+class Player {
+}
+```
+
+The file-level `module Game;` declaration applies to the remainder of that file. Only one file-level module declaration may determine the outer module of one source file.
+
+Comments and preprocessing/version metadata that must be read before the body do not change the requirement that the module declaration is the first ordinary language declaration.
+
+If the file does not contain an explicit file-level module declaration, the preprocessor derives the outer module name from the source file's base name with the extension removed.
+
+For example:
+
+```text
+player.bit
+    -> module player
+```
+
+The derived name is subject to the ordinary Bitlang identifier rules. The preprocessor must not silently sanitize an invalid file name into another module identifier. A file whose base name cannot form a valid module identifier must use an explicit module declaration or another explicitly defined mapping mechanism.
+
+### Module scopes
+
+A module may also be introduced for a lexical range by enclosing that range in a module scope:
+
+```bitlang
+module Combat {
+    class Damage {
+    }
+}
+```
+
+Declarations inside the block belong to that module scope. Module scopes may nest, and an inner module extends the current module hierarchy.
+
+Conceptually:
+
+```bitlang
+module Game;
+
+module Combat {
+    class Damage {
+    }
+}
+```
+
+resolves to ownership equivalent to:
+
+```text
+Game.Combat.Damage
+```
+
+A module scope affects only declarations inside its braces. Leaving the scope restores the enclosing module.
+
+### Preprocessor normalization
+
+The preprocessor canonicalizes file-module selection into the same scoped representation used by explicit module blocks.
+
+Conceptually, a file:
+
+```bitlang
+module Game;
+
+class Player {
+}
+```
+
+is normalized as though its body were enclosed by:
+
+```bitlang
+module Game {
+    class Player {
+    }
+}
+```
+
+If no file-level module declaration exists, the same transformation uses the file base name:
+
+```text
+player.bit
+```
+
+conceptually becomes:
+
+```bitlang
+module player {
+    // original file body
+}
+```
+
+Therefore later preprocessing/static-analysis stages do not need a separate hidden "file module" mechanism. They operate on explicit module ownership/scopes.
+
+A file default-property scope remains distinct from a module default-property scope even when the whole file is normalized into one outer module block: file scope refers to the physical source file, while module scope refers to logical ownership and may span or nest independently.
+
+### Interaction with namespace mounts
+
+Namespace mounts are preprocessing configuration that add an outer naming prefix. They do not replace the file module.
+
+For example, a tree mount that maps `src/combat` to `Game.Combat` combined with:
+
+```text
+src/combat/damage.bit
+```
+
+and no explicit file module produces:
+
+```text
+Game.Combat.damage
+```
+
+If that file instead begins with:
+
+```bitlang
+module Effects;
+```
+
+the effective outer ownership becomes:
+
+```text
+Game.Combat.Effects
+```
+
+Explicit scoped modules inside the file are nested beneath that effective outer module.
+
+By the Bitlang Explicit boundary, namespace mounts, implicit filename-derived modules, and the file-level module-header form have been normalized into canonical module/name ownership.
+
+### Qualified names
 
 A module may contain nested modules or named declarations so that fully qualified names can be expressed hierarchically.
 
