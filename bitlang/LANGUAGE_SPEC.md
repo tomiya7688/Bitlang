@@ -284,7 +284,9 @@ The derived name is subject to the ordinary Bitlang identifier rules. The prepro
 
 ### Module scopes
 
-A module may also be introduced for a lexical range by enclosing that range in a module scope:
+A module declaration owns a logical scope and may carry applicable canonical properties, including `Public / Private` scope visibility.
+
+A module may be introduced for a lexical range by enclosing that range in a module scope:
 
 ```bitlang
 module Combat {
@@ -385,6 +387,52 @@ Game.Combat.Effects
 Explicit scoped modules inside the file are nested beneath that effective outer module.
 
 By the Bitlang Explicit boundary, namespace mounts, implicit filename-derived modules, and the file-level module-header form have been normalized into canonical module/name ownership.
+
+
+### Module visibility
+
+Modules participate in the ordinary `Public / Private` scope-visibility axis.
+
+Conceptually:
+
+```bitlang
+Private module Internal {
+    class Helper {
+    }
+}
+```
+
+A `Private` module is file-private:
+
+- it may be resolved and used only from declarations whose source origin is the same physical source file;
+- a different source file must exclude that module from import discovery and ordinary qualified-name resolution;
+- attempting to import it from another file behaves as though no matching module were available;
+- using a fully qualified name from another file does not bypass the restriction;
+- nesting the private module inside a public module does not make it externally discoverable.
+
+This is deliberately stronger than producing an "access denied but found" import result. External import/name lookup must not expose a private module as a usable or discoverable candidate.
+
+Code elsewhere in the same physical file may refer to the private module according to ordinary lexical/qualified-name rules, even when it is in another module scope in that file.
+
+A `Public` module may participate in cross-file module resolution, but that does not automatically expose every declaration inside it. Member declarations still obey their own `Public / Private`, `Exported / Unexported`, import-capability, and other applicable restrictions.
+
+Therefore module visibility and member export remain separate:
+
+```text
+Public module
+    + Exported member
+        -> potentially importable, subject to other access rules
+
+Public module
+    + Unexported member
+        -> module can be found, member is not exported
+
+Private module
+    + any member visibility/export state
+        -> module is not discoverable from another file
+```
+
+The same rule applies to the file-level module-header form and to scoped/nested modules. Preprocessing must preserve the physical source-file origin needed to validate file-private module access before later stages discard source-only lookup state.
 
 ### Qualified names
 
