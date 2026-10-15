@@ -157,4 +157,37 @@ The compiler shell may keep in-memory project/build state between commands, incl
 
 Persistent shell state is an optimization only. A clean non-interactive build with the same declared inputs must remain reproducible.
 
+## JSON compiler configuration
+
+Bitlang compiler/build settings may be loaded from a selected JSON configuration file.
+
+The project-root default filename is `bitlang.json`. The compiler shell and one-shot CLI may explicitly select another JSON file. One session/build has one active configuration file; version 1 does not implicitly merge multiple configuration files.
+
+Selection precedence is:
+
+```text
+explicit shell/CLI config selection
+> project-root bitlang.json
+> compiler built-in defaults
+```
+
+For ordinary build settings, explicit shell/CLI session overrides take precedence over the active JSON configuration. For language/preprocessor semantics, configuration contributes at the project/default level and does not override stronger explicit source rules.
+
+Configuration parsing is strict. Unknown fields, type mismatches, unsupported schema versions, and duplicate object keys are errors. Configuration is declarative JSON and does not execute shell commands or arbitrary code.
+
+Switching the active configuration invalidates only the pipeline stages affected by changed resolved settings. Backend-only changes should preserve reusable semantic artifacts such as `.btlex` and `.btllw` when their own dependencies remain valid.
+
+The active configuration and the resolved values relevant to each artifact participate in artifact fingerprints so configuration changes cannot silently reuse semantically incompatible intermediates.
+
+Compiler-shell operations include the conceptual equivalents of:
+
+```text
+Bitlang> config show
+Bitlang> config use bitlang.debug.json
+Bitlang> config reload
+Bitlang> config none
+```
+
+The detailed format and initial schema are defined in `CONFIGURATION.md` and `../../../spec/compiler/config.schema.json`.
+
 Detailed compiler rules will be added as the compiler design is finalized.
