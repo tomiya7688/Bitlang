@@ -346,6 +346,22 @@ The Unicode scalar value U+0000 is a valid Bitlang string character. Bitlang str
 
 Conversion to a foreign NUL-terminated C string is explicit. Such a conversion must account for the terminator separately and must reject or otherwise explicitly handle an embedded U+0000 when the target C API cannot represent it unambiguously.
 
+### Constrained string assignment, warnings, and overflow
+
+A `Str` bit/byte/character suffix expresses a **maximum**, not an exact value length. A shorter valid UTF-8 string, including the empty string, may satisfy the constraint. The encoded bit length of a valid UTF-8 string is always a multiple of eight.
+
+A declared `Strx3` is therefore a valid type that can represent only the empty string: no non-empty UTF-8 scalar fits within three bits. Declaration of such an empty-only constrained string type **must produce a compiler warning**, not a declaration error. This warning does not authorize storing an overflowing value.
+
+Constrained `Str` bounds are part of canonical type identity. As with other Bitlang types, **ordinary assignment performs no implicit widening, narrowing, or constraint conversion**. For example:
+
+- assigning a `Strx8`-typed expression directly to `Strx3` is a compile-time type mismatch, even if the actual value could be empty;
+- assigning `Strx8` directly to `Strx16` is also a compile-time type mismatch, even though the destination bound is wider;
+- `Strxx1` and `Strx8` normalize to the same canonical bit-width constraint; this is not a distinct-type conversion.
+
+To cross different constrained-string types, the program must use an **explicit checked conversion/cast**. If its actual value violates the destination's bit, byte, or character bound, that is a **string capacity overflow**, never implicit truncation or wrapping. A statically known overflowing value is a compile-time error. When the value is not statically known, the conversion/construction/modification must check the bound at runtime before yielding the destination-typed value, and report a runtime overflow error/trap on failure.
+
+A value already established as a valid `Strx3` may be assigned to another compatible `Strx3` binding without a new conversion: the typed producer must have enforced the capacity bound before producing the value.
+
 ## Generics
 
 Bitlang generics are compile-time type parameterization.
