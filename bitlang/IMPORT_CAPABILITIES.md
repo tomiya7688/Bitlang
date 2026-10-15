@@ -45,6 +45,34 @@ A compiler may erase capability metadata after all relevant accesses are validat
 
 This mechanism allows fine-grained access control over structure knowledge, value observation, mutation, reassignment, calls, ownership transfer, and other independent capabilities without requiring wrapper objects or defensive copies solely for permission management.
 
+
+## Module discovery and Private modules
+
+Import capability processing begins only after module discovery has found an eligible module.
+
+A module marked `Private` is file-private. When the importing source file is different from the module's defining physical source file:
+
+- the private module is excluded from import lookup;
+- the import must not create a binding to it;
+- a fully qualified module reference must not bypass the same exclusion;
+- import capabilities such as `Callable`, `Type_only`, or write/read restrictions cannot grant access to it.
+
+Conceptually:
+
+```text
+cross-file module discovery
+    -> remove Private modules
+    -> resolve Public module candidate
+    -> apply export/member visibility
+    -> apply import capabilities
+```
+
+This ordering prevents import-capability syntax from turning a file-private module into an externally visible one.
+
+Within the same physical source file, a Private module remains resolvable under the ordinary module/name rules.
+
+If an external import names only a Private module, the observable import result is "module not found" rather than a successful lookup followed by an access-capability grant.
+
 ## Type-only imports
 
 Bitlang supports imports that expose a type declaration without importing a runtime value binding.
