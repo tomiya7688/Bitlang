@@ -93,4 +93,68 @@ failure      -> keep produced intermediates
 
 Cache storage is a separate concern from user-visible intermediate artifacts. A cleanup mode may remove materialized intermediates while retaining valid internal build-cache entries according to the build-cache policy.
 
+## Interactive compiler shell
+
+The normal interactive entrypoint of the Bitlang compiler is a persistent compiler shell rather than only a one-shot command invocation.
+
+Starting the compiler without an explicit one-shot command should enter the Bitlang compiler shell when an interactive terminal is available.
+
+The shell exposes the compilation pipeline instead of hiding it. Users can inspect:
+
+- current project and selected target/backend;
+- available source and intermediate artifacts;
+- artifact hashes/fingerprints;
+- which stage produced each artifact;
+- whether an artifact is current, stale, invalid, or reusable;
+- cache hits/misses;
+- validation state;
+- dependency changes that caused rebuilds;
+- stage timing and produced artifact size.
+
+Conceptually:
+
+```text
+$ bitlang
+Bitlang> status
+Bitlang> build
+Bitlang> inspect btlex
+Bitlang> resume btllw
+Bitlang> backend c
+Bitlang> build
+```
+
+Exact command spelling may evolve, but the shell model is canonical.
+
+One-shot commands remain supported for scripts, CI, IDE/build-system integration, and reproducible automation.
+
+### Visible stages as a build-speed control
+
+Because stage boundaries and intermediate artifacts are explicit, a user may deliberately reuse a valid existing artifact and resume compilation from a later stage.
+
+Examples include:
+
+- reuse an unchanged `.btlex` instead of preprocessing source again;
+- reuse a validated `.btllw` when only the selected backend changed;
+- regenerate `.btlvm` or generated C without repeating unrelated earlier work;
+- rebuild only downstream stages invalidated by an input/configuration change;
+- compare two intermediate artifacts before deciding which stage to rerun.
+
+This is a supported optimization mechanism, not an accidental implementation shortcut.
+
+However, reuse must be validated. An artifact is reusable only when the compiler can establish that its relevant inputs and semantic environment still match. The artifact metadata/fingerprint must cover at least the producing stage, compiler/specification version, relevant source/input hashes, preprocessing configuration, language-version selection, target-independent semantic configuration, and any other dependency that can change the artifact's meaning.
+
+A stale or incompatible artifact must not be silently accepted merely because a file with the expected extension exists.
+
+### Safety and explicit trust
+
+Build acceleration may avoid recomputing a stage when an equivalent validated artifact already exists; it must not silently skip safety obligations.
+
+If a user explicitly asks the shell to trust/import an externally produced intermediate artifact, the toolchain must distinguish that from ordinary validated reuse and either revalidate the artifact at the appropriate boundary or mark the build as using an explicit trust override. Ordinary builds remain fail-closed.
+
+### Shell state
+
+The compiler shell may keep in-memory project/build state between commands, including parsed manifests, dependency graphs, artifact fingerprints, and safe cache metadata. This avoids repeatedly rediscovering unchanged build state during an interactive development session.
+
+Persistent shell state is an optimization only. A clean non-interactive build with the same declared inputs must remain reproducible.
+
 Detailed compiler rules will be added as the compiler design is finalized.
