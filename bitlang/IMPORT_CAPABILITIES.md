@@ -216,3 +216,14 @@ Module discovery must evaluate the canonical visibility policy from `bitlang/VIS
 Standard boundaries include owner, file, module, module-tree, project, and global visibility. `Custom_scope_visibility` may carry a pure scope-relation expression for language-adapter semantics such as package, assembly, friend, or path-relative visibility.
 
 Import capabilities remain capability-reducing only and are evaluated after the declaration/module is eligible under its visibility policy.
+
+
+## Call-site policy and Callable imports
+
+`Callable` on an import path only means that the import capability does not itself prohibit invocation.
+
+It cannot override the target function's canonical call-site policy.
+
+A call through an imported function value is valid only when visibility/export/import capability **and** the target call-site policy all permit the direct caller.
+
+See `bitlang/CALL_SITE_POLICY.md`.
