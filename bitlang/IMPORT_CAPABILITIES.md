@@ -50,7 +50,7 @@ This mechanism allows fine-grained access control over structure knowledge, valu
 
 Import capability processing begins only after module discovery has found an eligible module.
 
-A module marked `Private` is file-private. When the importing source file is different from the module's defining physical source file:
+A source module marked `Private` normalizes to canonical `File_visible`. When the importing source file is different from the module's defining physical source file:
 
 - the private module is excluded from import lookup;
 - the import must not create a binding to it;
@@ -61,7 +61,7 @@ Conceptually:
 
 ```text
 cross-file module discovery
-    -> remove Private modules
+    -> remove modules whose canonical visibility does not admit the importer
     -> resolve Public module candidate
     -> apply export/member visibility
     -> apply import capabilities
@@ -207,3 +207,12 @@ The final normalized program must not rely on an implicit permission escalation.
 If an import configuration requests a capability that the source/export declaration does not allow, that request is invalid and preprocessing reports an error rather than silently granting it.
 
 Exact source syntax and source-level defaults are defined separately.
+
+
+## Generalized scope visibility
+
+Module discovery must evaluate the canonical visibility policy from `bitlang/VISIBILITY.md`, not hard-code only Public/Private.
+
+Standard boundaries include owner, file, module, module-tree, project, and global visibility. `Custom_scope_visibility` may carry a pure scope-relation expression for language-adapter semantics such as package, assembly, friend, or path-relative visibility.
+
+Import capabilities remain capability-reducing only and are evaluated after the declaration/module is eligible under its visibility policy.
