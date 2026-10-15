@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "property_axis": {
+    "name": "call_site_policy",
+    "states": [
+      "Call_site_unrestricted",
+      "Custom_call_site_policy"
+    ],
+    "applies_to": [
+      "function"
+    ],
+    "required": true,
+    "source_default": "Call_site_unrestricted"
+  },
+  "operators": [
+    "any",
+    "all",
+    "not"
+  ],
+  "predicates": [
+    "caller_function_name_exact",
+    "caller_function_name_prefix",
+    "caller_function_name_suffix",
+    "caller_function_name_glob",
+    "caller_function",
+    "caller_owner_type",
+    "caller_module",
+    "caller_project",
+    "caller_adapter_domain"
+  ],
+  "glob": {
+    "star": "zero_or_more_identifier_characters",
+    "question": "exactly_one_identifier_character",
+    "case_sensitive": false,
+    "underscore_significant": true
+  },
+  "indirect_call_rule": "all_reachable_targets_must_accept_caller"
+}
