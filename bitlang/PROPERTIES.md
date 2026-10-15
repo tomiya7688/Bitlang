@@ -481,6 +481,52 @@ caller class restriction -> Caller_class_unrestricted
 
 Before Bitlang Explicit is emitted, the final state is explicit on applicable type/class declarations.
 
+
+### Call-site policy
+
+Functions/methods/constructor-like callables may restrict **which caller is allowed to invoke them**, independently from visibility.
+
+Canonical states:
+
+```text
+Call_site_unrestricted
+Custom_call_site_policy
+```
+
+Source default:
+
+```text
+Call_site_unrestricted
+```
+
+A custom policy may inspect the canonical caller function name:
+
+```text
+caller_function_name_exact(...)
+caller_function_name_prefix(...)
+caller_function_name_suffix(...)
+caller_function_name_glob(...)
+```
+
+Conceptually:
+
+```text
+Caller_function_name_matches("log_*")
+function output_log(...)
+```
+
+allows direct callers such as `log_error` or `log_request`, while a direct call from `main` is rejected.
+
+Caller-name matching uses canonical Bitlang identifier semantics: case differences do not matter and `_` remains significant.
+
+Policies may also constrain caller function/type/module/project/adapter-domain identity and combine conditions with `any/all/not`.
+
+A wrapper does not inherit permission from an earlier caller. The direct semantic caller of the restricted invocation must satisfy the policy.
+
+Function values and indirect calls do not erase the restriction. When multiple targets are reachable, the compiler must prove that the caller is accepted by every reachable restricted target.
+
+Complete rules: [CALL_SITE_POLICY.md](CALL_SITE_POLICY.md).
+
 ## Preprocessor behavior
 
 Preprocessor functions may inspect, add, remove, expand, or rewrite source properties before canonical output is finalized.
