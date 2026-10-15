@@ -1,0 +1,116 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Bitlang Compiler Configuration",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "build": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backend": {
+          "type": "string",
+          "minLength": 1
+        },
+        "target": {
+          "type": "string",
+          "minLength": 1
+        },
+        "output_dir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "artifact_retention": {
+          "enum": [
+            "keep",
+            "final-only"
+          ]
+        },
+        "incremental": {
+          "type": "boolean"
+        }
+      }
+    },
+    "language": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "default_version": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "preprocessor": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "parent_project": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "namespace_mounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "kind",
+              "path",
+              "namespace"
+            ],
+            "properties": {
+              "kind": {
+                "enum": [
+                  "file",
+                  "tree"
+                ]
+              },
+              "path": {
+                "type": "string",
+                "minLength": 1
+              },
+              "namespace": {
+                "type": "string",
+                "minLength": 1
+              }
+            }
+          }
+        }
+      }
+    },
+    "cache": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "directory": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "shell": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "show_stage_timing": {
+          "type": "boolean"
+        },
+        "show_artifact_sizes": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}
