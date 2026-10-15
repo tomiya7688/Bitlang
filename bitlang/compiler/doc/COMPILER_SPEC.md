@@ -62,6 +62,19 @@ final-only / cleanup mode
 
 The cleanup mode changes artifact retention only. It must not skip semantic stages, validations, safety checks, or lowering steps merely because their serialized artifacts will later be deleted.
 
+
+### Why the default build keeps intermediates
+
+This default is also part of the user experience.
+
+Bitlang intentionally spends significant compile time on preprocessing, semantic expansion, explicit-property materialization, safety validation, lowering, and backend preparation. Most users will not read the compiler specification in detail. If a normal build deleted every intermediate artifact automatically, that work would be invisible and Bitlang could appear to be only a slow compiler.
+
+Keeping `.btlex`, `.btllw`, and the selected backend intermediate by default gives the user direct evidence of what the compiler produced and why compilation took time. The intermediate files make the transformation cost inspectable rather than mysterious.
+
+This does not make large intermediate output or slow compilation a goal. They are known side effects of Bitlang's explicit, auditable pipeline. Default retention keeps those costs observable instead of hiding them.
+
+`final-only` is therefore an explicit convenience/space-saving mode rather than the default.
+
 ### Failure behavior
 
 Automatic intermediate cleanup occurs only after a successful build by default.
