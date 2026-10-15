@@ -2,13 +2,11 @@ package bitlang
 
 func allowedTransition(from ArtifactKind, to ArtifactKind) bool {
 	switch {
-	case from == ArtifactSource && to == ArtifactPreprocessed:
+	case from == ArtifactSource && to == ArtifactExplicit:
 		return true
-	case from == ArtifactPreprocessed && to == ArtifactCompiled:
+	case from == ArtifactExplicit && to == ArtifactLow:
 		return true
-	case from == ArtifactCompiled && to == ArtifactTreeObject:
-		return true
-	case from == ArtifactTreeObject && to == ArtifactVMAssembly:
+	case from == ArtifactLow && to == ArtifactVMAssembly:
 		return true
 	default:
 		return false

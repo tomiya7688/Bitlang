@@ -4,7 +4,7 @@ This document defines how **Bitlang source and preprocessor rules** handle borro
 
 The canonical final borrow-state representation belongs to Bitlang Preprocessed:
 
-- https://github.com/tomiya7688/Bitlang_preprocessed/blob/main/BORROW_STATE.ja.md
+- https://github.com/tomiya7688/Bitlang-Explicit/blob/main/BORROW_STATE.ja.md
 
 ## Source-facing states
 

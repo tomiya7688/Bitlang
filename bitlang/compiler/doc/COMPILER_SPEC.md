@@ -13,9 +13,11 @@ Bitlang family source
     -> family-language transformer
     -> Bitlang
     -> Bitlang preprocessor
-    -> Bitlang preprocessed
-    -> compiler
-    -> Bitlang compiled
+    -> Bitlang Explicit
+    -> Bitlang Lowerer
+    -> Bitlang Low
+    -> Bitlang VM backend
+    -> Bitlang VM Assembly
 ```
 
 A transformer is responsible for translating a family language's syntax and language-specific conveniences into equivalent Bitlang meaning. It should not bypass the Bitlang layer unless a future specification explicitly permits it.
@@ -26,8 +28,8 @@ The Bitlang preprocessing system supports preprocessor functions. These are comp
 
 The core preprocessor-function language and built-in function groups are specified in `../../PREPROCESSOR_FUNCTIONS.md`.
 
-Preprocessor functions execute before the normal Bitlang-to-Bitlang-preprocessed compilation stage is completed and do not become runtime functions.
+Preprocessor functions execute during the Source-to-Explicit transformation and do not become runtime functions.
 
-The preprocessing implementation should preserve enough source mapping information to report diagnostics against the original source where practical and should allow developers to inspect the generated Bitlang preprocessed output.
+The preprocessing implementation should preserve enough source mapping information to report diagnostics against the original source where practical and should allow developers to inspect the generated Bitlang Explicit output.
 
 Detailed compiler rules will be added as the compiler design is finalized.

@@ -2,8 +2,24 @@ package bitlang
 
 import "fmt"
 
-// ResolveProperties maps source property spelling to the canonical spelling
-// declared by the machine-readable property specification.
+//	{
+//	  責務: [
+//	    ResolveProperties: 入力プロパティ表記を仕様上の正規状態へ対応付ける
+//	  ]
+//	  処理: [
+//	    1: 入力順に各プロパティを対象と仕様に照合する
+//	    2: 仕様に定義された元表記で結果を返す
+//	  ]
+//	  引数: [
+//	    spec: 検証済みのプロパティ仕様
+//	    target: プロパティを適用する対象
+//	    properties: ソース側のプロパティ状態列
+//	  ]
+//	  戻り値: [
+//	    resolved: 仕様から取得した正規状態列
+//	    error: 未定義または対象外の状態がある場合の失敗
+//	  ]
+//	}
 func ResolveProperties(spec PropertySpecification, target string, properties []PreprocessedProperty) ([]PreprocessedProperty, error) {
 	resolved := make([]PreprocessedProperty, 0, len(properties))
 	for _, property := range properties {

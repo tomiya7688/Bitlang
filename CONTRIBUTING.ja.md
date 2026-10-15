@@ -36,10 +36,10 @@ Bitlang は安定した言語意味論と実装詳細を意図的に分離して
 ```text
 Bitlang source
   -> preprocessor
-  -> Bitlang preprocessed
+  -> Bitlang Explicit
   -> static analysis / advisor
-  -> Bitlang compiled
-  -> tree object
+  -> Bitlang Low
+  -> Bitlang VM backend (TreeObjectを内部利用する場合がある)
   -> Bitlang VM assembly
   -> VM or architecture translator
 ```
@@ -79,6 +79,8 @@ go build -o bitlang ./cmd/bitlang
 変更を提出する前に関連テストが通ることを確認し、変更範囲は対象 Issue に集中させてください。
 
 ## コーディング上の期待事項
+
+作業前に [`コーディング規約.md`](コーディング規約.md) を確認してください。コードと仕様書・設計書・操作説明に共通の必須基準として適用します。手元に `レビュー基準.md` がある場合はレビューにも使用してください。このレビュー用ファイルはGitの除外対象です。
 
 Go 実装を変更する場合:
 

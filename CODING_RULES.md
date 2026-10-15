@@ -130,10 +130,10 @@ The canonical lowering pipeline is:
 ```text
 Bitlang source
   -> preprocessor
-  -> Bitlang preprocessed
+  -> Bitlang Explicit
   -> static analysis / advisor
-  -> Bitlang compiled
-  -> tree object
+  -> Bitlang Low
+  -> Bitlang VM backend (may use TreeObject internally)
   -> Bitlang VM assembly
 ```
 

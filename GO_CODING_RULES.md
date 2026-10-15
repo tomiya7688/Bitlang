@@ -312,6 +312,19 @@ A type, function, constant, or field MUST NOT be exported merely for tests or fu
 
 Public interfaces should expose Bitlang concepts rather than Go implementation details.
 
+### Declaration comments
+
+Declaration-level comments in the Bitlang Go implementation follow [JSON-like Comment Outs](https://github.com/tomiya7688/Json-like-comment-outs/blob/main/docs/jp/SPECIFICATION.md). The Japanese specification is the canonical reference; use Japanese semantic keys and descriptions for this project.
+
+- Comments describing a type use a JSON-like block with `責務` and, for state-bearing types, `フィールド`.
+- Comments describing a function or method use `責務`, `処理`, `引数`, and `戻り値`; include errors in `戻り値` or `エラー` where relevant.
+- Documented constant groups or package-level data use `責務` plus `項目` or `補足` as appropriate.
+- Write the block as contiguous Go doc-comment lines with `{` and `}` as the outer delimiters, immediately before the declaration.
+- `gofmt` may normalize comment indentation; preserve the JSON-like braces, keys, and entries.
+- Describe intent, contracts, and information-preservation boundaries; do not merely translate obvious code into prose.
+- JSON-like formatting is for declaration documentation, not every source comment. Implementation rationale, TODOs, build/tool directives, and security-scan directives remain ordinary Go comments and must not be wrapped.
+- Keep comments synchronized with implementation behavior and update them when the documented contract changes.
+
 Avoid leaking:
 
 - filesystem-specific types into compiler semantics

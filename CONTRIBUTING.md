@@ -36,10 +36,10 @@ The intended lowering pipeline is:
 ```text
 Bitlang source
   -> preprocessor
-  -> Bitlang preprocessed
+  -> Bitlang Explicit
   -> static analysis / advisor
-  -> Bitlang compiled
-  -> tree object
+  -> Bitlang Low
+  -> Bitlang VM backend (may use TreeObject internally)
   -> Bitlang VM assembly
   -> VM or architecture translator
 ```
@@ -79,6 +79,8 @@ go build -o bitlang ./cmd/bitlang
 Before submitting a change, make sure relevant tests pass and keep changes focused on the issue being solved.
 
 ## Coding expectations
+
+Read the shared project conventions in [`コーディング規約.md`](コーディング規約.md) before making changes. They apply to code, specifications, design documents, and user instructions. If the local `レビュー基準.md` file is present, use it during review as well; that review file is Git-ignored.
 
 For Go implementation work:
 

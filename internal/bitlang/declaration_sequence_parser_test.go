@@ -3,7 +3,7 @@ package bitlang
 import "testing"
 
 func TestParsePreprocessedDeclarations(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText(
+	source, err := LexicalPreprocess(NewSourceText(
 		"test.bit",
 		"Private unnullable Int First; Public nullable Text Second;",
 	))
@@ -23,7 +23,7 @@ func TestParsePreprocessedDeclarations(t *testing.T) {
 }
 
 func TestParsePreprocessedDeclarationsRejectsMissingTerminator(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private unnullable Int First"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Private unnullable Int First"))
 	if err != nil {
 		t.Fatal(err)
 	}

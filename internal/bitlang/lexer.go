@@ -2,7 +2,17 @@ package bitlang
 
 import "fmt"
 
-// Lexer converts SourceText into a sequence of lexical tokens.
+//	{
+//	  責務: [
+//	    Lexer: ソーステキストを位置情報付きの字句トークンへ変換する
+//	  ]
+//	  フィールド: [
+//	    source: 元のソースパスと変更していない入力文字列
+//	    index: 現在の入力バイト位置
+//	    line: 現在位置の 1 始まり行番号
+//	    column: UTF-8 バイト単位で数える現在位置の 1 始まり列番号
+//	  ]
+//	}
 type Lexer struct {
 	source SourceText
 	index  int
@@ -10,12 +20,39 @@ type Lexer struct {
 	column int
 }
 
-// NewLexer creates a lexer positioned at the first byte of the source.
+//	{
+//	  責務: [
+//	    NewLexer: 入力先頭から走査する Lexer を作る
+//	  ]
+//	  引数: [
+//	    source: 字句解析する元ソース
+//	  ]
+//	  戻り値: [
+//	    lexer: 行・列を 1 から数える新しい走査器
+//	  ]
+//	}
 func NewLexer(source SourceText) *Lexer {
 	return &Lexer{source: source, line: 1, column: 1}
 }
 
-// Lex scans the complete source and returns its token sequence.
+//	{
+//	  責務: [
+//	    Lex: ソース全体を走査し、元表記を保ったトークン列を返す
+//	  ]
+//	  処理: [
+//	    1: 空白とコメントを読み飛ばす
+//	    2: 識別子・数値・リテラル・記号をトークン化する
+//	    3: ASCII 外の通常トークンを誤変換せず拒否する
+//	    4: 終端トークンを追加する
+//	  ]
+//	  引数: [
+//	    l: 元ソースと現在の走査位置を持つ Lexer
+//	  ]
+//	  戻り値: [
+//	    tokens: ソース順の字句トークン列
+//	    error: 不正バイトや閉じていないコメント等の失敗
+//	  ]
+//	}
 func (l *Lexer) Lex() ([]Token, error) {
 	tokens := make([]Token, 0)
 	for !l.atEnd() {
@@ -53,6 +90,9 @@ func (l *Lexer) scanToken() (Token, error) {
 	if current == '\'' {
 		return l.scanQuotedLiteral('\'', TokenCharacter)
 	}
+	if current >= 0x80 {
+		return Token{}, fmt.Errorf("unsupported non-ASCII source byte 0x%02X at %d:%d", current, l.line, l.column)
+	}
 	return l.scanSymbol(), nil
 }
 
@@ -63,9 +103,13 @@ func (l *Lexer) scanIdentifier() Token {
 	for !l.atEnd() && isIdentifierContinue(l.peek()) {
 		l.advance()
 	}
-	return NewToken(TokenIdentifier, l.source.Text[startIndex:l.index], startLine, startColumn)
+	lexeme := l.source.Text[startIndex:l.index]
+	kind := TokenIdentifier
+	if keyword, found := keywordKind(lexeme); found {
+		kind = keyword
+	}
+	return NewToken(kind, lexeme, startLine, startColumn)
 }
-
 func (l *Lexer) scanNumber() Token {
 	startIndex := l.index
 	startLine := l.line

@@ -35,6 +35,19 @@ func TestLexerTracksLines(t *testing.T) {
 	}
 }
 
+func TestLexerCountsUTF8BytesInColumnsAndRejectsUnicodeIdentifiers(t *testing.T) {
+	tokens, err := NewLexer(NewSourceText("unicode.bit", `"猫" name`)).Lex()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if tokens[1].Line != 1 || tokens[1].Column != 7 {
+		t.Fatalf("token after UTF-8 literal = %d:%d, want byte column 1:7", tokens[1].Line, tokens[1].Column)
+	}
+	if _, err := NewLexer(NewSourceText("unicode.bit", "class 猫 {}")).Lex(); err == nil {
+		t.Fatal("expected unsupported non-ASCII identifier to fail")
+	}
+}
+
 func TestLexerRejectsUnterminatedString(t *testing.T) {
 	if _, err := NewLexer(NewSourceText("test.bit", "\"unfinished")).Lex(); err == nil {
 		t.Fatal("expected unterminated literal error")

@@ -2,8 +2,24 @@ package bitlang
 
 import "fmt"
 
-// ParsePreprocessedDeclarations parses a sequence of declarations using a
-// validated shared specification set and one declaration kind name.
+//	{
+//	  責務: [
+//	    ParsePreprocessedDeclarations: 同じ種別の宣言列を個別の宣言へ分割して解析する
+//	  ]
+//	  処理: [
+//	    1: 終端記号でトークン列を宣言単位に分割する
+//	    2: 各宣言を共有仕様に従って解析する
+//	  ]
+//	  引数: [
+//	    specs: 検証済みの共有仕様
+//	    kindName: 宣言列に適用する宣言種別名
+//	    tokens: 解析対象のプリプロセストークン列
+//	  ]
+//	  戻り値: [
+//	    declarations: 入力順の解析済み宣言
+//	    error: 分割または宣言解析に失敗した場合の内容
+//	  ]
+//	}
 func ParsePreprocessedDeclarations(specs SpecificationSet, kindName string, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
 	kind, err := specs.Declarations.DeclarationKind(kindName)
 	if err != nil {

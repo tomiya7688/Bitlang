@@ -2,8 +2,25 @@ package bitlang
 
 import "fmt"
 
-// ParsePreprocessedDeclaration parses one declaration using a validated shared
-// specification set and a data-defined declaration kind name.
+//	{
+//	  責務: [
+//	    ParsePreprocessedDeclaration: 仕様で定義された形式に従って宣言を解析する
+//	  ]
+//	  処理: [
+//	    1: 共有仕様から宣言種別を解決する
+//	    2: トークン列を宣言の構成要素へ分解する
+//	    3: 宣言名と型名を正規表記で保持する
+//	  ]
+//	  引数: [
+//	    specs: 検証済みの共有仕様
+//	    kindName: 仕様で定義された宣言種別名
+//	    tokens: 解析対象のプリプロセストークン列
+//	  ]
+//	  戻り値: [
+//	    declaration: 解析した宣言
+//	    error: 種別または宣言形式が無効な場合の失敗
+//	  ]
+//	}
 func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, tokens []PreprocessedToken) (PreprocessedDeclaration, error) {
 	kind, err := specs.Declarations.DeclarationKind(kindName)
 	if err != nil {
@@ -28,8 +45,8 @@ func ParsePreprocessedDeclaration(specs SpecificationSet, kindName string, token
 
 	explicit := make([]PreprocessedProperty, 0, len(parts.properties))
 	for _, token := range parts.properties {
-		if token.Kind != TokenIdentifier {
-			return PreprocessedDeclaration{}, fmt.Errorf("property %q must be an identifier", token.Lexeme)
+		if token.Kind != TokenIdentifier && token.Kind != TokenKeyword {
+			return PreprocessedDeclaration{}, fmt.Errorf("property %q must be an identifier or keyword", token.Lexeme)
 		}
 		explicit = append(explicit, PreprocessedProperty(token.Lexeme))
 	}

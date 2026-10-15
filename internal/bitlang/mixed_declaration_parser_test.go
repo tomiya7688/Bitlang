@@ -4,7 +4,7 @@ import "testing"
 
 func TestParseMixedPreprocessedDeclarationsDetectsKinds(t *testing.T) {
 	specs := mixedDeclarationTestSpecifications()
-	source, err := NewPreprocessor().Process(NewSourceText(
+	source, err := LexicalPreprocess(NewSourceText(
 		"test.bit",
 		"Private Int Count; Private Protected Text Name;",
 	))
@@ -30,7 +30,7 @@ func TestParseMixedPreprocessedDeclarationsRejectsAmbiguousKind(t *testing.T) {
 		Name: "alias_variable", PropertyTarget: "variable", Terminator: ";",
 		Layout: []string{"properties", "type", "name"},
 	})
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Private Int Count;"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -41,7 +41,7 @@ func TestParseMixedPreprocessedDeclarationsRejectsAmbiguousKind(t *testing.T) {
 
 func TestParseMixedPreprocessedDeclarationsRejectsUnknownKind(t *testing.T) {
 	specs := mixedDeclarationTestSpecifications()
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Protected Int Count;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Protected Int Count;"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -75,7 +75,6 @@ func mixedDeclarationTestSpecifications() SpecificationSet {
 	}
 }
 
-
 func TestParseMixedPreprocessedDeclarationsUsesContext(t *testing.T) {
 	specs := SpecificationSet{
 		Properties: PropertySpecification{Version: 1, Axes: []PropertyAxisSpec{{
@@ -93,7 +92,7 @@ func TestParseMixedPreprocessedDeclarationsUsesContext(t *testing.T) {
 			},
 		}},
 	}
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Private Int Count;"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -117,7 +116,7 @@ func TestParseMixedPreprocessedDeclarationsRequiresConfiguredContext(t *testing.
 			Layout: []string{"properties", "type", "name"}, Contexts: []string{"outer"},
 		}}},
 	}
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Private Int Count;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Private Int Count;"))
 	if err != nil {
 		t.Fatal(err)
 	}

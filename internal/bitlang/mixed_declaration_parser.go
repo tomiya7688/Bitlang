@@ -5,14 +5,45 @@ import (
 	"strings"
 )
 
-// ParseMixedPreprocessedDeclarations parses a token stream containing multiple
-// declaration kinds without applying a declaration context filter.
+//	{
+//	  責務: [
+//	    ParseMixedPreprocessedDeclarations: 宣言種別を混在させたトークン列を解析する
+//	  ]
+//	  処理: [
+//	    1: 各位置で仕様に合う宣言種別を特定する
+//	    2: 宣言列を入力順に返す
+//	  ]
+//	  引数: [
+//	    specs: 宣言形式とプロパティの検証済み仕様
+//	    tokens: 種別が混在するプリプロセストークン列
+//	  ]
+//	  戻り値: [
+//	    declarations: 解析済み宣言列
+//	    error: 宣言形式が曖昧または不正な場合の失敗
+//	  ]
+//	}
 func ParseMixedPreprocessedDeclarations(specs SpecificationSet, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
 	return ParseMixedPreprocessedDeclarationsInScope(specs, nil, tokens)
 }
 
-// ParseMixedPreprocessedDeclarationsInContext preserves the string-based
-// bootstrap entrypoint while routing through the typed scope representation.
+//	{
+//	  責務: [
+//	    ParseMixedPreprocessedDeclarationsInContext: 文字列指定の互換入口から文脈付き宣言解析を行う
+//	  ]
+//	  処理: [
+//	    1: 文脈名を型付きスコープへ変換する
+//	    2: スコープを使って宣言種別を絞り込み解析する
+//	  ]
+//	  引数: [
+//	    specs: 宣言形式とプロパティの検証済み仕様
+//	    context: 現在の宣言文脈名
+//	    tokens: 解析対象のプリプロセストークン列
+//	  ]
+//	  戻り値: [
+//	    declarations: 文脈に適合した解析済み宣言列
+//	    error: 文脈または宣言解析に失敗した場合の内容
+//	  ]
+//	}
 func ParseMixedPreprocessedDeclarationsInContext(specs SpecificationSet, context string, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
 	if context == "" {
 		return ParseMixedPreprocessedDeclarationsInScope(specs, nil, tokens)
@@ -24,8 +55,24 @@ func ParseMixedPreprocessedDeclarationsInContext(specs SpecificationSet, context
 	return ParseMixedPreprocessedDeclarationsInScope(specs, &scope, tokens)
 }
 
-// ParseMixedPreprocessedDeclarationsInScope parses mixed declarations after
-// filtering candidate kinds by the current Preprocessed scope.
+//	{
+//	  責務: [
+//	    ParseMixedPreprocessedDeclarationsInScope: 型付きスコープに適合する宣言列を解析する
+//	  ]
+//	  処理: [
+//	    1: スコープ文脈に適用できる宣言種別だけを候補にする
+//	    2: 候補種別に基づいて宣言列を解析する
+//	  ]
+//	  引数: [
+//	    specs: 宣言形式とプロパティの検証済み仕様
+//	    scope: 宣言文脈を表す型付きスコープ
+//	    tokens: 解析対象のプリプロセストークン列
+//	  ]
+//	  戻り値: [
+//	    declarations: 文脈に適合した解析済み宣言列
+//	    error: 対応する宣言種別がない場合などの失敗
+//	  ]
+//	}
 func ParseMixedPreprocessedDeclarationsInScope(specs SpecificationSet, scope *PreprocessedScope, tokens []PreprocessedToken) ([]PreprocessedDeclaration, error) {
 	groups, err := splitMixedDeclarationTokens(specs.Declarations, tokens)
 	if err != nil {

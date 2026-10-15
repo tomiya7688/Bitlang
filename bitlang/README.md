@@ -39,7 +39,9 @@ The Bitlang repository should therefore explain **what authors may write or omit
 ## Main specification documents
 
 - [LANGUAGE_SPEC.md](LANGUAGE_SPEC.md) — overall Bitlang source language semantics
+- [BASIC_SYNTAX.md](BASIC_SYNTAX.md) — initial class/member declaration grammar and preservation rules
 - [STATIC_AND_DIRECT.md](STATIC_AND_DIRECT.md) ([日本語](STATIC_AND_DIRECT.ja.md)) — `static` (static retention) and `Direct` (instance-free access)
+- [BORROW_STATE.md](BORROW_STATE.md) — source-facing borrow-state rules
 - [SOURCE_NORMALIZATION.md](SOURCE_NORMALIZATION.md) — relaxed source notation and canonical normalization rules
 - [PROPERTIES.md](PROPERTIES.md) — source-facing semantic properties and preprocessing behavior
 - [TYPES.md](TYPES.md) — source type system
@@ -65,3 +67,9 @@ The final resolved representation is not specified here. Its canonical home is:
 - https://github.com/tomiya7688/Bitlang-Explicit/blob/main/BORROW_STATE.ja.md
 
 This repository separation is an ownership boundary for documentation and implementation, not a statement that source and Explicit are different semantic languages.
+
+## Related repositories
+
+- [Bitlang Explicit](https://github.com/tomiya7688/Bitlang-Explicit) — canonical fully resolved Bitlang representation
+- [Bitlang Low](https://github.com/tomiya7688/Bitlang_low) — lower-level compiled language
+- [Bitlang VM](https://github.com/tomiya7688/Bitlang-VM) — virtual machine project

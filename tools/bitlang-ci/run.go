@@ -16,7 +16,23 @@ type commandCheck struct {
 	command *exec.Cmd
 }
 
-// Run executes the strict local CI gate used by developers and GitHub Actions.
+//	{
+//	  責務: [
+//	    Run: 開発環境と GitHub Actions で共有する Bitlang 検証ゲートを実行する
+//	  ]
+//	  処理: [
+//	    1: 形式・仕様・静的解析・テスト・ビルドなどの検査を順に実行する
+//	    2: 検査結果を指定された出力先へ集約する
+//	  ]
+//	  引数: [
+//	    root: 検査対象リポジトリのルート
+//	    out: 通常の検査結果出力先
+//	    errOut: エラー出力先
+//	  ]
+//	  戻り値: [
+//	    exitCode: ゲート全体の成否を表す終了状態
+//	  ]
+//	}
 func Run(root string, out io.Writer, errOut io.Writer) int {
 	failures := 0
 

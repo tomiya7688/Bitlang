@@ -3,7 +3,7 @@ package bitlang
 import "testing"
 
 func TestParsePreprocessedDeclaration(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "pRiVaTe UnNuLlAbLe Int PlayerHP;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "pRiVaTe UnNuLlAbLe Int PlayerHP;"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -28,7 +28,7 @@ func TestParsePreprocessedDeclaration(t *testing.T) {
 func TestParsePreprocessedDeclarationUsesConfiguredLayout(t *testing.T) {
 	specs := declarationParserTestSpecifications()
 	specs.Declarations.Kinds[0].Layout = []string{"type", "name", "properties"}
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Int PlayerHP pRiVaTe UnNuLlAbLe;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Int PlayerHP pRiVaTe UnNuLlAbLe;"))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -45,12 +45,46 @@ func TestParsePreprocessedDeclarationUsesConfiguredLayout(t *testing.T) {
 }
 
 func TestParsePreprocessedDeclarationRejectsIncompleteProperties(t *testing.T) {
-	source, err := NewPreprocessor().Process(NewSourceText("test.bit", "Int PlayerHP;"))
+	source, err := LexicalPreprocess(NewSourceText("test.bit", "Int PlayerHP;"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if _, err := ParsePreprocessedDeclaration(declarationParserTestSpecifications(), "variable", source.Tokens); err == nil {
 		t.Fatal("expected missing property error")
+	}
+}
+
+func TestParsePreprocessedDeclarationNormalizesPropertyVariants(t *testing.T) {
+	specs := declarationParserTestSpecifications()
+	specs.Declarations.Kinds[0].PropertyTarget = "VARIABLE"
+	specs.Properties.Axes[0].AppliesTo = []string{"Variable"}
+	specs.Properties.Axes[1] = PropertyAxisSpec{
+		Name: "release", States: []string{"Disable_Auto_Release"}, Required: true, Exclusive: true, AppliesTo: []string{"Variable"},
+	}
+	if err := ValidateSpecificationConsistency(specs.Properties, specs.Declarations); err != nil {
+		t.Fatal(err)
+	}
+	for _, text := range []string{
+		"Private Disable_Auto_Release Int PlayerHP;",
+		"private disable_auto_release Int PlayerHP;",
+		"PRIVATE DISABLE_AUTO_RELEASE Int PlayerHP;",
+	} {
+		t.Run(text, func(t *testing.T) {
+			source, err := LexicalPreprocess(NewSourceText("case.bit", text))
+			if err != nil {
+				t.Fatal(err)
+			}
+			declaration, err := ParsePreprocessedDeclaration(specs, "variable", source.Tokens)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(declaration.Properties) != 2 || declaration.Properties[0] != "Private" || declaration.Properties[1] != "Disable_Auto_Release" {
+				t.Fatalf("properties = %#v", declaration.Properties)
+			}
+			if source.Tokens[0].Lexeme != text[:len("Private")] {
+				t.Fatal("source property spelling changed")
+			}
+		})
 	}
 }
 

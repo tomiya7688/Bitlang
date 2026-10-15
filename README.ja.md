@@ -22,12 +22,12 @@ Bitlang source
   -> Bitlang Explicit
   -> static analysis / advisor
   -> Bitlang Low
-  -> tree object
+  -> Bitlang VM backend (TreeObjectを内部利用する場合がある)
   -> Bitlang VM assembly
   -> VM or architecture translator
 ```
 
-各段階は明示的に表現されます。各 stage は1種類の artifact を受け取り、次の artifact を生成します。現在の core では、暗黙的な stage の飛ばしや並べ替えを許可しません。
+公開stage契約は Source -> Explicit -> Low -> VM Assembly で、正規artifact値は`source`、`explicit`、`low`、`vm_assembly`です。Go識別子`ArtifactPreprocessed`と`ArtifactCompiled`は、それぞれ`ArtifactExplicit`と`ArtifactLow`を指すsource互換aliasとして最初のmajor API version（`v1`）まで残し、`v1`で削除します。旧文字列値`preprocessed`と`compiled`は黙って移行せず、拒否します。このリポジトリにはシリアライズ済みartifactのschema versionがまだないため、旧文字列を使う保存データはpipeline投入前に移行が必要です。`ArtifactTreeObject`はVM backend内部用に保持し、公開pipeline stageにはしません。遷移の飛ばしや並べ替えは拒否します。
 
 中間 stage の境界は、将来的に実装言語をまたぐ契約として扱う予定です。将来 Bitlang で書かれたコンパイラも、Go 固有の実装詳細を引き継がず、同等の artifact を入出力できることを目標とします。
 
@@ -102,7 +102,7 @@ Self-hosting は長期的なアーキテクチャ目標であり、不安定な�
 - 外部依存を必要としない unit tests
 - 将来の別実装を考慮した portability-first coding rules
 
-文字列リテラルと文字リテラルの内容は canonicalize しません。identifier canonicalization は symbol level の処理です。具体的な grammar が確定した後、source lexing は別責務として実装します。
+初期C#風class/member宣言の形は [bitlang/BASIC_SYNTAX.md](bitlang/BASIC_SYNTAX.md) に定義しています。bootstrap lexerは一部予約語をkeyword tokenに分類し、元の綴りを保持します。初期class/member parserはmodifier、generic構文、未解析本体tokenを保持します。式と文のgrammarは未確定です。文字列・文字リテラルの内容はcanonicalizeしません。
 
 Unicode identifier の normalization / case-folding はまだ言語契約に含めていません。現在は一時的かつ決定的な基準として Go standard library の lowercase mapping を使用しています。
 
