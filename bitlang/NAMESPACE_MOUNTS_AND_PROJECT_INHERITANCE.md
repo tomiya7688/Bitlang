@@ -6,9 +6,9 @@ These facilities exist before Bitlang Explicit. They are preprocessing configura
 
 ## Namespace Mount
 
-A **Namespace Mount** assigns an outer naming scope to files based on their project-relative path.
+A **Namespace Mount** assigns an outer naming prefix to files based on their project-relative path.
 
-Bitlang itself continues to use `module` as its canonical naming hierarchy. A namespace mount is preprocessing metadata that is normalized into the corresponding Bitlang module/name hierarchy before Bitlang Explicit is emitted.
+Bitlang itself continues to use `module` as its canonical naming hierarchy. Every file also resolves to an outer file module: an explicit top-of-file module declaration wins, otherwise the source file base name (without extension) is used. A namespace mount is preprocessing metadata placed outside that file module and is normalized into the corresponding Bitlang module/name hierarchy before Bitlang Explicit is emitted.
 
 The standard preprocessing operations are:
 
@@ -29,7 +29,15 @@ Conceptually:
 mount_namespace_file("src/main.bit", "Game.Client")
 ```
 
-makes declarations in that file belong under `Game.Client`, before any module nesting explicitly declared inside the file is appended.
+with no explicit file-level module declaration resolves the file under:
+
+```text
+Game.Client.main
+```
+
+because `main.bit` contributes the implicit file module `main`.
+
+If the file starts with `module App;`, the effective outer module becomes `Game.Client.App` instead. Explicit scoped modules inside the file are nested beneath that.
 
 ### Tree mount
 
@@ -51,17 +59,19 @@ src/combat/damage.bit
 src/combat/effects/fire.bit
 ```
 
-produces the effective outer namespace hierarchy:
+produces the effective outer hierarchy when those files do not declare their own file module:
 
 ```text
-src/player.bit               -> Game
-src/combat/damage.bit        -> Game.Combat
-src/combat/effects/fire.bit  -> Game.Combat.Effects
+src/player.bit               -> Game.player
+src/combat/damage.bit        -> Game.Combat.damage
+src/combat/effects/fire.bit  -> Game.Combat.Effects.fire
 ```
 
-The source filename itself is not automatically added as a namespace segment.
+The source filename base is the implicit file module. It is not added when the file explicitly chooses its outer module with a top-of-file module declaration.
 
-If a mounted file contains an explicit Bitlang module, that module is nested inside the mounted namespace rather than replacing it.
+For example, if `src/combat/damage.bit` begins with `module DamageEngine;`, its effective outer module is `Game.Combat.DamageEngine`.
+
+Explicit scoped modules inside the file are nested below the effective file module.
 
 ### Deterministic path rules
 
@@ -71,9 +81,11 @@ If a mounted file contains an explicit Bitlang module, that module is nested ins
 - Among directory-tree mounts, the most specific matching directory wins as the namespace root.
 - A nested directory mount replaces the inherited mount root for its subtree.
 - If equally specific applicable mounts assign incompatible namespace roots and no explicit override/order relation resolves them, preprocessing reports an error.
-- A single source file must resolve to one deterministic effective outer namespace.
+- A single source file must resolve to one deterministic mount prefix and one deterministic file module.
+- The implicit file module is the file base name with the extension removed; invalid identifier text is not silently sanitized.
+- An explicit file-level module declaration replaces only the implicit filename-derived file-module segment, not the namespace-mount prefix.
 
-Namespace mounts are consumed during preprocessing. Bitlang Explicit contains only canonical module/name ownership.
+Namespace mounts and implicit filename-module selection are consumed during preprocessing. The preprocessor normalizes the effective file module by enclosing the file body in an equivalent module scope. Bitlang Explicit contains only canonical module scopes/name ownership rather than mount metadata or an implicit filename rule.
 
 ## Parent/Child Projects
 
