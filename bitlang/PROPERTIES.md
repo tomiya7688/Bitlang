@@ -171,6 +171,12 @@ Exported / Unexported
 
 Scope visibility, inheritance visibility, and module export visibility are separate concerns.
 
+`Public / Private` also applies to module declarations.
+
+For modules, `Private` means file-private module visibility: the module may be resolved only from the same physical source file. Cross-file imports and qualified-name lookup exclude it as though no matching external module were present. `Public` permits the module itself to participate in cross-file lookup, but member declarations still require their own applicable visibility/export permissions.
+
+Module visibility is independent from `Exported / Unexported` on declarations contained by the module.
+
 ### Retention and instance access
 
 ```text
