@@ -190,4 +190,12 @@ Bitlang> config none
 
 The detailed format and initial schema are defined in `CONFIGURATION.md` and `../../../spec/compiler/config.schema.json`.
 
+### GUI frontend parity
+
+The GUI uses the same compiler core, active JSON configuration, resolved-setting precedence, artifact fingerprints, stage invalidation, cache/reuse rules, and build semantics as the interactive shell and one-shot CLI.
+
+The GUI is not a separate compiler implementation. A build configured identically through the GUI, shell, or CLI must be semantically equivalent.
+
+GUI-only presentation preferences may remain frontend-local when they do not affect compilation.
+
 Detailed compiler rules will be added as the compiler design is finalized.
