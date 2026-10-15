@@ -284,7 +284,7 @@ The derived name is subject to the ordinary Bitlang identifier rules. The prepro
 
 ### Module scopes
 
-A module declaration owns a logical scope and may carry applicable canonical properties, including `Public / Private` scope visibility.
+A module declaration owns a logical scope and carries the applicable canonical scope-visibility state. Source `Public / Private` is normalized before Bitlang Explicit; for modules, source `Private` becomes `File_visible` and source `Public` normally becomes `Global_visible`. See `VISIBILITY.md`.
 
 A module may be introduced for a lexical range by enclosing that range in a module scope:
 
@@ -391,7 +391,7 @@ By the Bitlang Explicit boundary, namespace mounts, implicit filename-derived mo
 
 ### Module visibility
 
-Modules participate in the ordinary `Public / Private` scope-visibility axis.
+Modules participate in the ordinary `scope_visibility` axis defined in `VISIBILITY.md`.
 
 Conceptually:
 
@@ -402,7 +402,7 @@ Private module Internal {
 }
 ```
 
-A `Private` module is file-private:
+A source `Private` module normalizes to `File_visible` and is file-private:
 
 - it may be resolved and used only from declarations whose source origin is the same physical source file;
 - a different source file must exclude that module from import discovery and ordinary qualified-name resolution;
@@ -414,20 +414,20 @@ This is deliberately stronger than producing an "access denied but found" import
 
 Code elsewhere in the same physical file may refer to the private module according to ordinary lexical/qualified-name rules, even when it is in another module scope in that file.
 
-A `Public` module may participate in cross-file module resolution, but that does not automatically expose every declaration inside it. Member declarations still obey their own `Public / Private`, `Exported / Unexported`, import-capability, and other applicable restrictions.
+A source `Public` module normally normalizes to `Global_visible` and may participate in cross-file module resolution, but that does not automatically expose every declaration inside it. Member declarations still obey their own `Public / Private`, `Exported / Unexported`, import-capability, and other applicable restrictions.
 
 Therefore module visibility and member export remain separate:
 
 ```text
-Public module
+Global_visible module
     + Exported member
         -> potentially importable, subject to other access rules
 
-Public module
+Global_visible module
     + Unexported member
         -> module can be found, member is not exported
 
-Private module
+File_visible module (for example source Private module)
     + any member visibility/export state
         -> module is not discoverable from another file
 ```
