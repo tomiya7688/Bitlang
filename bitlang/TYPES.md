@@ -493,6 +493,23 @@ Fixed-length arrays may use inline contiguous storage.
 
 No backend may substitute a C variable-length array, bare pointer, or null-terminated convention in a way that loses the explicit runtime length.
 
+### Zero-sized types and zero-length values
+
+Bitlang permits meaningful **zero-size semantic payloads**. A zero payload is not an unlimited payload and does **not** imply that the value must be stored as a pointer. The conceptual payload may require no storage, but a runtime descriptor, object identity, alignment, foreign ABI wrapper, or bookkeeping may still require physical bytes. Semantic payload bit count, `bitsizeof` (when defined), and target-dependent physical `sizeof` are separate notions.
+
+Examples:
+
+- `Strx0` / `Strxx0`: valid UTF-8 string constraints accepting only `""` (zero encoded bits). `Strxxx0` similarly accepts only zero Unicode scalar values. The empty-only string declaration follows the existing warning policy, and any nonempty value overflows. These string *values* may still use a pointer-plus-length runtime descriptor.
+- `Array<T, Length=0>`: a valid fixed-length array with **zero elements** and no element payload. Indexing any element is always out of bounds. This is distinct from the runtime-length `Array<T>`, whose current length happens to be zero.
+- `struct Empty { }`: a valid zero-field, single-value aggregate with no semantic field payload. A backend must not invent an observable, user-addressable data field merely to satisfy a target ABI.
+- `Array<Empty, Length=N>`: has `N` logical elements and normal index bounds despite each element having zero semantic field payload. Logical element count and identities/borrows must not be inferred from physical byte offsets.
+
+These cases do not make `Int10x0`, `Uint10x0`, `Float10x0`, or `Boolx0` valid. Those types lack a defined zero-bit numerical/Boolean value model and are rejected. `Char` still requires exactly one Unicode scalar value and must not be changed into an empty value by applying a zero bit bound.
+
+Zero-size representations must respect ownership, move/borrow/lifetime, initialization/finalization, and access checks like other values. If distinct live object identities are observable, a backend must preserve them even if the payload occupies no addressable bytes. Pointer equality, address arithmetic, non-null `Ref<T>` guarantees, and array indexes must not be decided solely by coincident zero-byte storage addresses. No implicit heap allocation, fabricated non-null address, or unique pointer is mandated for a zero-sized value.
+
+Ordinary struct/array physical layout follows the selected target descriptor. Explicit `exact struct` physical bit/byte layout has its own deterministic zero-bit rule; exposing any zero-size type via a foreign C/native ABI requires an explicitly compatible representation or wrapper rather than assuming that C supports empty structures or zero-length arrays.
+
 ## Pointer and reference types
 
 `Ptr<T>` and `Ref<T>` are distinct types with different safety guarantees.
