@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "axes": [
     {
       "name": "scope_visibility",
@@ -375,6 +375,18 @@
       "required": true,
       "applies_to": [
         "type"
+      ]
+    },
+    {
+      "name": "call_site_policy",
+      "states": [
+        "Call_site_unrestricted",
+        "Custom_call_site_policy"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "function"
       ]
     }
   ]
