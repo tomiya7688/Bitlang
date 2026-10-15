@@ -2,7 +2,7 @@
 
 Bitlang compiler/build settings may be loaded from a JSON configuration file.
 
-The compiler shell and one-shot CLI can select which configuration file is active. This allows projects to keep separate configurations such as development, release, VM, C-backend, or target-specific builds without changing source code.
+The compiler shell, GUI frontend, and one-shot CLI can select which configuration file is active. They use the same compiler configuration loader and semantics. This allows projects to keep separate configurations such as development, release, VM, C-backend, or target-specific builds without changing source code.
 
 ## 1. File format
 
@@ -40,7 +40,7 @@ One compiler session/build has one active configuration file.
 Selection order:
 
 ```text
-explicit shell/CLI config selection
+explicit shell/GUI/CLI config selection
 > project-root bitlang.json
 > compiler built-in defaults
 ```
@@ -59,7 +59,7 @@ Bitlang> config none
 
 `config none` disables automatic use of the project configuration for the current session and uses explicit session overrides plus built-in defaults.
 
-One-shot CLI also supports an explicit configuration path. Exact CLI spelling may evolve, but it must provide behavior equivalent to selecting the file in the compiler shell.
+The GUI and one-shot CLI also support an explicit configuration path. Exact UI/CLI spelling may evolve, but selecting a configuration in any frontend must produce equivalent compiler behavior.
 
 Changing the active configuration causes the compiler to recompute which existing artifacts remain reusable.
 
@@ -68,7 +68,7 @@ Changing the active configuration causes the compiler to recompute which existin
 For ordinary compiler/build settings:
 
 ```text
-explicit one-shot CLI or compiler-shell session override
+explicit CLI / compiler-shell / GUI session override
 > active JSON configuration
 > compiler built-in default
 ```
@@ -195,7 +195,7 @@ Switching configuration files therefore causes targeted invalidation rather than
 
 The active configuration identity and the relevant canonicalized setting values are recorded in build metadata/fingerprints.
 
-A clean one-shot build and an interactive-shell build using the same source, compiler/specification versions, active configuration, and explicit overrides must have equivalent semantics.
+A clean one-shot build, compiler-shell build, and GUI build using the same source, compiler/specification versions, active configuration, and explicit overrides must have equivalent semantics.
 
 Configuration paths themselves are not sufficient identity: the compiler fingerprints the relevant resolved setting values so changing file contents is detected.
 
@@ -210,3 +210,23 @@ Configuration files may select output/cache/project-relative paths, so path use 
 - JSON values do not perform implicit shell expansion or command execution.
 
 Configuration is declarative build/preprocessing data, not a scripting language.
+
+## 9. GUI frontend parity
+
+The GUI is a frontend to the same compiler configuration/build engine used by the shell and one-shot CLI.
+
+The GUI must not define a second configuration format, silently translate settings into different semantics, or maintain hidden build-semantic settings that cannot be represented by the shared compiler configuration/session model.
+
+The GUI provides equivalents of the shell configuration operations:
+
+```text
+show active configuration
+select another JSON configuration
+reload the selected file
+disable automatic project configuration for the session
+show resolved settings and their source/precedence
+```
+
+Changing the active configuration in the GUI uses the same stage-aware invalidation and artifact-reuse decisions as the shell/CLI.
+
+GUI-only presentation state such as window layout, panel sizes, editor theme, and other non-compiler UI preferences may be stored separately. Such UI state must not affect compiler semantics or artifact fingerprints unless it corresponds to an explicit shared compiler setting.
