@@ -1,5 +1,5 @@
 {
-  "version": 5,
+  "version": 6,
   "axes": [
     {
       "name": "scope_visibility",
@@ -357,6 +357,18 @@
         "field",
         "parameter",
         "return"
+      ]
+    },
+    {
+      "name": "caller_class_limit",
+      "states": [
+        "Single_caller_class",
+        "Caller_class_unrestricted"
+      ],
+      "exclusive": true,
+      "required": true,
+      "applies_to": [
+        "type"
       ]
     }
   ]
