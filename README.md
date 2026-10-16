@@ -83,7 +83,7 @@ Self-hosting is a long-term architectural target, not a requirement to premature
 
 String and character literal contents are not canonicalized. Identifier canonicalization is a symbol-level operation; source lexing will be implemented separately once the concrete grammar is fixed.
 
-Unicode identifier normalization/case-folding is intentionally not part of the language contract yet. The current implementation uses Go's standard-library lowercase mapping as a temporary deterministic baseline.
+Unicode identifiers are part of the language contract, including Japanese names. Canonical identifier comparison follows the language-version-pinned Unicode rules in `bitlang/IDENTIFIERS_AND_ALIASES.md`; the current Go bootstrap implementation still needs to be updated from its temporary byte/host-library baseline to that full contract.
 
 ## Contributing
 
