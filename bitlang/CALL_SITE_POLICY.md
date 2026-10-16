@@ -50,7 +50,7 @@ Matching is performed after ordinary Bitlang identifier canonicalization:
 
 - identifier case is not significant;
 - `_` remains significant;
-- the local function name is matched, not source spelling preserved only for diagnostics.
+- the caller declaration's primary canonical function name is matched, not source spelling preserved only for diagnostics.
 
 For example, conceptually:
 
@@ -66,6 +66,8 @@ caller_function_name_glob("log_*")
 ```
 
 Then callers such as `log_error` and `log_request` are permitted, while `main` or `handle_request` are rejected.
+
+Aliases do not affect these default name predicates. Adding an alias `log_main` to a function whose primary name is `main` does not make it satisfy a `log_*` policy. Alias-aware matching requires an explicitly separate predicate if one is ever introduced.
 
 The exact source shorthand spelling may remain ergonomic; Bitlang Explicit receives the resolved canonical expression.
 
