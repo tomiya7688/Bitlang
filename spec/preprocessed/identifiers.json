@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "source_encoding": "UTF-8",
+  "invalid_utf8": "error",
+  "ordinary_identifier": {
+    "start": [
+      "underscore",
+      "Unicode_XID_Start"
+    ],
+    "continue": [
+      "underscore",
+      "Unicode_XID_Continue"
+    ],
+    "unicode_data_version_policy": "pinned_by_bitlang_language_version"
+  },
+  "canonicalization": {
+    "normalization": "NFC",
+    "case_folding": "Unicode_Default_Case_Folding",
+    "underscore_significant": true,
+    "string_literal_contents_affected": false,
+    "character_literal_contents_affected": false
+  },
+  "aliases": {
+    "named_declarations": [
+      "module",
+      "variable",
+      "field",
+      "parameter",
+      "function",
+      "type"
+    ],
+    "canonicalize_like_primary": true,
+    "same_symbol_identity": true,
+    "duplicate_alias_error": true,
+    "alias_primary_collision_error": true,
+    "alias_other_symbol_collision_error": true,
+    "backend_symbol_duplication": false
+  },
+  "name_based_policy": {
+    "default_match_name": "primary_canonical_name",
+    "call_spelling_affects_match": false,
+    "aliases_affect_match": false
+  }
+}
