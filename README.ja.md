@@ -104,7 +104,7 @@ Self-hosting は長期的なアーキテクチャ目標であり、不安定な�
 
 文字列リテラルと文字リテラルの内容は canonicalize しません。identifier canonicalization は symbol level の処理です。具体的な grammar が確定した後、source lexing は別責務として実装します。
 
-Unicode identifier の normalization / case-folding はまだ言語契約に含めていません。現在は一時的かつ決定的な基準として Go standard library の lowercase mapping を使用しています。
+Unicode identifier は日本語名を含めて言語契約へ含まれます。比較用canonicalizationは `bitlang/IDENTIFIERS_AND_ALIASES.md` のlanguage-version固定Unicode規則に従います。現在のGo bootstrap実装は、temporaryなbyte/host-library依存の処理からこの正式仕様へ更新する必要があります。
 
 ## コントリビュート
 
