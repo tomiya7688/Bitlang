@@ -521,6 +521,33 @@ current project default
 
 The complete rules are defined in [NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md](NAMESPACE_MOUNTS_AND_PROJECT_INHERITANCE.md).
 
+## Unicode identifiers and declaration aliases
+
+Bitlang supports Unicode identifiers, including Japanese names for variables, functions, types/classes, modules, fields, parameters, and other named declarations.
+
+Ordinary identifiers are UTF-8 and use the Unicode identifier profile defined in [IDENTIFIERS_AND_ALIASES.md](IDENTIFIERS_AND_ALIASES.md). Identifier comparison uses the language-version-pinned Unicode canonicalization rules rather than host-library-dependent byte processing.
+
+Every named declaration may also have zero or more aliases. A primary name and all of its aliases resolve to one semantic symbol identity.
+
+Conceptually:
+
+```text
+primary: 実行
+aliases: execute, run
+
+実行()
+execute()
+run()
+
+-> same function symbol
+```
+
+Aliases inherit the declaration's visibility, export, import capability, call-site policy, ownership/access restrictions, and all other semantics. An alias never creates a wrapper/copy or a separate backend symbol.
+
+Alias collisions are checked after the same Unicode canonicalization used for primary identifiers.
+
+Complete rules are defined in [IDENTIFIERS_AND_ALIASES.md](IDENTIFIERS_AND_ALIASES.md).
+
 ## Naming style
 
 Bitlang does not force source-code authors to use snake_case, camelCase, PascalCase, or another naming style. Source-facing code may use whichever naming style is convenient, subject to the language's normal identifier rules.
