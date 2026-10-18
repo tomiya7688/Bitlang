@@ -527,7 +527,7 @@ Bitlang source is first-class writable in both English and Japanese.
 
 Japanese support is not limited to user-defined Unicode identifiers. Source-facing language vocabulary such as declaration keywords, common properties, built-in source names, and other ordinary reserved words may have Japanese spellings that normalize to the same canonical language token as their English spellings.
 
-English and Japanese spellings may be mixed in one source file. This is a style choice, not a semantic mode switch.
+English and Japanese spellings may be mixed in one source file. This is a style choice, not a semantic mode switch. Before Bitlang Explicit is emitted, all language-vocabulary spellings are normalized to the canonical English Explicit vocabulary.
 
 Conceptually:
 
@@ -539,7 +539,7 @@ module / モジュール -> same module token
 
 A new source-facing canonical language token should define its Japanese spelling as part of the same language-versioned specification unless it is language-neutral punctuation/symbol syntax or explicitly documented as intentionally untranslated.
 
-The machine-readable source lexicon is `spec/source/lexicon.json`; detailed rules are in [SOURCE_LEXICON.md](SOURCE_LEXICON.md).
+Bitlang Explicit vocabulary is English-only: Japanese keywords/properties/built-in source aliases are consumed by preprocessing and emitted using their canonical English spelling. User-defined Unicode identifiers are not automatically translated. The machine-readable source lexicon is `spec/source/lexicon.json`; detailed rules are in [SOURCE_LEXICON.md](SOURCE_LEXICON.md).
 
 ## Unicode identifiers and declaration aliases
 
