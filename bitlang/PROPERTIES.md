@@ -328,6 +328,18 @@ The canonical model does not collapse these into a single broad `mutable / immut
 
 A binding may, for example, be unreassignable while the referenced object remains writeable.
 
+### Flow-sensitive property transitions
+
+Variable/declaration properties are not necessarily fixed for the entire lifetime of a declaration.
+
+For axes whose transition specification permits it, the effective property state may change at a later program point. In particular, `Readable / Unreadable`, `Writeable / Unwriteable`, and `Reassignable / Unreassignable` are flow-sensitive capability axes.
+
+`Unreadable` therefore means "not readable at this program point", not "this declaration can never be useful". A variable may be written or initialized while unreadable when its other properties permit that, then later transition to `Readable`.
+
+State transitions remain subject to all independent safety rules. For example, becoming `Readable` does not make an `Uninitialized`, `Moved`, or `Released` value readable.
+
+Complete transition semantics are defined in [PROPERTY_TRANSITIONS.md](PROPERTY_TRANSITIONS.md).
+
 ### Ownership and borrow
 
 ```text
