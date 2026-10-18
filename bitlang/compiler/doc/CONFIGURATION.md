@@ -115,6 +115,8 @@ The normal default remains `keep`.
 
 `default_version` supplies the project-level default Bitlang language-version selector when one is not selected by a stronger source/version rule.
 
+`source_lexicon_preference` may be `en`, `ja`, or `preserve`. It controls formatter/generated-source spelling only; the parser continues to accept both English and Japanese source lexicon spellings simultaneously.
+
 ### preprocessor
 
 Project-level preprocessing configuration may include the parent project and namespace mounts.
@@ -142,7 +144,8 @@ Controls presentation preferences for the interactive compiler shell, such as wh
     "incremental": true
   },
   "language": {
-    "default_version": "1.0"
+    "default_version": "1.0",
+    "source_lexicon_preference": "ja"
   },
   "preprocessor": {
     "parent_project": null,
