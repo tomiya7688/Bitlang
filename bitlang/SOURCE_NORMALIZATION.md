@@ -4,6 +4,40 @@ Bitlang source is intentionally more permissive and concise than Bitlang Explici
 
 Bitlang source is allowed to optimize for human readability by omitting information or using conveniences. The preprocessor converts those forms into the fully explicit normalized Bitlang form defined by `tomiya7688/Bitlang-Explicit`.
 
+## Two source normalization products
+
+Bitlang distinguishes lexicon-only source normalization from full Explicit normalization.
+
+```text
+multilingual Bitlang
+    -> lexicon-only normalization
+    -> English Bitlang source
+
+multilingual Bitlang
+    -> full preprocessing / normalization
+    -> Bitlang Explicit
+```
+
+The first product remains ordinary Bitlang source. The second crosses the fully explicit semantic boundary.
+
+## Lexicon-only English source normalization
+
+Lexicon-only normalization rewrites only registered source-language vocabulary to the canonical English spelling.
+
+It preserves source-level omissions and conveniences. In particular it does not resolve omitted properties/defaults, expand unrelated source sugar, or otherwise make the program Explicit.
+
+Comments, literals, and arbitrary user-defined identifiers are preserved rather than natural-language translated.
+
+The operation is intended for source sharing, inspection, canonical English tooling input, diffs, generated-source workflows, and users who want an English Bitlang representation without semantic expansion.
+
+## Direct Explicit normalization
+
+Full preprocessing may consume multilingual Bitlang directly. It uses the same lexicon resolver internally and then continues through all normal semantic normalization stages.
+
+A toolchain is not required to materialize the lexicon-only English source before producing Explicit.
+
+For equivalent input/configuration, `multilingual -> English Bitlang -> Explicit` and `multilingual -> direct Explicit` must produce semantically equivalent Explicit output.
+
 ## Core rule
 
 ```text
