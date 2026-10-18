@@ -541,6 +541,21 @@ A new source-facing canonical language token should define its Japanese spelling
 
 Bitlang Explicit vocabulary is English-only: Japanese keywords/properties/built-in source aliases are consumed by preprocessing and emitted using their canonical English spelling. User-defined Unicode identifiers are not automatically translated. The machine-readable source lexicon is `spec/source/lexicon.json`; detailed rules are in [SOURCE_LEXICON.md](SOURCE_LEXICON.md).
 
+### Two user-visible normalization routes
+
+Multilingual Bitlang has two distinct normalization operations:
+
+```text
+multilingual Bitlang -> English Bitlang source
+multilingual Bitlang -> Bitlang Explicit
+```
+
+The English-source operation performs source-lexicon normalization only and remains ordinary Bitlang. It does not imply Explicit property/default expansion.
+
+The Explicit operation performs full preprocessing. It may normalize the source lexicon internally without first writing an English Bitlang file.
+
+Both routes share the same lexicon mapping, and converting through English Bitlang before Explicit must be semantically equivalent to direct Explicit conversion.
+
 ## Unicode identifiers and declaration aliases
 
 Bitlang supports Unicode identifiers, including Japanese names for variables, functions, types/classes, modules, fields, parameters, and other named declarations.
