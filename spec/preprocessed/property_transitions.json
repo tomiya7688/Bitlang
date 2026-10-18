@@ -1,0 +1,161 @@
+{
+  "version": 1,
+  "classes": [
+    "flow_transitionable",
+    "structural",
+    "operation_derived"
+  ],
+  "axes": {
+    "readability": {
+      "classification": [
+        "flow_transitionable"
+      ],
+      "states": [
+        "Readable",
+        "Unreadable"
+      ],
+      "explicit_transitions": [
+        [
+          "Readable",
+          "Unreadable"
+        ],
+        [
+          "Unreadable",
+          "Readable"
+        ]
+      ]
+    },
+    "writeability": {
+      "classification": [
+        "flow_transitionable"
+      ],
+      "states": [
+        "Writeable",
+        "Unwriteable"
+      ],
+      "explicit_transitions": [
+        [
+          "Writeable",
+          "Unwriteable"
+        ],
+        [
+          "Unwriteable",
+          "Writeable"
+        ]
+      ]
+    },
+    "reassignment": {
+      "classification": [
+        "flow_transitionable"
+      ],
+      "states": [
+        "Reassignable",
+        "Unreassignable"
+      ],
+      "explicit_transitions": [
+        [
+          "Reassignable",
+          "Unreassignable"
+        ],
+        [
+          "Unreassignable",
+          "Reassignable"
+        ]
+      ]
+    },
+    "borrow_state": {
+      "classification": [
+        "operation_derived"
+      ],
+      "states": [
+        "Unborrowed",
+        "Shared_borrowed",
+        "Exclusive_borrowed"
+      ]
+    },
+    "move_state": {
+      "classification": [
+        "operation_derived"
+      ],
+      "states": [
+        "Unmoved",
+        "Moved"
+      ]
+    },
+    "release_state": {
+      "classification": [
+        "operation_derived"
+      ],
+      "states": [
+        "Unreleased",
+        "Released"
+      ]
+    },
+    "initialization": {
+      "classification": [
+        "operation_derived"
+      ],
+      "states": [
+        "Initialized",
+        "Uninitialized"
+      ]
+    },
+    "scope_visibility": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "inheritance_visibility": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "module_export": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "retention": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "retention_domain": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "instance_access": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "lifetime": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "nullability": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "optionality": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "caller_class_limit": {
+      "classification": [
+        "structural"
+      ]
+    },
+    "call_site_policy": {
+      "classification": [
+        "structural"
+      ]
+    }
+  },
+  "control_flow_join": "no_implicit_privilege_widening",
+  "unknown_transition": "error"
+}
