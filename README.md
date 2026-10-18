@@ -7,7 +7,7 @@ Bitlang is a strict language and translation pipeline designed around explicit, 
 > **好きなコードを 好きな書き方で**  
 > *Write the code you want, the way you want.*
 
-This slogan is a design requirement, not only branding. Bitlang itself is intended to be reasonably writable and very safe, but the ecosystem is also deliberately designed so other languages and source styles can be translated into Bitlang without discarding their semantics. Preprocessing, language adapters, scoped defaults, namespace mounting, and explicit normalization exist in part to make that possible while keeping the final safety rules strict.
+This slogan is a design requirement, not only branding. Bitlang source is first-class writable in both English and Japanese; Japanese support includes source-facing language vocabulary as well as Unicode user identifiers, and both lexicons may be mixed without changing semantics. Bitlang itself is intended to be reasonably writable and very safe, but the ecosystem is also deliberately designed so other languages and source styles can be translated into Bitlang without discarding their semantics. Preprocessing, language adapters, scoped defaults, namespace mounting, and explicit normalization exist in part to make that possible while keeping the final safety rules strict.
 
 The initial implementation is written in **Go** so development builds can be turned into standalone executables immediately and cross-compiled without introducing a runtime dependency.
 
