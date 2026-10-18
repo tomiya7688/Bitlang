@@ -20,6 +20,33 @@ Bitlang family source
 
 A transformer is responsible for translating a family language's syntax and language-specific conveniences into equivalent Bitlang meaning. It should not bypass the Bitlang layer unless a future specification explicitly permits it.
 
+## Multilingual source conversion modes
+
+The compiler exposes two distinct source conversion operations.
+
+### English Bitlang source output
+
+A lexicon-normalization operation accepts multilingual Bitlang and emits ordinary Bitlang source whose registered language vocabulary uses canonical English spellings.
+
+This is not Bitlang Explicit generation. It must preserve source-level omissions, preprocessing constructs, and other ordinary Bitlang conveniences except where lexicon spelling itself is being normalized.
+
+### Direct Bitlang Explicit output
+
+A full-preprocessing operation accepts the same multilingual Bitlang and emits Bitlang Explicit directly.
+
+The implementation may share parsed/tokenized state and does not need to serialize the intermediate English Bitlang source. However, it must use the same lexicon resolution rules.
+
+Required equivalence:
+
+```text
+multilingual source -> English Bitlang -> full preprocess -> Explicit
+multilingual source ---------------------> full preprocess -> Explicit
+```
+
+must produce semantically equivalent Explicit output under the same compiler/specification/configuration inputs.
+
+Shell, GUI, and one-shot CLI must expose equivalent access to both operations. Exact command/button naming may evolve.
+
 ## Preprocessor functions
 
 The Bitlang preprocessing system supports preprocessor functions. These are compile-time functions used for definitions, code generation, source transformation, and attribute automation.
