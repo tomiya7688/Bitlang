@@ -1,12 +1,14 @@
 # Bitlang Source Lexicon
 
-Bitlang source is intentionally writable in both English and Japanese.
+Bitlang source is intentionally writable in English and Japanese, and the source lexicon is extensible to additional languages.
 
 Japanese support is not limited to Unicode user-defined identifiers. Reserved words, built-in source names, source-facing properties, literals, and other ordinary language vocabulary may have English and Japanese source spellings that normalize to the same canonical semantic token.
 
 ## 1. Equal source-language status
 
-English and Japanese spellings are both first-class Bitlang source syntax.
+English and Japanese spellings are both first-class Bitlang source syntax. Version 1 requires `en` and `ja`; additional registered language aliases may be added under versioned language codes without changing the canonical Explicit vocabulary.
+
+Language codes other than `en` and `ja` are optional extensions of the source lexicon. Every entry still has exactly one canonical English spelling.
 
 At the Bitlang source boundary, Japanese is not implemented as a separate source-to-source language adapter and English is not privileged for source acceptance. Both forms are first-class source spellings.
 
@@ -157,7 +159,70 @@ Therefore Bitlang Explicit never needs to preserve whether the source language t
 
 This English-only rule applies to **language vocabulary**, not arbitrary user-defined symbol names. A user identifier such as `利用者` or `実行` remains a valid Unicode identifier in Explicit unless ordinary declaration-alias/name-normalization rules explicitly choose another symbol name. The compiler must not machine-translate arbitrary user identifiers into English.
 
-## 8. Formatter and generated-source preference
+## 8. Two normalization outputs
+
+The same multilingual source lexicon resolver supports two distinct outputs.
+
+### A. Multilingual Bitlang -> English Bitlang source
+
+This is **source-to-source lexicon normalization only**.
+
+It replaces registered non-English language-vocabulary spellings with each entry's canonical English spelling while preserving ordinary Bitlang source semantics and source-level convenience.
+
+It does **not**:
+
+- fill omitted properties;
+- expand source sugar merely because Explicit would require expansion;
+- resolve all defaults;
+- force fully qualified references;
+- turn the program into Bitlang Explicit.
+
+For example:
+
+```text
+公開 クラス 利用者 {
+    関数 実行() {
+        文字列 名前;
+    }
+}
+
+->
+
+Public class 利用者 {
+    function 実行() {
+        Str 名前;
+    }
+}
+```
+
+User-defined identifiers, comments, string/character literals, and other non-lexicon text are not translated into English.
+
+The result is still ordinary Bitlang source and may still contain omitted properties, source sugar, preprocessing directives, and other source-only constructs.
+
+### B. Multilingual Bitlang -> Bitlang Explicit
+
+This is the full preprocessing/normalization path.
+
+It first applies the same source-lexicon resolution semantics, then performs all required Bitlang normalization: property/default resolution, source-sugar expansion, module/name normalization, policy/state materialization, and every other transformation required by the Explicit boundary.
+
+The implementation may perform this directly in memory and does not need to serialize an intermediate English Bitlang source file.
+
+The following must be semantically equivalent:
+
+```text
+multilingual Bitlang
+    -> English Bitlang source
+    -> full preprocess
+    -> Bitlang Explicit
+
+multilingual Bitlang
+    -> direct full preprocess
+    -> Bitlang Explicit
+```
+
+The English-source conversion and Explicit conversion are therefore separate user-visible operations built on one lexicon resolver.
+
+## 9. Formatter and generated-source preference
 
 The compiler/formatter/tooling may have a source lexicon preference such as:
 
@@ -171,7 +236,7 @@ This preference controls emitted/generated/rewritten source spelling only. It do
 
 `preserve` keeps original source spelling where possible.
 
-## 9. Versioning
+## 10. Versioning
 
 The lexicon is versioned together with the Bitlang language specification.
 
