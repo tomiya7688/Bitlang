@@ -20,7 +20,8 @@
         "ja": [
           "モジュール"
         ]
-      }
+      },
+      "canonical_spelling": "module"
     },
     {
       "id": "keyword.class",
@@ -31,7 +32,8 @@
         "ja": [
           "クラス"
         ]
-      }
+      },
+      "canonical_spelling": "class"
     },
     {
       "id": "keyword.struct",
@@ -42,7 +44,8 @@
         "ja": [
           "構造体"
         ]
-      }
+      },
+      "canonical_spelling": "struct"
     },
     {
       "id": "keyword.interface",
@@ -53,7 +56,8 @@
         "ja": [
           "インターフェース"
         ]
-      }
+      },
+      "canonical_spelling": "interface"
     },
     {
       "id": "keyword.function",
@@ -64,7 +68,8 @@
         "ja": [
           "関数"
         ]
-      }
+      },
+      "canonical_spelling": "function"
     },
     {
       "id": "keyword.return",
@@ -75,7 +80,8 @@
         "ja": [
           "返す"
         ]
-      }
+      },
+      "canonical_spelling": "return"
     },
     {
       "id": "keyword.import",
@@ -86,7 +92,8 @@
         "ja": [
           "インポート"
         ]
-      }
+      },
+      "canonical_spelling": "import"
     },
     {
       "id": "source_property.public",
@@ -97,7 +104,8 @@
         "ja": [
           "公開"
         ]
-      }
+      },
+      "canonical_spelling": "Public"
     },
     {
       "id": "source_property.private",
@@ -108,7 +116,8 @@
         "ja": [
           "非公開"
         ]
-      }
+      },
+      "canonical_spelling": "Private"
     },
     {
       "id": "source_property.static",
@@ -119,7 +128,8 @@
         "ja": [
           "静的"
         ]
-      }
+      },
+      "canonical_spelling": "Static"
     },
     {
       "id": "source_property.dynamic",
@@ -130,7 +140,8 @@
         "ja": [
           "動的"
         ]
-      }
+      },
+      "canonical_spelling": "Dynamic"
     },
     {
       "id": "source_property.readable",
@@ -141,7 +152,8 @@
         "ja": [
           "読取可能"
         ]
-      }
+      },
+      "canonical_spelling": "Readable"
     },
     {
       "id": "source_property.unreadable",
@@ -152,7 +164,8 @@
         "ja": [
           "読取不可"
         ]
-      }
+      },
+      "canonical_spelling": "Unreadable"
     },
     {
       "id": "source_property.writeable",
@@ -163,7 +176,8 @@
         "ja": [
           "書込可能"
         ]
-      }
+      },
+      "canonical_spelling": "Writeable"
     },
     {
       "id": "source_property.unwriteable",
@@ -174,7 +188,8 @@
         "ja": [
           "書込不可"
         ]
-      }
+      },
+      "canonical_spelling": "Unwriteable"
     },
     {
       "id": "source_property.copyable",
@@ -185,7 +200,8 @@
         "ja": [
           "コピー可能"
         ]
-      }
+      },
+      "canonical_spelling": "Copyable"
     },
     {
       "id": "source_property.uncopyable",
@@ -196,7 +212,8 @@
         "ja": [
           "コピー不可"
         ]
-      }
+      },
+      "canonical_spelling": "Uncopyable"
     },
     {
       "id": "source_property.movable",
@@ -207,7 +224,8 @@
         "ja": [
           "移動可能"
         ]
-      }
+      },
+      "canonical_spelling": "Movable"
     },
     {
       "id": "source_property.unmovable",
@@ -218,7 +236,8 @@
         "ja": [
           "移動不可"
         ]
-      }
+      },
+      "canonical_spelling": "Unmovable"
     },
     {
       "id": "type.bool",
@@ -229,7 +248,8 @@
         "ja": [
           "真偽"
         ]
-      }
+      },
+      "canonical_spelling": "Bool"
     },
     {
       "id": "type.str",
@@ -240,7 +260,8 @@
         "ja": [
           "文字列"
         ]
-      }
+      },
+      "canonical_spelling": "Str"
     },
     {
       "id": "type.char",
@@ -251,7 +272,8 @@
         "ja": [
           "文字"
         ]
-      }
+      },
+      "canonical_spelling": "Char"
     }
   ],
   "completeness": {
@@ -260,5 +282,10 @@
       "language-neutral punctuation",
       "explicitly documented untranslated token"
     ]
+  },
+  "canonical_output": {
+    "stage": "Bitlang Explicit",
+    "language_vocabulary": "en",
+    "translate_user_identifiers": false
   }
 }
