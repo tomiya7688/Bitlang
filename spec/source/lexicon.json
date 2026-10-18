@@ -3,7 +3,8 @@
   "acceptance": {
     "english_and_japanese_simultaneously": true,
     "mixed_source_allowed": true,
-    "dynamic_natural_language_translation": false
+    "dynamic_natural_language_translation": false,
+    "multilingual_aliases_extensible": true
   },
   "formatter_preferences": [
     "en",
@@ -287,5 +288,26 @@
     "stage": "Bitlang Explicit",
     "language_vocabulary": "en",
     "translate_user_identifiers": false
+  },
+  "required_language_codes": [
+    "en",
+    "ja"
+  ],
+  "canonical_language_code": "en",
+  "outputs": {
+    "english_bitlang_source": {
+      "kind": "source_to_source_lexicon_normalization",
+      "fully_explicit": false,
+      "canonical_language_vocabulary": "en",
+      "translate_user_identifiers": false
+    },
+    "bitlang_explicit": {
+      "kind": "full_preprocessing",
+      "fully_explicit": true,
+      "canonical_language_vocabulary": "en",
+      "may_skip_materializing_english_source": true,
+      "translate_user_identifiers": false
+    },
+    "equivalence_requirement": "english_source_then_explicit_equals_direct_explicit_semantically"
   }
 }
