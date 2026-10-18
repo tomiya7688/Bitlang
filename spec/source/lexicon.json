@@ -1,0 +1,264 @@
+{
+  "version": 1,
+  "acceptance": {
+    "english_and_japanese_simultaneously": true,
+    "mixed_source_allowed": true,
+    "dynamic_natural_language_translation": false
+  },
+  "formatter_preferences": [
+    "en",
+    "ja",
+    "preserve"
+  ],
+  "entries": [
+    {
+      "id": "keyword.module",
+      "spellings": {
+        "en": [
+          "module"
+        ],
+        "ja": [
+          "モジュール"
+        ]
+      }
+    },
+    {
+      "id": "keyword.class",
+      "spellings": {
+        "en": [
+          "class"
+        ],
+        "ja": [
+          "クラス"
+        ]
+      }
+    },
+    {
+      "id": "keyword.struct",
+      "spellings": {
+        "en": [
+          "struct"
+        ],
+        "ja": [
+          "構造体"
+        ]
+      }
+    },
+    {
+      "id": "keyword.interface",
+      "spellings": {
+        "en": [
+          "interface"
+        ],
+        "ja": [
+          "インターフェース"
+        ]
+      }
+    },
+    {
+      "id": "keyword.function",
+      "spellings": {
+        "en": [
+          "function"
+        ],
+        "ja": [
+          "関数"
+        ]
+      }
+    },
+    {
+      "id": "keyword.return",
+      "spellings": {
+        "en": [
+          "return"
+        ],
+        "ja": [
+          "返す"
+        ]
+      }
+    },
+    {
+      "id": "keyword.import",
+      "spellings": {
+        "en": [
+          "import"
+        ],
+        "ja": [
+          "インポート"
+        ]
+      }
+    },
+    {
+      "id": "source_property.public",
+      "spellings": {
+        "en": [
+          "Public"
+        ],
+        "ja": [
+          "公開"
+        ]
+      }
+    },
+    {
+      "id": "source_property.private",
+      "spellings": {
+        "en": [
+          "Private"
+        ],
+        "ja": [
+          "非公開"
+        ]
+      }
+    },
+    {
+      "id": "source_property.static",
+      "spellings": {
+        "en": [
+          "Static"
+        ],
+        "ja": [
+          "静的"
+        ]
+      }
+    },
+    {
+      "id": "source_property.dynamic",
+      "spellings": {
+        "en": [
+          "Dynamic"
+        ],
+        "ja": [
+          "動的"
+        ]
+      }
+    },
+    {
+      "id": "source_property.readable",
+      "spellings": {
+        "en": [
+          "Readable"
+        ],
+        "ja": [
+          "読取可能"
+        ]
+      }
+    },
+    {
+      "id": "source_property.unreadable",
+      "spellings": {
+        "en": [
+          "Unreadable"
+        ],
+        "ja": [
+          "読取不可"
+        ]
+      }
+    },
+    {
+      "id": "source_property.writeable",
+      "spellings": {
+        "en": [
+          "Writeable"
+        ],
+        "ja": [
+          "書込可能"
+        ]
+      }
+    },
+    {
+      "id": "source_property.unwriteable",
+      "spellings": {
+        "en": [
+          "Unwriteable"
+        ],
+        "ja": [
+          "書込不可"
+        ]
+      }
+    },
+    {
+      "id": "source_property.copyable",
+      "spellings": {
+        "en": [
+          "Copyable"
+        ],
+        "ja": [
+          "コピー可能"
+        ]
+      }
+    },
+    {
+      "id": "source_property.uncopyable",
+      "spellings": {
+        "en": [
+          "Uncopyable"
+        ],
+        "ja": [
+          "コピー不可"
+        ]
+      }
+    },
+    {
+      "id": "source_property.movable",
+      "spellings": {
+        "en": [
+          "Movable"
+        ],
+        "ja": [
+          "移動可能"
+        ]
+      }
+    },
+    {
+      "id": "source_property.unmovable",
+      "spellings": {
+        "en": [
+          "Unmovable"
+        ],
+        "ja": [
+          "移動不可"
+        ]
+      }
+    },
+    {
+      "id": "type.bool",
+      "spellings": {
+        "en": [
+          "Bool"
+        ],
+        "ja": [
+          "真偽"
+        ]
+      }
+    },
+    {
+      "id": "type.str",
+      "spellings": {
+        "en": [
+          "Str"
+        ],
+        "ja": [
+          "文字列"
+        ]
+      }
+    },
+    {
+      "id": "type.char",
+      "spellings": {
+        "en": [
+          "Char"
+        ],
+        "ja": [
+          "文字"
+        ]
+      }
+    }
+  ],
+  "completeness": {
+    "japanese_required_for_source_facing_canonical_tokens": true,
+    "exceptions": [
+      "language-neutral punctuation",
+      "explicitly documented untranslated token"
+    ]
+  }
+}
