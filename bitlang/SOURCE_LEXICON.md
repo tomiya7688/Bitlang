@@ -8,9 +8,9 @@ Japanese support is not limited to Unicode user-defined identifiers. Reserved wo
 
 English and Japanese spellings are both first-class Bitlang source syntax.
 
-Japanese is not implemented as a source-to-source translator that runs before the real language, and English is not the only semantically privileged source spelling.
+At the Bitlang source boundary, Japanese is not implemented as a separate source-to-source language adapter and English is not privileged for source acceptance. Both forms are first-class source spellings.
 
-Both forms normalize directly into the same canonical parser/preprocessor concepts.
+However, Bitlang Explicit has one canonical **English language vocabulary**. Both source forms normalize directly into the same parser/preprocessor concepts, and preprocessing emits the English canonical keyword/property/built-in spelling when materializing Bitlang Explicit.
 
 Conceptually:
 
@@ -25,7 +25,7 @@ module     -> keyword.module
 モジュール -> keyword.module
 ```
 
-After lexical normalization, later semantic stages do not care which source-language spelling was used.
+After lexical normalization, later semantic stages do not care which source-language spelling was used. When serialized as Bitlang Explicit, the canonical language token spelling is English.
 
 ## 2. Mixed-language source
 
@@ -142,7 +142,20 @@ Lexicon normalization happens before ordinary parsing/semantic normalization nee
 
 Diagnostics and source maps preserve the original spelling and location.
 
-Bitlang Explicit does not need to preserve whether source used `class` or `クラス`; it preserves the resulting canonical declaration and semantic properties.
+Bitlang Explicit uses English-only canonical language vocabulary. For example:
+
+```text
+Bitlang source                  Bitlang Explicit
+クラス                           class
+関数                             function
+モジュール                       module
+公開                             canonical English visibility/property spelling
+文字列                           Str
+```
+
+Therefore Bitlang Explicit never needs to preserve whether the source language token was written as `class` or `クラス`; preprocessing emits the English canonical language token.
+
+This English-only rule applies to **language vocabulary**, not arbitrary user-defined symbol names. A user identifier such as `利用者` or `実行` remains a valid Unicode identifier in Explicit unless ordinary declaration-alias/name-normalization rules explicitly choose another symbol name. The compiler must not machine-translate arbitrary user identifiers into English.
 
 ## 8. Formatter and generated-source preference
 
