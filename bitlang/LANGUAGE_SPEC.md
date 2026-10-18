@@ -641,6 +641,22 @@ If the final resolved operation or semantic state is provably unsafe or invalid,
 
 A default can change which property value is selected for an omitted axis, but cannot turn an unsafe operation into a valid one or suppress a required safety error.
 
+## Value-by-default transfer semantics
+
+Bitlang uses value semantics for plain types regardless of whether a declaration is a struct or class/type.
+
+```text
+T       -> value
+Ref<T>  -> explicit safe reference
+Ptr<T>  -> explicit raw pointer
+```
+
+The compiler must not silently turn an uncopyable or large `T` into a reference. Copy/move capability determines whether the value transfer itself is legal; indirection must remain explicit in the type.
+
+Foreign-language adapters must materialize source-language reference semantics as explicit Bitlang reference/pointer/handle forms.
+
+See [VALUE_SEMANTICS.md](VALUE_SEMANTICS.md).
+
 ## Functional-language support
 
 Bitlang must be able to represent functional-programming semantics even though Bitlang itself does not need to be primarily written as a functional language.
