@@ -510,6 +510,24 @@ Zero-size representations must respect ownership, move/borrow/lifetime, initiali
 
 Ordinary struct/array physical layout follows the selected target descriptor. Explicit `exact struct` physical bit/byte layout has its own deterministic zero-bit rule; exposing any zero-size type via a foreign C/native ABI requires an explicitly compatible representation or wrapper rather than assuming that C supports empty structures or zero-length arrays.
 
+## Value semantics by default
+
+Plain `T` always denotes a value. Structs and classes do not change this rule.
+
+```text
+T       -> value semantics
+Ref<T>  -> explicit safe reference semantics
+Ptr<T>  -> explicit raw-pointer semantics
+```
+
+Function parameters, ordinary assignment/initialization, and return values therefore use value semantics when their type is plain `T`.
+
+If copying a plain `T` requires `Copyable` and the value/type is `Uncopyable`, the operation is an error unless an explicit valid move is used. The compiler must never silently reinterpret the transfer as a reference.
+
+A backend may physically transport a large value through a hidden address or perform copy elision, but this is an ABI/optimization detail and must preserve the observable by-value semantics.
+
+Complete rules: [VALUE_SEMANTICS.md](VALUE_SEMANTICS.md).
+
 ## Pointer and reference types
 
 `Ptr<T>` and `Ref<T>` are distinct types with different safety guarantees.
