@@ -6,7 +6,7 @@ Bitlang は、明示的で検査可能な多段 lowering を中心に設計さ�
 
 > **好きなコードを 好きな書き方で**
 
-これは宣伝文句だけではなく、Bitlang の設計原則です。Bitlang 自体も多少冗長ながら書きやすく非常に安全な言語を目指しますが、それだけでなく、他言語や異なる記述スタイルから意味を保ったまま容易に Bitlang へ変換できることを重視します。preprocessor、language adapter、scope 単位の property default、namespace mount、完全明示化は、その自由さと安全性を両立するための仕組みです。
+これは宣伝文句だけではなく、Bitlang の設計原則です。Bitlang sourceは英語でも日本語でも第一級に記述でき、日本語対応は識別子だけでなくsource-facing keyword/property等のlexiconにも及びます。英語と日本語を同一file内で混在させても意味は変わりません。Bitlang 自体も多少冗長ながら書きやすく非常に安全な言語を目指しますが、それだけでなく、他言語や異なる記述スタイルから意味を保ったまま容易に Bitlang へ変換できることを重視します。preprocessor、language adapter、scope 単位の property default、namespace mount、完全明示化は、その自由さと安全性を両立するための仕組みです。
 
 初期実装は **Go** で作られています。これにより、開発中のビルドをすぐに単体実行可能ファイルへでき、ランタイム依存を増やさずクロスコンパイルできます。
 
