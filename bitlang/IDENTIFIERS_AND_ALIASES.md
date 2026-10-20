@@ -105,7 +105,42 @@ References using `実行`, `execute`, or `run` all resolve to the same function 
 
 Aliases do not create wrapper functions, copied variables, duplicate types, or additional runtime objects.
 
-Exact source spelling for attaching aliases to declarations is defined by the source grammar/parser; the semantic model is primary-name plus alias set.
+Source syntax uses a declaration-prefix metadata clause:
+
+```bitlang
+Alias(execute, run) function 実行(...) { ... }
+Alias(User) class 利用者 { ... }
+Alias(count) Int 回数;
+```
+
+The Japanese source lexicon spelling is:
+
+```bitlang
+別名(execute, run) 関数 実行(...) { ... }
+```
+
+`Alias(...)` is declaration-name metadata, not a property axis. It occupies the declaration prefix alongside ordinary source properties but does not participate in property precedence/default resolution.
+
+Rules:
+
+- one declaration has at most one `Alias(...)` clause after source normalization;
+- the clause must contain at least one alias identifier;
+- each entry is one ordinary identifier, not a string literal or qualified path;
+- aliases are attached to the immediately following named declaration;
+- preprocessing may merge repeated/source-sugar alias clauses only when the merged canonical alias set is unambiguous; canonical Explicit output uses one clause;
+- the declaration's written name remains the primary name; `Alias(...)` never changes primary identity.
+
+## 5.1. Canonical Explicit alias clause
+
+When alias metadata must remain across the Bitlang Explicit boundary, Explicit serializes it using the English canonical clause:
+
+```text
+Alias(<canonical-alias-1>, <canonical-alias-2>, ...) <declaration>
+```
+
+The keyword `Alias` is English canonical language vocabulary. Alias names themselves remain ordinary Unicode identifiers and may therefore be Japanese or another supported identifier spelling.
+
+If no aliases exist, the clause is omitted.
 
 ## 6. Alias canonicalization and collisions
 
