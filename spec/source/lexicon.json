@@ -275,6 +275,18 @@
         ]
       },
       "canonical_spelling": "Char"
+    },
+    {
+      "id": "declaration_metadata.alias",
+      "spellings": {
+        "en": [
+          "Alias"
+        ],
+        "ja": [
+          "別名"
+        ]
+      },
+      "canonical_spelling": "Alias"
     }
   ],
   "completeness": {
