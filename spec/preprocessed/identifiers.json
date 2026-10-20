@@ -34,7 +34,24 @@
     "duplicate_alias_error": true,
     "alias_primary_collision_error": true,
     "alias_other_symbol_collision_error": true,
-    "backend_symbol_duplication": false
+    "backend_symbol_duplication": false,
+    "source_syntax": {
+      "form": "Alias(identifier[, identifier ...]) <named-declaration>",
+      "japanese_keyword": "別名",
+      "canonical_keyword": "Alias",
+      "clause_kind": "declaration_name_metadata",
+      "property_axis": false,
+      "minimum_aliases": 1,
+      "maximum_clauses_per_canonical_declaration": 1,
+      "alias_item_kind": "ordinary_identifier",
+      "qualified_alias_allowed": false,
+      "changes_primary_name": false
+    },
+    "explicit_serialization": {
+      "keyword": "Alias",
+      "language_vocabulary": "en",
+      "omit_when_empty": true
+    }
   },
   "name_based_policy": {
     "default_match_name": "primary_canonical_name",
